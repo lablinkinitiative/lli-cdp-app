@@ -1,0 +1,1390 @@
+{
+  "meta": {
+    "version": "1.0",
+    "lastUpdated": "2026-02-28",
+    "description": "Curated internship and career experience programs for the LabLink Initiative CDP. All programs are paid unless noted. Data verified against official program websites.",
+    "maintainer": "lab-link agent"
+  },
+  "programs": [
+    {
+      "id": "doe-suli",
+      "name": "DOE Science Undergraduate Laboratory Internships (SULI)",
+      "shortName": "SULI",
+      "category": "DOE National Labs",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate"],
+        "citizenship": ["US citizen", "US permanent resident"],
+        "gpa": 2.5,
+        "notes": "Must be enrolled at an accredited college/university. Full-time enrollment not required."
+      },
+      "duration": {
+        "weeks": [10, 16],
+        "terms": ["Spring", "Summer", "Fall"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "weekly stipend (varies by lab and major)",
+        "housing": "housing allowance for most labs",
+        "travel": "one round-trip reimbursement"
+      },
+      "locations": [
+        "Argonne National Laboratory (ANL), IL",
+        "Brookhaven National Laboratory (BNL), NY",
+        "Fermilab, IL",
+        "Idaho National Laboratory (INL), ID",
+        "Lawrence Berkeley National Laboratory (LBNL), CA",
+        "Lawrence Livermore National Laboratory (LLNL), CA",
+        "Los Alamos National Laboratory (LANL), NM",
+        "National Energy Technology Laboratory (NETL), WV/OR/PA",
+        "National Renewable Energy Laboratory (NREL), CO",
+        "Oak Ridge National Laboratory (ORNL), TN",
+        "Pacific Northwest National Laboratory (PNNL), WA",
+        "Princeton Plasma Physics Laboratory (PPPL), NJ",
+        "Sandia National Laboratories, NM/CA",
+        "Savannah River National Laboratory (SRNL), SC",
+        "SLAC National Accelerator Laboratory, CA",
+        "Thomas Jefferson National Accelerator Facility, VA",
+        "Office of Fossil Energy sites"
+      ],
+      "researchAreas": ["Physics", "Chemistry", "Biology", "Engineering", "Computer Science", "Materials Science", "Environmental Science", "Nuclear Science", "Energy Technology", "Mathematics", "Data Science"],
+      "deadlines": {
+        "summer": "January (typically mid-January)",
+        "fall": "May",
+        "spring": "October"
+      },
+      "applicationUrl": "https://science.osti.gov/wdts/suli",
+      "applicationPlatform": "Zintellect (ORISE)",
+      "keyFacts": [
+        "Flagship DOE undergraduate internship program",
+        "17+ national laboratories participate",
+        "Research on cutting-edge science and technology",
+        "Mentored by DOE lab scientists and engineers",
+        "Can apply to multiple labs simultaneously on Zintellect"
+      ],
+      "lliBridgeNote": "LLI co-hosted a webinar with INL and PTK focused on SULI. Our free guide covers SULI application strategy."
+    },
+    {
+      "id": "doe-cci",
+      "name": "DOE Community College Internships (CCI)",
+      "shortName": "CCI",
+      "category": "DOE National Labs",
+      "type": "internship",
+      "eligibility": {
+        "level": ["community college"],
+        "citizenship": ["US citizen", "US permanent resident"],
+        "gpa": 2.5,
+        "notes": "Must be currently enrolled in an accredited 2-year community college or technical school."
+      },
+      "duration": {
+        "weeks": [10],
+        "terms": ["Summer"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "weekly stipend (varies by lab and major)",
+        "housing": "housing allowance for most labs",
+        "travel": "one round-trip reimbursement"
+      },
+      "locations": [
+        "Argonne National Laboratory (ANL), IL",
+        "Brookhaven National Laboratory (BNL), NY",
+        "Fermilab, IL",
+        "Idaho National Laboratory (INL), ID",
+        "Lawrence Berkeley National Laboratory (LBNL), CA",
+        "Lawrence Livermore National Laboratory (LLNL), CA",
+        "Los Alamos National Laboratory (LANL), NM",
+        "National Energy Technology Laboratory (NETL), WV/OR/PA",
+        "National Renewable Energy Laboratory (NREL), CO",
+        "Oak Ridge National Laboratory (ORNL), TN",
+        "Pacific Northwest National Laboratory (PNNL), WA",
+        "Sandia National Laboratories, NM/CA",
+        "Savannah River National Laboratory (SRNL), SC",
+        "Thomas Jefferson National Accelerator Facility, VA"
+      ],
+      "researchAreas": ["Engineering Technology", "Applied Science", "Computer Technology", "Environmental Technology", "Life Sciences", "Physical Sciences", "Mathematics"],
+      "deadlines": {
+        "summer": "January (typically mid-January)"
+      },
+      "applicationUrl": "https://science.osti.gov/wdts/cci",
+      "applicationPlatform": "Zintellect (ORISE)",
+      "keyFacts": [
+        "Designed specifically for community college students",
+        "One of the most undersubscribed DOE programs — strong acceptance rates",
+        "Technical and vocational backgrounds welcome alongside traditional STEM",
+        "Same national laboratory network as SULI",
+        "A direct LLI flagship program — we specialize in helping CC students access CCI"
+      ],
+      "lliBridgeNote": "CCI is LLI's origin program. Sean and Michael both accessed national labs through community college pathways like this. CCI has only ~18-21 slots per lab per term — it is massively undersubscribed."
+    },
+    {
+      "id": "afrl-scholars",
+      "name": "AFRL Scholars Program",
+      "shortName": "AFRL Scholars",
+      "category": "Federal / Defense",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate"],
+        "citizenship": ["US citizen"],
+        "gpa": 3.0,
+        "notes": "Must be able to obtain a security clearance. US citizenship required."
+      },
+      "duration": {
+        "weeks": [10, 12],
+        "terms": ["Summer"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "competitive pay (GS-3 to GS-7 equivalent)",
+        "housing": "varies by site",
+        "travel": "varies"
+      },
+      "locations": [
+        "Wright-Patterson AFB, OH (AFRL HQ)",
+        "Kirtland AFB, NM",
+        "Hanscom AFB, MA",
+        "Edwards AFB, CA",
+        "Eglin AFB, FL",
+        "Rome, NY (AFRL/RI)",
+        "Arnold AFB, TN",
+        "Tyndall AFB, FL",
+        "Munitions Directorate, Eglin AFB, FL"
+      ],
+      "researchAreas": ["Aerospace Engineering", "Materials Science", "Computer Science", "Electrical Engineering", "Physics", "Chemistry", "Bioengineering", "Directed Energy", "Space Systems"],
+      "deadlines": {
+        "summer": "December-February (varies by directorate)"
+      },
+      "applicationUrl": "https://afrlscholars.usra.edu",
+      "applicationPlatform": "AFRL Scholars Portal (USRA)",
+      "keyFacts": [
+        "Air Force Research Laboratory — cutting-edge defense research",
+        "Path to federal career and security clearance",
+        "9 directorates across the country",
+        "Mentored by AFRL scientists and engineers",
+        "Sean Florez (LLI co-founder) interned at AFRL"
+      ],
+      "lliBridgeNote": "Sean Florez completed an AFRL internship during his path from community college to Ph.D. AFRL is a core LLI partner program."
+    },
+    {
+      "id": "nasa-internships",
+      "name": "NASA Internships",
+      "shortName": "NASA Internships",
+      "category": "Federal / Space",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate", "high school senior"],
+        "citizenship": ["US citizen"],
+        "gpa": 3.0,
+        "notes": "Most positions require US citizenship. GPA requirements vary by center and project."
+      },
+      "duration": {
+        "weeks": [10, 16],
+        "terms": ["Spring", "Summer", "Fall"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$3,600–$8,000 per session (varies by level)",
+        "housing": "not typically provided",
+        "travel": "varies by position"
+      },
+      "locations": [
+        "NASA HQ, Washington DC",
+        "Johnson Space Center, Houston TX",
+        "Kennedy Space Center, FL",
+        "Goddard Space Flight Center, Greenbelt MD",
+        "Jet Propulsion Laboratory, Pasadena CA",
+        "Ames Research Center, Mountain View CA",
+        "Marshall Space Flight Center, Huntsville AL",
+        "Langley Research Center, Hampton VA",
+        "Glenn Research Center, Cleveland OH",
+        "Stennis Space Center, MS"
+      ],
+      "researchAreas": ["Aerospace Engineering", "Astrophysics", "Earth Science", "Computer Science", "Electrical Engineering", "Mechanical Engineering", "Communications", "Project Management", "Business Operations", "STEM Education"],
+      "deadlines": {
+        "spring": "October",
+        "summer": "March",
+        "fall": "May"
+      },
+      "applicationUrl": "https://intern.nasa.gov",
+      "applicationPlatform": "NASA OSSI (One Stop Shopping Initiative)",
+      "keyFacts": [
+        "3 application cycles per year",
+        "Business, communications, and policy roles available alongside STEM",
+        "JPL positions may require additional clearance process",
+        "Strong alumni network across aerospace and defense industry"
+      ],
+      "lliBridgeNote": "NASA internships span all disciplines — STEM and Business students both qualify. Many positions do not require specialized coursework beyond general science/engineering foundation."
+    },
+    {
+      "id": "epa-gro",
+      "name": "EPA Greater Research Opportunities (GRO) Fellowship",
+      "shortName": "EPA GRO",
+      "category": "Federal / Environment",
+      "type": "fellowship",
+      "eligibility": {
+        "level": ["undergraduate", "junior", "senior"],
+        "citizenship": ["US citizen"],
+        "gpa": 3.0,
+        "notes": "For junior-year undergrads; includes summer internship at an EPA facility."
+      },
+      "duration": {
+        "weeks": [10, 12],
+        "terms": ["Summer", "Academic Year"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$27,000/year (undergraduate) — tuition support + salary",
+        "housing": "not included",
+        "travel": "one round-trip for summer internship"
+      },
+      "locations": [
+        "EPA Research Triangle Park, NC",
+        "EPA Cincinnati, OH",
+        "EPA Las Vegas, NV",
+        "EPA Ada, OK",
+        "EPA Athens, GA",
+        "EPA Narragansett, RI",
+        "EPA Gulf Ecology Division, FL"
+      ],
+      "researchAreas": ["Environmental Science", "Chemistry", "Biology", "Public Health", "Environmental Engineering", "Ecology", "Risk Assessment"],
+      "deadlines": {
+        "main": "November (for following academic year)"
+      },
+      "applicationUrl": "https://www.epa.gov/careers/gro-fellowships",
+      "applicationPlatform": "ORISE / Zintellect",
+      "keyFacts": [
+        "Combines academic-year financial support with summer EPA internship",
+        "Managed by ORISE (same portal as DOE programs)",
+        "Strong pathway to environmental science federal careers",
+        "Especially relevant for biology, chemistry, and public health majors"
+      ],
+      "lliBridgeNote": "EPA GRO is through the same ORISE/Zintellect platform as DOE SULI and CCI. If you're already applying to SULI, adding EPA GRO is a low-lift additional option."
+    },
+    {
+      "id": "nist-surf",
+      "name": "NIST Summer Undergraduate Research Fellowship (SURF)",
+      "shortName": "NIST SURF",
+      "category": "Federal / Science",
+      "type": "fellowship",
+      "eligibility": {
+        "level": ["undergraduate"],
+        "citizenship": ["US citizen", "US permanent resident"],
+        "gpa": 3.0,
+        "notes": "Sophomore standing or above preferred."
+      },
+      "duration": {
+        "weeks": [11],
+        "terms": ["Summer"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$700–$950/week",
+        "housing": "not provided",
+        "travel": "not provided"
+      },
+      "locations": [
+        "NIST Gaithersburg, MD",
+        "NIST Boulder, CO"
+      ],
+      "researchAreas": ["Physics", "Chemistry", "Materials Science", "Electrical Engineering", "Computer Science", "Statistics", "Measurement Science", "Metrology"],
+      "deadlines": {
+        "summer": "February-March"
+      },
+      "applicationUrl": "https://www.nist.gov/surf",
+      "applicationPlatform": "NIST SURF Portal",
+      "keyFacts": [
+        "National Institute of Standards and Technology",
+        "Measurement science and standards — unique research area",
+        "Less competitive than NASA/DOE programs — strong fit for students wanting federal lab exposure",
+        "Strong networking with federal career paths"
+      ],
+      "lliBridgeNote": "NIST is often overlooked but is a flagship US research institution. NIST SURF is a high-quality alternative when SULI competition is steep."
+    },
+    {
+      "id": "nsf-reu",
+      "name": "NSF Research Experiences for Undergraduates (REU)",
+      "shortName": "NSF REU",
+      "category": "Academic Research",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate"],
+        "citizenship": ["US citizen", "US permanent resident"],
+        "gpa": null,
+        "notes": "Each REU site sets its own criteria. Many sites prioritize community college students and underrepresented groups."
+      },
+      "duration": {
+        "weeks": [8, 10],
+        "terms": ["Summer"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$500–$700/week (varies by site)",
+        "housing": "most sites provide housing or housing allowance",
+        "travel": "most sites provide round-trip travel"
+      },
+      "locations": ["700+ sites across all 50 states — universities, colleges, and research centers"],
+      "researchAreas": ["All STEM disciplines — biology, chemistry, physics, engineering, computer science, mathematics, materials science, social sciences, geosciences, and more"],
+      "deadlines": {
+        "summer": "November-February (varies widely by site)"
+      },
+      "applicationUrl": "https://www.nsf.gov/crssprgm/reu/reu_search.jsp",
+      "applicationPlatform": "NSF REU Site Search + individual site portals",
+      "keyFacts": [
+        "700+ sites annually across all STEM disciplines",
+        "Hosted at universities, not just federal labs",
+        "Many sites specifically recruit community college students",
+        "Strong launchpad for graduate school",
+        "Apply to multiple sites — requirements vary widely"
+      ],
+      "lliBridgeNote": "NSF REUs are geographically distributed so students can find sites near home or at top research universities. Excellent for students not yet ready for federal lab competition."
+    },
+    {
+      "id": "nih-niaid-summer",
+      "name": "NIH Summer Internship Program in Biomedical Research (SIP)",
+      "shortName": "NIH SIP",
+      "category": "Federal / Biomedical",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate", "high school senior"],
+        "citizenship": ["US citizen", "US permanent resident"],
+        "gpa": 3.0,
+        "notes": "Accepts a wide range of students from high school through postbac. Strong emphasis on biomedical and health sciences."
+      },
+      "duration": {
+        "weeks": [8, 12],
+        "terms": ["Summer"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$18.08/hour (undergrad, 2024 rates)",
+        "housing": "not provided (Bethesda MD cost of living assistance varies)",
+        "travel": "varies"
+      },
+      "locations": [
+        "NIH Main Campus, Bethesda MD",
+        "NIH Rocky Mountain Labs, Hamilton MT",
+        "NIH Frederick, MD",
+        "NIH satellite campuses (varies)"
+      ],
+      "researchAreas": ["Biomedical Research", "Biology", "Chemistry", "Biochemistry", "Microbiology", "Genetics", "Neuroscience", "Public Health", "Clinical Research", "Computational Biology"],
+      "deadlines": {
+        "summer": "March 1"
+      },
+      "applicationUrl": "https://www.training.nih.gov/programs/sip",
+      "applicationPlatform": "NIH IRTA/OITE Portal",
+      "keyFacts": [
+        "National Institutes of Health — world's largest biomedical research institution",
+        "Highly competitive but accepts diverse academic backgrounds",
+        "Access to top scientists across 27 institutes and centers",
+        "Strong pathway to biomedical graduate programs and medical school"
+      ],
+      "lliBridgeNote": "NIH SIP broadens LLI's footprint into biomedical careers — particularly valuable for biology, pre-med, and public health students."
+    },
+    {
+      "id": "noaa-hollings",
+      "name": "NOAA Ernest F. Hollings Undergraduate Scholarship",
+      "shortName": "NOAA Hollings",
+      "category": "Federal / Environment",
+      "type": "scholarship_plus_internship",
+      "eligibility": {
+        "level": ["undergraduate", "sophomore"],
+        "citizenship": ["US citizen"],
+        "gpa": 3.25,
+        "notes": "Must be sophomore at time of application. All STEM and social science disciplines considered."
+      },
+      "duration": {
+        "weeks": [10],
+        "terms": ["Summer", "Academic Year"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$9,500 academic year scholarship × 2 years; $700/week summer internship",
+        "housing": "housing allowance for internship",
+        "travel": "one round-trip for internship"
+      },
+      "locations": ["NOAA facilities across the US"],
+      "researchAreas": ["Oceanography", "Atmospheric Science", "Fisheries Biology", "Environmental Science", "Remote Sensing", "Data Science", "Marine Ecology", "Climate Science"],
+      "deadlines": {
+        "main": "January 31 (annual)"
+      },
+      "applicationUrl": "https://www.noaa.gov/office-education/hollings-scholarship",
+      "applicationPlatform": "NOAA application portal",
+      "keyFacts": [
+        "2-year scholarship plus summer internship at NOAA",
+        "One of the most comprehensive federal science scholarships",
+        "Full mentorship and career development support",
+        "Highly prestigious — strong resume differentiator"
+      ],
+      "lliBridgeNote": "Hollings combines scholarship + internship — exceptional value for a strong sophomore applicant. Worth the additional preparation investment."
+    },
+    {
+      "id": "doe-wdts-eci",
+      "name": "DOE Energy I-Corps (EIC) Technology Commercialization Program",
+      "shortName": "DOE EIC",
+      "category": "DOE / Innovation",
+      "type": "program",
+      "eligibility": {
+        "level": ["graduate", "postdoc"],
+        "citizenship": ["US citizen", "US permanent resident"],
+        "gpa": null,
+        "notes": "For graduate students and postdocs working on energy technology commercialization."
+      },
+      "duration": {
+        "weeks": [5],
+        "terms": ["Rolling cohorts"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$4,500 per participant",
+        "housing": "not provided",
+        "travel": "covered for regional workshops"
+      },
+      "locations": ["Remote + regional workshop locations"],
+      "researchAreas": ["Energy Technology", "Clean Energy", "Technology Transfer", "Innovation", "Entrepreneurship"],
+      "deadlines": {
+        "main": "Rolling — 2-3 cohorts per year"
+      },
+      "applicationUrl": "https://www.energy.gov/technologytransitions/energy-i-corps",
+      "applicationPlatform": "DOE Energy I-Corps portal",
+      "keyFacts": [
+        "Focused on technology commercialization, not just research",
+        "Graduate students pair with industry mentors",
+        "Strong pathway to DOE SBIR/STTR and startup ecosystem",
+        "Less known but high-value for entrepreneurially-minded grad students"
+      ],
+      "lliBridgeNote": "Appropriate for grad students in LLI's network interested in clean energy entrepreneurship beyond just research careers."
+    },
+    {
+      "id": "inl-internship",
+      "name": "Idaho National Laboratory Internship Program",
+      "shortName": "INL Internships",
+      "category": "DOE National Labs",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate", "community college"],
+        "citizenship": ["US citizen"],
+        "gpa": 3.0,
+        "notes": "INL has additional paid positions beyond SULI/CCI. Background check required."
+      },
+      "duration": {
+        "weeks": [10, 12, 16, 40],
+        "terms": ["Spring", "Summer", "Fall", "Year-round co-op"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "competitive hourly rate",
+        "housing": "not typically provided (Idaho Falls is affordable)",
+        "travel": "varies by position"
+      },
+      "locations": ["Idaho Falls, ID (INL main campus)", "Idaho Falls environs"],
+      "researchAreas": ["Nuclear Energy", "Nuclear Security", "Cybersecurity", "Energy Systems", "Materials Science", "Chemistry", "Environmental Science", "Robotics", "AI/ML", "Business Operations"],
+      "deadlines": {
+        "main": "Rolling — positions posted on INL careers page"
+      },
+      "applicationUrl": "https://inl.gov/careers/internships/",
+      "applicationPlatform": "INL Careers Portal + Handshake",
+      "keyFacts": [
+        "Michael Sarmento (LLI co-founder) interned at INL",
+        "INL is the only US nuclear energy laboratory — unique specialty",
+        "INL has the most nuclear engineering internship slots of any DOE lab",
+        "Nuclear internships increasingly include cybersecurity and AI angles",
+        "INL co-hosted LLI's first webinar with PTK"
+      ],
+      "lliBridgeNote": "INL is LLI's founding lab partner. Michael's path from community college to INL is the origin story. We have direct relationships with INL's internship office."
+    },
+    {
+      "id": "ornl-internship",
+      "name": "Oak Ridge National Laboratory Internships",
+      "shortName": "ORNL Internships",
+      "category": "DOE National Labs",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate", "community college"],
+        "citizenship": ["US citizen", "US permanent resident"],
+        "gpa": 3.0,
+        "notes": "ORNL manages many SULI/CCI positions plus direct lab appointments."
+      },
+      "duration": {
+        "weeks": [10, 16],
+        "terms": ["Spring", "Summer", "Fall"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "SULI rates apply for ORISE positions; direct hires are competitive hourly",
+        "housing": "varies by program",
+        "travel": "varies by program"
+      },
+      "locations": ["Oak Ridge, TN"],
+      "researchAreas": ["Materials Science", "Advanced Manufacturing", "Nuclear Science", "Supercomputing", "Data Science", "Artificial Intelligence", "Biology", "Climate Science", "Energy Systems"],
+      "deadlines": {
+        "main": "Apply via Zintellect for SULI/CCI; ORNL careers portal for direct hires"
+      },
+      "applicationUrl": "https://www.ornl.gov/content/students-and-graduates",
+      "applicationPlatform": "Zintellect (ORISE) + ORNL Careers",
+      "keyFacts": [
+        "Home to Frontier supercomputer — world's most powerful as of 2022",
+        "Operates the Spallation Neutron Source and High Flux Isotope Reactor",
+        "Strong in advanced manufacturing (MDF) and AI/ML research",
+        "Major employer in the Southeast with strong community college pipeline"
+      ],
+      "lliBridgeNote": "ORNL's advanced manufacturing and AI research is increasingly accessible to engineering and CS students. Strong program for Southeast-based students."
+    },
+    {
+      "id": "llnl-internship",
+      "name": "Lawrence Livermore National Laboratory Student Programs",
+      "shortName": "LLNL Internships",
+      "category": "DOE National Labs",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate", "community college"],
+        "citizenship": ["US citizen"],
+        "gpa": 3.0,
+        "notes": "Many LLNL positions require Q clearance eligibility (US citizenship + background check). No prior clearance needed — LLNL sponsors."
+      },
+      "duration": {
+        "weeks": [10, 16, 40],
+        "terms": ["Spring", "Summer", "Fall", "Year-round"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "SULI rates + LLNL direct hire competitive pay",
+        "housing": "not provided (Bay Area — expensive)",
+        "travel": "varies"
+      },
+      "locations": ["Livermore, CA"],
+      "researchAreas": ["National Security Science", "Nuclear Deterrence", "High-Performance Computing", "Laser Science", "Materials Science", "Engineering", "Chemistry", "Biology", "Data Science", "AI/ML"],
+      "deadlines": {
+        "main": "Rolling — LLNL careers + Zintellect for SULI"
+      },
+      "applicationUrl": "https://www.llnl.gov/jobs/students",
+      "applicationPlatform": "LLNL Careers + Zintellect (ORISE)",
+      "keyFacts": [
+        "Michael Sarmento (LLI co-founder) interned at LLNL via NNSA",
+        "Home to the National Ignition Facility — achieved nuclear fusion ignition 2022",
+        "Strong path to national security careers and Q clearance",
+        "Bay Area location provides strong tech industry networking",
+        "Data science, AI, and computing roles growing rapidly"
+      ],
+      "lliBridgeNote": "LLNL is Michael's lab connection. National security science and computing are growing areas — many non-physics roles available."
+    },
+    {
+      "id": "sandia-internship",
+      "name": "Sandia National Laboratories Student Internships",
+      "shortName": "Sandia Internships",
+      "category": "DOE National Labs",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate"],
+        "citizenship": ["US citizen"],
+        "gpa": 3.0,
+        "notes": "Most positions require security clearance eligibility. Sandia has some of the most competitive SULI slots."
+      },
+      "duration": {
+        "weeks": [10, 16, 40],
+        "terms": ["Summer", "Year-round co-op"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "competitive hourly + potential relocation",
+        "housing": "not provided",
+        "travel": "varies"
+      },
+      "locations": ["Albuquerque, NM (main)", "Livermore, CA"],
+      "researchAreas": ["Engineering", "Physics", "Computer Science", "Cybersecurity", "Materials Science", "Nuclear Weapons Science", "Renewable Energy", "Robotics", "Microsystems", "Climate Security"],
+      "deadlines": {
+        "summer": "December-February",
+        "yearRound": "Rolling"
+      },
+      "applicationUrl": "https://www.sandia.gov/careers/students-and-postdocs/",
+      "applicationPlatform": "Sandia Careers Portal + Handshake",
+      "keyFacts": [
+        "Sandia is NNSA's engineering laboratory — high-value national security research",
+        "Engineering roles dominate but CS, data science growing fast",
+        "New Mexico location offers lower cost of living than coastal labs",
+        "Strong co-op program for multi-term commitments"
+      ],
+      "lliBridgeNote": "Sandia is a top-tier target for engineering, CS, and physical science students. The Albuquerque location is accessible for Southwest students."
+    },
+    {
+      "id": "pnnl-internship",
+      "name": "Pacific Northwest National Laboratory Internships",
+      "shortName": "PNNL Internships",
+      "category": "DOE National Labs",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate", "community college"],
+        "citizenship": ["US citizen", "US permanent resident"],
+        "gpa": 3.0,
+        "notes": "PNNL actively recruits Pacific Northwest community college students."
+      },
+      "duration": {
+        "weeks": [10, 16],
+        "terms": ["Summer", "Fall", "Spring"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "SULI rates for ORISE positions",
+        "housing": "varies",
+        "travel": "round-trip for most positions"
+      },
+      "locations": ["Richland, WA"],
+      "researchAreas": ["Data Analytics", "Earth Science", "Energy Systems", "Environmental Sciences", "Grid Modernization", "Biology", "Chemistry", "Cybersecurity", "National Security"],
+      "deadlines": {
+        "main": "Zintellect for SULI/CCI; PNNL careers for direct"
+      },
+      "applicationUrl": "https://www.pnnl.gov/internships",
+      "applicationPlatform": "Zintellect (ORISE) + PNNL Careers",
+      "keyFacts": [
+        "Strong data analytics and grid modernization research",
+        "Actively recruits Tri-Cities area community college students",
+        "Environmental science and Pacific Northwest ecology research",
+        "Cybersecurity and national security research growing"
+      ],
+      "lliBridgeNote": "PNNL is particularly accessible for Pacific Northwest and Tri-Cities area community college students."
+    },
+    {
+      "id": "nrel-internship",
+      "name": "National Renewable Energy Laboratory Internships",
+      "shortName": "NREL Internships",
+      "category": "DOE National Labs",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate", "community college"],
+        "citizenship": ["US citizen", "US permanent resident"],
+        "gpa": 3.0,
+        "notes": "NREL is the only DOE lab dedicated entirely to renewable energy — strong demand for clean energy-specific backgrounds."
+      },
+      "duration": {
+        "weeks": [10, 16],
+        "terms": ["Summer", "Fall", "Spring"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "SULI rates + NREL direct competitive rates",
+        "housing": "varies",
+        "travel": "varies"
+      },
+      "locations": ["Golden, CO (near Denver)"],
+      "researchAreas": ["Solar Energy", "Wind Energy", "Energy Storage", "Grid Systems", "Transportation Electrification", "Bioenergy", "Hydrogen", "Energy Efficiency", "Data Science", "Buildings Technology"],
+      "deadlines": {
+        "main": "Zintellect for SULI/CCI; NREL careers for direct"
+      },
+      "applicationUrl": "https://www.nrel.gov/careers/intern-undergrad.html",
+      "applicationPlatform": "Zintellect (ORISE) + NREL Careers",
+      "keyFacts": [
+        "The only US national lab 100% focused on renewable energy",
+        "Golden, CO location — Denver metro, excellent quality of life",
+        "Direct pipeline into clean energy industry jobs",
+        "Strong internship-to-hire conversion rate",
+        "Business, policy, and finance roles available alongside engineering"
+      ],
+      "lliBridgeNote": "NREL is the flagship clean energy lab. Business Analytics, Policy, and Finance students can find non-engineering roles there — not just STEM."
+    },
+    {
+      "id": "anl-internship",
+      "name": "Argonne National Laboratory Student Programs",
+      "shortName": "ANL Internships",
+      "category": "DOE National Labs",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate", "community college"],
+        "citizenship": ["US citizen", "US permanent resident"],
+        "gpa": 3.0,
+        "notes": "Argonne has the largest computing and physics programs of any DOE lab."
+      },
+      "duration": {
+        "weeks": [10, 16],
+        "terms": ["Summer", "Fall", "Spring"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "SULI rates + Argonne direct",
+        "housing": "varies",
+        "travel": "round-trip for most SULI/CCI"
+      },
+      "locations": ["Lemont, IL (near Chicago)"],
+      "researchAreas": ["Physics", "Chemistry", "Computing/HPC", "AI/ML", "Materials Science", "Nuclear Science", "Electrical Engineering", "Energy Storage", "Transportation", "Environmental Science"],
+      "deadlines": {
+        "main": "Zintellect for SULI/CCI; ANL careers for direct"
+      },
+      "applicationUrl": "https://www.anl.gov/education/students",
+      "applicationPlatform": "Zintellect (ORISE) + ANL Careers",
+      "keyFacts": [
+        "Home to Aurora supercomputer — the first US exascale computer",
+        "Chicagoland location — affordable Midwest cost of living",
+        "Strong physics, computing, and advanced battery research",
+        "APS (Advanced Photon Source) — synchrotron used by research from worldwide"
+      ],
+      "lliBridgeNote": "Argonne's computing and AI research is cutting-edge. CS and data science students have strong options here alongside traditional STEM."
+    },
+    {
+      "id": "lbnl-internship",
+      "name": "Lawrence Berkeley National Laboratory Internships",
+      "shortName": "LBNL Internships",
+      "category": "DOE National Labs",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate", "community college"],
+        "citizenship": ["US citizen", "US permanent resident"],
+        "gpa": 3.0,
+        "notes": "Berkeley Lab is unique — directly affiliated with UC Berkeley."
+      },
+      "duration": {
+        "weeks": [10, 16],
+        "terms": ["Summer", "Fall", "Spring"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "SULI rates + LBNL direct (Bay Area adjustment)",
+        "housing": "not provided (Berkeley CA is expensive)",
+        "travel": "SULI round-trip"
+      },
+      "locations": ["Berkeley, CA (UC Berkeley campus hill)"],
+      "researchAreas": ["Physics", "Computing", "Biology", "Chemistry", "Materials Science", "Energy Efficiency", "Environmental Science", "Quantum Science", "Biosciences"],
+      "deadlines": {
+        "main": "Zintellect for SULI/CCI; LBNL careers for direct"
+      },
+      "applicationUrl": "https://education.lbl.gov/internships/",
+      "applicationPlatform": "Zintellect (ORISE) + LBNL Careers",
+      "keyFacts": [
+        "On the UC Berkeley campus — unique lab-university integration",
+        "Nobel laureates are common here — the scientific environment is exceptional",
+        "Active Community College Internship program specifically for Bay Area CC students",
+        "Bay Area tech ecosystem creates unique networking for CS/data students"
+      ],
+      "lliBridgeNote": "LBNL actively runs a Community College Internship alongside CCI. Bay Area CC students have a strong local pipeline here."
+    },
+    {
+      "id": "doe-scholars",
+      "name": "DOE Scholars Program",
+      "shortName": "DOE Scholars",
+      "category": "DOE National Labs",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate"],
+        "citizenship": ["US citizen", "US permanent resident"],
+        "gpa": 2.5,
+        "notes": "Managed by ORISE. Placements at DOE Headquarters and field sites (not always national labs)."
+      },
+      "duration": {
+        "weeks": [10, 16],
+        "terms": ["Summer", "Fall", "Spring"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "weekly stipend + housing allowance for many positions",
+        "housing": "varies by site",
+        "travel": "round-trip"
+      },
+      "locations": ["DOE HQ, Washington DC", "DOE field offices and sites nationwide"],
+      "researchAreas": ["Energy Policy", "Science Policy", "Data Analysis", "Business Operations", "Communications", "Program Management", "STEM disciplines"],
+      "deadlines": {
+        "main": "Rolling — positions posted on Zintellect year-round"
+      },
+      "applicationUrl": "https://orise.orau.gov/doescholars/",
+      "applicationPlatform": "Zintellect (ORISE)",
+      "keyFacts": [
+        "DOE Headquarters placements — policy, communications, operations roles",
+        "Good option for Business, Policy, Communications students who want federal exposure",
+        "Often less competitive than laboratory-specific programs",
+        "Direct pathway to understanding federal energy policy"
+      ],
+      "lliBridgeNote": "DOE Scholars opens national lab and federal agency pathways to Business and Policy students — not just STEM. Underutilized and less competitive."
+    },
+    {
+      "id": "orau-lsi",
+      "name": "ORAU Lab-to-Lab Student Internship",
+      "shortName": "ORAU LSI",
+      "category": "DOE National Labs",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate"],
+        "citizenship": ["US citizen", "US permanent resident"],
+        "gpa": 3.0,
+        "notes": "Managed by ORAU for DOE labs. Less known but high quality."
+      },
+      "duration": {
+        "weeks": [10],
+        "terms": ["Summer"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "weekly stipend",
+        "housing": "housing allowance",
+        "travel": "round-trip"
+      },
+      "locations": ["DOE national laboratory sites"],
+      "researchAreas": ["All STEM disciplines"],
+      "deadlines": {
+        "main": "February-March"
+      },
+      "applicationUrl": "https://www.orau.org/university-partnerships/student-programs",
+      "applicationPlatform": "ORAU portal",
+      "keyFacts": [
+        "Managed by ORAU (Oak Ridge Associated Universities)",
+        "Less publicized than SULI but comparable quality",
+        "Good backup option for students already pursuing SULI"
+      ],
+      "lliBridgeNote": "ORAU manages multiple DOE student programs. Students should check the ORAU portal directly alongside Zintellect."
+    },
+    {
+      "id": "nsf-grad-research-fellowship",
+      "name": "NSF Graduate Research Fellowship Program (GRFP)",
+      "shortName": "NSF GRFP",
+      "category": "Academic Research",
+      "type": "fellowship",
+      "eligibility": {
+        "level": ["senior undergraduate", "first-year graduate", "second-year graduate"],
+        "citizenship": ["US citizen", "US permanent resident", "US national"],
+        "gpa": null,
+        "notes": "Undergrads can apply in senior year. One of the most prestigious fellowships in science and engineering."
+      },
+      "duration": {
+        "weeks": null,
+        "terms": ["3 years of funding over 5 years"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$37,000/year",
+        "housing": "not directly",
+        "travel": "varies by institution"
+      },
+      "locations": ["Any accredited US graduate program"],
+      "researchAreas": ["All NSF-supported STEM disciplines"],
+      "deadlines": {
+        "main": "October (varies by discipline)"
+      },
+      "applicationUrl": "https://www.nsfgrfp.org",
+      "applicationPlatform": "NSF GRFP Portal",
+      "keyFacts": [
+        "One of the most prestigious early-career science fellowships",
+        "Apply as a senior — 3 years of $37K stipend in grad school",
+        "The 'NSF fellowship' on a CV opens major doors in academic and government science",
+        "Research freedom — bring your own project to any grad program"
+      ],
+      "lliBridgeNote": "GRFP is the graduate transition for high-achieving SULI/REU alumni. LLI can help students position their national lab experience in GRFP essays."
+    },
+    {
+      "id": "hhmi-gilliam",
+      "name": "HHMI Gilliam Fellowships for Advanced Study",
+      "shortName": "HHMI Gilliam",
+      "category": "Academic Research",
+      "type": "fellowship",
+      "eligibility": {
+        "level": ["graduate (PhD)"],
+        "citizenship": ["any"],
+        "gpa": null,
+        "notes": "For PhD students from groups underrepresented in biomedical sciences. Applied through advisor."
+      },
+      "duration": {
+        "weeks": null,
+        "terms": ["3 years"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$53,000/year + allowances",
+        "housing": "not provided",
+        "travel": "training events covered"
+      },
+      "locations": ["Any accredited US PhD program"],
+      "researchAreas": ["Biomedical Science", "Biology", "Chemistry", "Neuroscience", "Genetics"],
+      "deadlines": {
+        "main": "Varies — institution-based nomination"
+      },
+      "applicationUrl": "https://www.hhmi.org/programs/gilliam-fellowships",
+      "applicationPlatform": "HHMI institutional nomination",
+      "keyFacts": [
+        "Focused on diversity in biomedical science",
+        "Nominated through advisor — mentorship development is part of program",
+        "Strong network of HHMI alumni in academic and industry science"
+      ],
+      "lliBridgeNote": "Relevant for LLI's life science students transitioning to PhD programs."
+    },
+    {
+      "id": "smithsonian-internship",
+      "name": "Smithsonian Institution Internship Program",
+      "shortName": "Smithsonian Internships",
+      "category": "Federal / Culture & Science",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate", "community college"],
+        "citizenship": ["any (most positions)"],
+        "gpa": null,
+        "notes": "Wide range of fields — STEM, arts, education, communications, museum studies."
+      },
+      "duration": {
+        "weeks": [8, 10, 16],
+        "terms": ["Spring", "Summer", "Fall"]
+      },
+      "compensation": {
+        "paid": false,
+        "stipend": "some paid positions available ($700/week for select programs)",
+        "housing": "not provided",
+        "travel": "not provided"
+      },
+      "locations": ["Washington DC (most units)", "New York (NMAI)", "Various field stations"],
+      "researchAreas": ["Natural History", "American History", "Astrophysics", "Conservation Biology", "Museum Operations", "Education", "Communications", "Anthropology", "Zoology"],
+      "deadlines": {
+        "spring": "October 1",
+        "summer": "February 1",
+        "fall": "June 1"
+      },
+      "applicationUrl": "https://www.si.edu/ofg/internships",
+      "applicationPlatform": "Smithsonian Internship Portal",
+      "keyFacts": [
+        "Not all positions paid — apply strategically",
+        "Unique access to world-class science and cultural collections",
+        "Strong pathway for museum science, conservation, and policy careers",
+        "Humanities and social science students welcome alongside STEM"
+      ],
+      "lliBridgeNote": "Smithsonian broadens LLI's portfolio to include humanities and social science students interested in federal science institutions."
+    },
+    {
+      "id": "doe-office-science-scgsr",
+      "name": "DOE Office of Science Graduate Student Research (SCGSR) Program",
+      "shortName": "DOE SCGSR",
+      "category": "DOE National Labs",
+      "type": "fellowship",
+      "eligibility": {
+        "level": ["graduate (PhD)"],
+        "citizenship": ["US citizen", "US permanent resident"],
+        "gpa": null,
+        "notes": "Must be enrolled in PhD program at accredited US institution. Thesis must be related to DOE Office of Science research priorities."
+      },
+      "duration": {
+        "weeks": [12, 24],
+        "terms": ["2 solicitations per year"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$3,000/month (supplement to existing stipend)",
+        "housing": "not provided",
+        "travel": "one round-trip"
+      },
+      "locations": ["All 17 DOE Office of Science National Laboratories"],
+      "researchAreas": ["Advanced Scientific Computing", "Basic Energy Sciences", "Biological and Environmental Research", "Fusion Energy Sciences", "High Energy Physics", "Nuclear Physics"],
+      "deadlines": {
+        "main": "May and November (two annual solicitations)"
+      },
+      "applicationUrl": "https://science.osti.gov/wdts/scgsr",
+      "applicationPlatform": "DOE SCGSR Portal",
+      "keyFacts": [
+        "PhD students work at national labs while maintaining grad school enrollment",
+        "Research must relate to DOE Office of Science priorities — defined broadly",
+        "Strong pathway from PhD to national lab career",
+        "Advisor and lab scientist must collaborate — builds relationship for post-PhD hiring"
+      ],
+      "lliBridgeNote": "SCGSR is the graduate-level bridge to national lab careers — the grad school equivalent of SULI."
+    },
+    {
+      "id": "microsoft-explore",
+      "name": "Microsoft Explore Internship",
+      "shortName": "Microsoft Explore",
+      "category": "Industry / Tech",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate (freshman, sophomore)"],
+        "citizenship": ["any (work authorization required)"],
+        "gpa": null,
+        "notes": "Specifically designed for early-career CS students. Strong emphasis on diversity."
+      },
+      "duration": {
+        "weeks": [12],
+        "terms": ["Summer"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$7,500–$8,000/month",
+        "housing": "corporate housing provided",
+        "travel": "covered"
+      },
+      "locations": ["Redmond, WA (primary)", "various"],
+      "researchAreas": ["Software Engineering", "Product Management", "UX Research"],
+      "deadlines": {
+        "summer": "September-November"
+      },
+      "applicationUrl": "https://careers.microsoft.com/students",
+      "applicationPlatform": "Microsoft Careers",
+      "keyFacts": [
+        "Rotational program — 2 different teams in 12 weeks",
+        "Specifically for underclassmen (freshmen, sophomores)",
+        "Extremely high pay for early career",
+        "Strong conversion rate to full-time SWE roles"
+      ],
+      "lliBridgeNote": "Industry internships at Microsoft caliber validate technical skills and fund graduate school or further lab work. LLI supports industry pathways alongside federal labs."
+    },
+    {
+      "id": "google-step",
+      "name": "Google STEP Internship",
+      "shortName": "Google STEP",
+      "category": "Industry / Tech",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate (freshman, sophomore)"],
+        "citizenship": ["any (work authorization required)"],
+        "gpa": null,
+        "notes": "Focused on first- and second-year CS students from underrepresented groups."
+      },
+      "duration": {
+        "weeks": [12],
+        "terms": ["Summer"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$7,500–$8,500/month",
+        "housing": "housing stipend",
+        "travel": "covered"
+      },
+      "locations": ["Mountain View CA, New York NY, other Google offices"],
+      "researchAreas": ["Software Engineering"],
+      "deadlines": {
+        "summer": "October-January"
+      },
+      "applicationUrl": "https://careers.google.com/students",
+      "applicationPlatform": "Google Careers",
+      "keyFacts": [
+        "Student Training in Engineering Program — DEI-focused",
+        "Pairs STEP interns with mentors for full summer",
+        "Direct pathway to Google SWE internship sophomore/junior year",
+        "Highly competitive but prioritizes underrepresented groups"
+      ],
+      "lliBridgeNote": "STEP and similar industry programs complement LLI's national lab focus — CS students pursuing dual tracks (lab + industry) have very strong career outcomes."
+    },
+    {
+      "id": "lockheed-martin-intern",
+      "name": "Lockheed Martin Engineering Internship",
+      "shortName": "Lockheed Internship",
+      "category": "Industry / Defense & Aerospace",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate"],
+        "citizenship": ["US citizen"],
+        "gpa": 3.0,
+        "notes": "Defense contractor — US citizenship required. Many positions require clearance eligibility."
+      },
+      "duration": {
+        "weeks": [10, 12],
+        "terms": ["Summer", "Co-op year-round"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$25–$35/hour depending on major/level",
+        "housing": "housing assistance at some sites",
+        "travel": "varies"
+      },
+      "locations": ["Fort Worth TX", "Marietta GA", "Bethesda MD", "Orlando FL", "Denver CO", "Sunnyvale CA", "other sites"],
+      "researchAreas": ["Aerospace Engineering", "Mechanical Engineering", "Electrical Engineering", "Systems Engineering", "Computer Science", "Cybersecurity", "Data Science"],
+      "deadlines": {
+        "summer": "October-February",
+        "coOp": "Rolling"
+      },
+      "applicationUrl": "https://www.lockheedmartinjobs.com/students-and-entry-level",
+      "applicationPlatform": "Lockheed Martin Careers",
+      "keyFacts": [
+        "F-35, Orion spacecraft, Skunk Works — premier aerospace and defense work",
+        "Strong internship-to-hire conversion",
+        "Many locations require relocation — company supports",
+        "Industry + clearance combination opens many doors"
+      ],
+      "lliBridgeNote": "Defense industry internships at Lockheed, Northrop, Raytheon complement DOE lab experience. For clearance-eligible students, this is a high-value combination."
+    },
+    {
+      "id": "tesla-energy-intern",
+      "name": "Tesla Energy Engineering Internship",
+      "shortName": "Tesla Energy Internship",
+      "category": "Industry / Clean Energy",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate"],
+        "citizenship": ["any (work authorization required)"],
+        "gpa": 3.0,
+        "notes": "Fast-paced environment. Strong in EE, ME, CS, Data."
+      },
+      "duration": {
+        "weeks": [12, 16],
+        "terms": ["Summer", "Rolling"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$30–$45/hour",
+        "housing": "housing assistance at some sites",
+        "travel": "varies"
+      },
+      "locations": ["Fremont CA", "Austin TX", "Sparks NV (Gigafactory)", "other US sites"],
+      "researchAreas": ["Electrical Engineering", "Mechanical Engineering", "Data Science", "Software Engineering", "Manufacturing Engineering", "Battery Technology", "Power Electronics"],
+      "deadlines": {
+        "main": "Rolling — posted year-round"
+      },
+      "applicationUrl": "https://www.tesla.com/careers/internship",
+      "applicationPlatform": "Tesla Careers",
+      "keyFacts": [
+        "Powerwall, Megapack, Solar Roof — direct clean energy product work",
+        "Fast-paced culture — expect high responsibility from day one",
+        "Battery technology experience directly overlaps with DOE lab research areas",
+        "Direct clean energy career — not government, but pure mission alignment"
+      ],
+      "lliBridgeNote": "Industry clean energy companies like Tesla create direct application for the science students learn at national labs. A NREL internship + Tesla internship combination is a strong clean energy portfolio."
+    },
+    {
+      "id": "next-era-intern",
+      "name": "NextEra Energy Engineering & Analytics Internship",
+      "shortName": "NextEra Internship",
+      "category": "Industry / Clean Energy",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate"],
+        "citizenship": ["any (work authorization required)"],
+        "gpa": 3.0,
+        "notes": "World's largest producer of wind and solar energy."
+      },
+      "duration": {
+        "weeks": [10, 12],
+        "terms": ["Summer"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$22–$30/hour",
+        "housing": "housing allowance",
+        "travel": "round-trip for most positions"
+      },
+      "locations": ["Juno Beach FL (HQ)", "various US wind and solar sites"],
+      "researchAreas": ["Power Engineering", "Environmental Engineering", "Data Analytics", "Finance", "Operations", "Project Management"],
+      "deadlines": {
+        "summer": "October-February"
+      },
+      "applicationUrl": "https://www.nexteraenergy.com/careers",
+      "applicationPlatform": "NextEra Careers",
+      "keyFacts": [
+        "Operates Florida Power & Light + 100+ GW of wind and solar",
+        "Business Analytics and Finance roles available alongside engineering",
+        "One of the largest employers in clean energy outside of government labs",
+        "Strong graduate hiring pipeline"
+      ],
+      "lliBridgeNote": "NextEra is a premier industry destination for Business Analytics and Engineering students in clean energy. Business students have strong options here."
+    },
+    {
+      "id": "ptk-connect",
+      "name": "PTK Career Connect (Phi Theta Kappa)",
+      "shortName": "PTK Career Connect",
+      "category": "Academic / Community College",
+      "type": "program",
+      "eligibility": {
+        "level": ["community college"],
+        "citizenship": ["any"],
+        "gpa": 3.5,
+        "notes": "Phi Theta Kappa honor society membership required (3.5 GPA, 12 college credits)."
+      },
+      "duration": {
+        "weeks": null,
+        "terms": ["Ongoing membership benefits"]
+      },
+      "compensation": {
+        "paid": false,
+        "stipend": "scholarships and awards available through PTK",
+        "housing": null,
+        "travel": "some travel for events"
+      },
+      "locations": ["1,300+ chapters at community colleges nationwide"],
+      "researchAreas": ["All disciplines"],
+      "deadlines": {
+        "main": "Rolling — join through your campus PTK chapter"
+      },
+      "applicationUrl": "https://www.ptk.org",
+      "applicationPlatform": "PTK Website / campus chapter",
+      "keyFacts": [
+        "3.5M+ members — largest honor society for 2-year colleges",
+        "Michael Sarmento (LLI co-founder) was PTK Chapter President at SCC",
+        "PTK membership signals academic achievement on applications",
+        "LLI co-hosted October 2025 webinar with PTK and INL",
+        "PTK provides transfer scholarship access and career resources"
+      ],
+      "lliBridgeNote": "PTK is LLI's primary community college partner. PTK members who qualify for SULI/CCI have a direct pipeline through LLI."
+    },
+    {
+      "id": "zintellect-orise",
+      "name": "Zintellect / ORISE Research Opportunities",
+      "shortName": "Zintellect (ORISE)",
+      "category": "Platform",
+      "type": "platform",
+      "eligibility": {
+        "level": ["undergraduate", "graduate", "community college", "postdoc"],
+        "citizenship": ["US citizen", "US permanent resident (many programs)"],
+        "gpa": null,
+        "notes": "Platform hosting SULI, CCI, EPA GRO, DOE Scholars, and 200+ other DOE/federal programs."
+      },
+      "duration": {
+        "weeks": null,
+        "terms": ["varies by program"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "varies by program",
+        "housing": "varies by program",
+        "travel": "varies by program"
+      },
+      "locations": ["Nationwide"],
+      "researchAreas": ["All STEM disciplines"],
+      "deadlines": {
+        "main": "Multiple deadlines throughout the year — SULI/CCI in January"
+      },
+      "applicationUrl": "https://zintellect.com",
+      "applicationPlatform": "Zintellect",
+      "keyFacts": [
+        "One profile, access to 200+ DOE and federal research programs",
+        "SULI, CCI, EPA GRO, SCGSR, DOE Scholars all on one platform",
+        "Create your profile once, apply to multiple programs and labs",
+        "The #1 tool for DOE lab internship access"
+      ],
+      "lliBridgeNote": "CRITICAL: Every LLI student should create a Zintellect profile. This is the single highest-leverage action for DOE lab internship access."
+    },
+    {
+      "id": "handshake",
+      "name": "Handshake — Career Platform",
+      "shortName": "Handshake",
+      "category": "Platform",
+      "type": "platform",
+      "eligibility": {
+        "level": ["undergraduate", "graduate", "community college"],
+        "citizenship": ["any"],
+        "gpa": null,
+        "notes": "Student-facing platform. Many national labs and federal agencies post directly here."
+      },
+      "duration": {
+        "weeks": null,
+        "terms": ["varies by posting"]
+      },
+      "compensation": {
+        "paid": "varies",
+        "stipend": "varies",
+        "housing": "varies",
+        "travel": "varies"
+      },
+      "locations": ["Nationwide"],
+      "researchAreas": ["All disciplines"],
+      "deadlines": {
+        "main": "Varies by posting"
+      },
+      "applicationUrl": "https://joinhandshake.com",
+      "applicationPlatform": "Handshake",
+      "keyFacts": [
+        "INL, Sandia, Argonne, ORNL all post directly to Handshake",
+        "Used by 1,400+ community colleges and universities",
+        "Good for finding internships not on Zintellect",
+        "Free for students"
+      ],
+      "lliBridgeNote": "Students should maintain both Zintellect and Handshake profiles. Many INL direct hires come through Handshake."
+    },
+    {
+      "id": "hacu-internship",
+      "name": "HACU National Internship Program (HNIP)",
+      "shortName": "HACU HNIP",
+      "category": "Equity / Federal",
+      "type": "internship",
+      "eligibility": {
+        "level": ["undergraduate", "graduate"],
+        "citizenship": ["US citizen", "US permanent resident"],
+        "gpa": 2.5,
+        "notes": "Must be enrolled at a Hispanic-Serving Institution (HSI) OR be of Hispanic/Latino descent."
+      },
+      "duration": {
+        "weeks": [10],
+        "terms": ["Summer", "Fall"]
+      },
+      "compensation": {
+        "paid": true,
+        "stipend": "$600–$800/week",
+        "housing": "housing allowance",
+        "travel": "round-trip"
+      },
+      "locations": ["Federal agencies nationwide (DOE, EPA, DOL, HHS, USDA, and more)"],
+      "researchAreas": ["All federal agency focus areas — STEM, Business, Policy, Communications"],
+      "deadlines": {
+        "summer": "February",
+        "fall": "June"
+      },
+      "applicationUrl": "https://www.hacu.net/hacu/HNIP.asp",
+      "applicationPlatform": "HACU HNIP Portal",
+      "keyFacts": [
+        "Hispanic Association of Colleges and Universities program",
+        "Federal placements across many agencies — DOE, EPA, USDA, etc.",
+        "Strong for Business, Policy, and Communications students",
+        "ALPFA (LLI partner) serves similar Latino professional population"
+      ],
+      "lliBridgeNote": "HACU HNIP is a key partner for LLI's ALPFA and Hispanic-serving community college relationships. Business and Policy students especially should apply."
+    },
+    {
+      "id": "nsbe-internship-pipeline",
+      "name": "NSBE Career Fair & Internship Pipeline",
+      "shortName": "NSBE Career Fair",
+      "category": "Equity / Professional",
+      "type": "program",
+      "eligibility": {
+        "level": ["undergraduate", "graduate"],
+        "citizenship": ["any"],
+        "gpa": null,
+        "notes": "NSBE membership recommended. Annual convention with massive career fair."
+      },
+      "duration": {
+        "weeks": null,
+        "terms": ["Annual convention + year-round career resources"]
+      },
+      "compensation": {
+        "paid": false,
+        "stipend": "NSBE connects to paid internship employers",
+        "housing": null,
+        "travel": "self-funded (scholarships available)"
+      },
+      "locations": ["Annual convention rotating US cities"],
+      "researchAreas": ["All engineering disciplines", "Technology", "Data Science"],
+      "deadlines": {
+        "main": "Annual convention in March"
+      },
+      "applicationUrl": "https://www.nsbe.org",
+      "applicationPlatform": "NSBE Career Center",
+      "keyFacts": [
+        "National Society of Black Engineers",
+        "Annual convention career fair draws 200+ employers including DOE labs",
+        "NSBE membership signals commitment to professional development",
+        "Strong alumni network in engineering and tech"
+      ],
+      "lliBridgeNote": "NSBE and LLI share target audiences. LLI should be present at NSBE convention to reach Black engineering students with national lab opportunities."
+    },
+    {
+      "id": "swe-scholarship-pipeline",
+      "name": "Society of Women Engineers (SWE) Scholarships & Career Fair",
+      "shortName": "SWE Career Fair",
+      "category": "Equity / Professional",
+      "type": "program",
+      "eligibility": {
+        "level": ["undergraduate", "graduate"],
+        "citizenship": ["any"],
+        "gpa": 3.0,
+        "notes": "Open to all engineering and technology students who identify as women."
+      },
+      "duration": {
+        "weeks": null,
+        "terms": ["Annual WE conference + year-round"]
+      },
+      "compensation": {
+        "paid": false,
+        "stipend": "$1,000–$17,000 scholarships available through SWE",
+        "housing": null,
+        "travel": "varies"
+      },
+      "locations": ["Annual WE conference + chapters at 1,000+ universities"],
+      "researchAreas": ["All engineering and technology disciplines"],
+      "deadlines": {
+        "scholarships": "February annually"
+      },
+      "applicationUrl": "https://swe.org",
+      "applicationPlatform": "SWE Scholarship Portal",
+      "keyFacts": [
+        "Largest organization for women in engineering",
+        "Annual WE Conference career fair draws top employers including national labs",
+        "$1M+ in scholarships awarded annually",
+        "Strong professional network and mentoring programs"
+      ],
+      "lliBridgeNote": "SWE and LLI should co-promote — SWE scholarships plus LLI internship placement is a strong value package for women engineering students."
+    }
+  ]
+}

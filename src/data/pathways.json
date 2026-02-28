@@ -1,0 +1,732 @@
+{
+  "meta": {
+    "version": "1.0",
+    "lastUpdated": "2026-02-28",
+    "description": "Career pathway templates for the LabLink Initiative CDP gap analysis engine. Each pathway defines the skill requirements, recommended coursework, and target programs for a specific career track. Used to generate personalized gap analyses for students.",
+    "maintainer": "lab-link agent",
+    "howToUse": "Each pathway has a 'skills' array with weight 1-5 (5 = most critical). The gap analysis compares student skills against this list. 'corePrograms' links to program IDs in programs.json."
+  },
+  "pathways": [
+    {
+      "id": "doe-research-stem",
+      "name": "DOE National Lab Research Internship",
+      "shortName": "National Lab Research",
+      "track": "STEM Research",
+      "targetLevel": ["undergraduate", "community college"],
+      "targetPrograms": ["doe-suli", "doe-cci", "orau-lsi"],
+      "description": "The foundation pathway for DOE national lab research internships (SULI/CCI). Covers the skills and preparation needed to compete for and succeed in a national laboratory research placement.",
+      "timeToReady": "6-18 months for students starting with science coursework; faster for students already in STEM programs",
+      "skills": [
+        {"name": "STEM coursework (2+ science/math courses completed)", "weight": 5, "category": "Academic"},
+        {"name": "Lab safety basics (OSHA/campus lab safety training)", "weight": 4, "category": "Lab Skills"},
+        {"name": "Scientific writing (lab reports, research summaries)", "weight": 4, "category": "Communication"},
+        {"name": "Data collection and basic analysis", "weight": 4, "category": "Research"},
+        {"name": "Python or MATLAB fundamentals", "weight": 3, "category": "Computing"},
+        {"name": "Research methodology (hypothesis, methods, analysis)", "weight": 4, "category": "Research"},
+        {"name": "Technical presentation skills", "weight": 3, "category": "Communication"},
+        {"name": "Microsoft Office / Google Suite proficiency", "weight": 2, "category": "Tools"},
+        {"name": "Zintellect account created and profile complete", "weight": 5, "category": "Application"},
+        {"name": "Personal statement / research interest statement drafted", "weight": 4, "category": "Application"},
+        {"name": "2 faculty or supervisor references identified", "weight": 4, "category": "Application"},
+        {"name": "GPA 2.5+ maintained (3.0+ preferred)", "weight": 4, "category": "Academic"}
+      ],
+      "recommendedCourses": [
+        "Introduction to Chemistry or Physics",
+        "Calculus I",
+        "Scientific Writing or Technical Communication",
+        "Introduction to Programming (Python preferred)",
+        "Statistics for Scientists or Data Analysis"
+      ],
+      "certifications": [
+        "OSHA 10-hour General Industry (or campus lab safety equivalent)",
+        "Responsible Conduct of Research (RCR) training (usually free online)"
+      ],
+      "applicationTips": [
+        "Apply to 5+ labs on Zintellect — the platform allows multiple simultaneous applications",
+        "SULI and CCI share the January deadline — submit both on one profile",
+        "Your research interest statement should mention specific lab capabilities (e.g., 'ORNL's Spallation Neutron Source')",
+        "Weak GPA? Address it proactively in your personal statement — show trajectory",
+        "Community college students: CCI is LESS competitive than SULI — higher acceptance rate",
+        "Reach out to your local PTK chapter — LLI has direct connections through our PTK partnership"
+      ],
+      "lliFreeResources": [
+        "LLI Free Guide: 'Your Path to a National Lab Internship' — download at lablinkinitiative.org",
+        "LLI Webinar recording: PTK × INL × LLI session on SULI/CCI strategy",
+        "LinkBot Newsletter — monthly deep-tech topics from the labs you're applying to"
+      ]
+    },
+    {
+      "id": "nuclear-engineering",
+      "name": "Nuclear Engineering & Science",
+      "shortName": "Nuclear Engineering",
+      "track": "STEM Research",
+      "targetLevel": ["undergraduate", "graduate"],
+      "targetPrograms": ["doe-suli", "inl-internship", "sandia-internship", "llnl-internship"],
+      "description": "Pathway for students pursuing nuclear engineering, nuclear science, or nuclear security careers at DOE national labs and the nuclear industry.",
+      "timeToReady": "12-24 months for undergrads with physics/math foundation",
+      "skills": [
+        {"name": "Physics I and II (calculus-based)", "weight": 5, "category": "Academic"},
+        {"name": "Mathematics through Differential Equations", "weight": 5, "category": "Academic"},
+        {"name": "Nuclear physics fundamentals", "weight": 4, "category": "Domain"},
+        {"name": "Radiation safety and dosimetry basics", "weight": 4, "category": "Lab Skills"},
+        {"name": "Python or MATLAB for engineering computation", "weight": 4, "category": "Computing"},
+        {"name": "MCNP or OpenMC (Monte Carlo radiation transport — basic)", "weight": 3, "category": "Tools"},
+        {"name": "Thermodynamics", "weight": 4, "category": "Domain"},
+        {"name": "Heat transfer fundamentals", "weight": 3, "category": "Domain"},
+        {"name": "Fluid mechanics", "weight": 3, "category": "Domain"},
+        {"name": "Technical report writing", "weight": 4, "category": "Communication"},
+        {"name": "US citizenship (required for many positions)", "weight": 5, "category": "Eligibility"},
+        {"name": "Willingness to obtain security clearance", "weight": 4, "category": "Eligibility"}
+      ],
+      "recommendedCourses": [
+        "Calculus I, II, III",
+        "Physics I and II (calculus-based)",
+        "Differential Equations",
+        "Nuclear Physics",
+        "Introduction to Nuclear Engineering",
+        "Radiation Detection and Measurement",
+        "Thermodynamics"
+      ],
+      "certifications": [
+        "40-hour Radiation Worker Training (site-specific — provided by the lab)",
+        "OSHA 10-hour General Industry"
+      ],
+      "applicationTips": [
+        "INL is the US nuclear lab — the primary target for nuclear engineering students",
+        "LLNL and Sandia have significant nuclear security/weapons programs — require clearance eligibility",
+        "Mention any related coursework in the personal statement, even if incomplete",
+        "Nuclear engineering programs are small — a faculty connection helps"
+      ],
+      "lliFreeResources": [
+        "LLI Free Guide includes INL-specific pathway information",
+        "Michael Sarmiento (LLI ED) completed an INL internship — can speak to the experience"
+      ]
+    },
+    {
+      "id": "computational-data-science",
+      "name": "Computational Science & Data Analysis",
+      "shortName": "Computational Science",
+      "track": "Computing & Data",
+      "targetLevel": ["undergraduate", "graduate", "community college"],
+      "targetPrograms": ["doe-suli", "anl-internship", "ornl-internship", "llnl-internship", "pnnl-internship"],
+      "description": "Pathway for students with computing and data analysis skills pursuing research computing, scientific software engineering, or data science roles at national labs.",
+      "timeToReady": "6-18 months depending on Python/programming baseline",
+      "skills": [
+        {"name": "Python programming (intermediate: numpy, pandas, matplotlib)", "weight": 5, "category": "Computing"},
+        {"name": "Git version control (basic: commit, branch, push)", "weight": 4, "category": "Computing"},
+        {"name": "Statistics and probability", "weight": 4, "category": "Math"},
+        {"name": "Linear algebra", "weight": 4, "category": "Math"},
+        {"name": "Data visualization (matplotlib, seaborn, or Tableau)", "weight": 3, "category": "Tools"},
+        {"name": "Unix/Linux command line basics", "weight": 3, "category": "Computing"},
+        {"name": "Machine learning fundamentals (scikit-learn or equivalent)", "weight": 3, "category": "AI/ML"},
+        {"name": "SQL basics (SELECT, JOIN, GROUP BY)", "weight": 3, "category": "Data"},
+        {"name": "Scientific or technical writing", "weight": 3, "category": "Communication"},
+        {"name": "A domain science area (physics, chemistry, biology, etc.)", "weight": 3, "category": "Domain"}
+      ],
+      "recommendedCourses": [
+        "Python Programming I & II",
+        "Statistics for Data Science",
+        "Linear Algebra",
+        "Database Fundamentals (SQL)",
+        "Introduction to Machine Learning",
+        "Data Visualization",
+        "Unix/Linux Fundamentals"
+      ],
+      "certifications": [
+        "Google Data Analytics Certificate (free via Coursera — good starter)",
+        "AWS Cloud Practitioner (basic cloud familiarity)",
+        "Kaggle competitions (practical ML experience)"
+      ],
+      "applicationTips": [
+        "National labs are among the world's largest computing consumers — computing skills transfer widely",
+        "ANL (Aurora exascale), ORNL (Frontier), LBNL (NERSC) — all hire computational science interns",
+        "GitHub profile with real code is a strong differentiator — start building now",
+        "Domain pairing matters: CS + physics → HPC; CS + biology → bioinformatics; CS + materials → materials ML"
+      ],
+      "lliFreeResources": [
+        "LinkBot Newsletter regularly covers AI and computing research at national labs",
+        "LLI CDP provides personalized Python learning pathway recommendations"
+      ]
+    },
+    {
+      "id": "ai-ml-research",
+      "name": "AI/ML Research at National Labs",
+      "shortName": "AI/ML Research",
+      "track": "Computing & Data",
+      "targetLevel": ["undergraduate", "graduate"],
+      "targetPrograms": ["doe-suli", "anl-internship", "ornl-internship", "lbnl-internship", "llnl-internship"],
+      "description": "Pathway for students pursuing AI, machine learning, and scientific computing research at DOE national labs, which are at the frontier of scientific AI (AuroraGPT, climate AI, drug discovery).",
+      "timeToReady": "12-18 months for students with programming baseline",
+      "skills": [
+        {"name": "Python (advanced: classes, decorators, efficient data structures)", "weight": 5, "category": "Computing"},
+        {"name": "PyTorch or TensorFlow (basic model training)", "weight": 5, "category": "AI/ML"},
+        {"name": "Linear algebra (vectors, matrices, eigenvalues)", "weight": 5, "category": "Math"},
+        {"name": "Calculus (derivatives, gradients for backpropagation)", "weight": 4, "category": "Math"},
+        {"name": "Probability and statistics", "weight": 4, "category": "Math"},
+        {"name": "Machine learning theory (supervised, unsupervised, reinforcement)", "weight": 4, "category": "AI/ML"},
+        {"name": "Deep learning architectures (CNNs, transformers, GNNs)", "weight": 3, "category": "AI/ML"},
+        {"name": "Git and collaborative development", "weight": 4, "category": "Computing"},
+        {"name": "Unix/Linux proficiency", "weight": 3, "category": "Computing"},
+        {"name": "Scientific domain knowledge (chemistry, physics, biology, or climate)", "weight": 3, "category": "Domain"},
+        {"name": "Research paper reading and literature review skills", "weight": 3, "category": "Research"}
+      ],
+      "recommendedCourses": [
+        "Linear Algebra",
+        "Multivariable Calculus",
+        "Probability and Statistics",
+        "Machine Learning (Andrew Ng / Stanford CS229 or equivalent)",
+        "Deep Learning (fast.ai or equivalent)",
+        "Scientific Computing with Python",
+        "A domain science course (physics, chemistry, or biology)"
+      ],
+      "certifications": [
+        "fast.ai Practical Deep Learning for Coders (free)",
+        "DeepLearning.AI specializations (Coursera — often free audit)",
+        "Kaggle: Pandas, Machine Learning, Deep Learning certificates"
+      ],
+      "applicationTips": [
+        "National labs are building AI for science — not just consumer products",
+        "AuroraGPT (ANL), scientific ML for drug discovery (ORNL/LBNL), climate AI (PNNL) — each lab has unique AI research",
+        "Show applied projects: GitHub with ML projects is more valuable than just coursework",
+        "Scientific AI is different from industry AI — emphasize interest in domain applications"
+      ],
+      "lliFreeResources": [
+        "LinkBot Newsletter Issue 03: AI at National Labs — covers AuroraGPT, Frontier, PNNL grid security AI",
+        "LLI CDP provides curated AI learning pathways aligned to specific lab research areas"
+      ]
+    },
+    {
+      "id": "materials-science",
+      "name": "Materials Science & Engineering",
+      "shortName": "Materials Science",
+      "track": "STEM Research",
+      "targetLevel": ["undergraduate", "graduate"],
+      "targetPrograms": ["doe-suli", "ornl-internship", "anl-internship", "lbnl-internship", "nist-surf"],
+      "description": "Pathway for materials science, chemistry, and related engineering students pursuing characterization, synthesis, and computational materials research at national labs.",
+      "timeToReady": "12-18 months with chemistry/physics coursework",
+      "skills": [
+        {"name": "General Chemistry I and II", "weight": 5, "category": "Academic"},
+        {"name": "Physics I (mechanics, thermodynamics)", "weight": 4, "category": "Academic"},
+        {"name": "Materials Science fundamentals (structure-property relationships)", "weight": 4, "category": "Domain"},
+        {"name": "Laboratory technique (wet lab, handling equipment safely)", "weight": 4, "category": "Lab Skills"},
+        {"name": "Microscopy basics (optical, SEM awareness)", "weight": 3, "category": "Lab Skills"},
+        {"name": "Python or MATLAB for data analysis", "weight": 3, "category": "Computing"},
+        {"name": "X-ray diffraction (XRD) concepts", "weight": 3, "category": "Characterization"},
+        {"name": "Thermodynamics", "weight": 4, "category": "Domain"},
+        {"name": "Scientific writing and poster presentation", "weight": 4, "category": "Communication"},
+        {"name": "Literature review ability", "weight": 3, "category": "Research"}
+      ],
+      "recommendedCourses": [
+        "General Chemistry I and II",
+        "Physics I",
+        "Materials Science I (crystal structure, phase diagrams)",
+        "Introduction to Thermodynamics",
+        "Instrumental Analysis (spectroscopy basics)",
+        "Technical Writing"
+      ],
+      "certifications": [
+        "OSHA 40-hour HAZWOPER (for hazardous materials environments — some labs require)",
+        "Materials characterization workshops (many labs offer free online modules)"
+      ],
+      "applicationTips": [
+        "NIST SURF in Boulder or Gaithersburg is excellent for metrology and measurement science",
+        "Sean Florez (LLI co-founder) has a PhD in Materials Science from CU Boulder — strong mentoring for this pathway",
+        "ANL's Advanced Photon Source and ORNL's SNS accept students from diverse materials backgrounds",
+        "Perovskite solar cells, battery materials, advanced alloys — mention specific materials areas you're interested in"
+      ],
+      "lliFreeResources": [
+        "Sean Florez (LLI co-founder) patented materials science work — his career path is a model for this track",
+        "LinkBot Newsletter Issue 05: Synthetic Biology at National Labs — covers biomanufacturing and materials interfaces"
+      ]
+    },
+    {
+      "id": "environmental-science",
+      "name": "Environmental Science & Ecology",
+      "shortName": "Environmental Science",
+      "track": "STEM Research",
+      "targetLevel": ["undergraduate", "graduate", "community college"],
+      "targetPrograms": ["doe-suli", "doe-cci", "epa-gro", "pnnl-internship", "ornl-internship"],
+      "description": "Pathway for environmental science, ecology, and related students pursuing environmental monitoring, climate research, and ecological remediation work at national labs and federal agencies.",
+      "timeToReady": "6-12 months for students with biology/chemistry background",
+      "skills": [
+        {"name": "Biology I (or Environmental Science foundation course)", "weight": 4, "category": "Academic"},
+        {"name": "Chemistry I", "weight": 4, "category": "Academic"},
+        {"name": "Field data collection techniques", "weight": 4, "category": "Lab Skills"},
+        {"name": "GIS or spatial data basics (ArcGIS or QGIS)", "weight": 3, "category": "Tools"},
+        {"name": "Environmental regulations awareness (CERCLA, NEPA basics)", "weight": 3, "category": "Domain"},
+        {"name": "Statistical analysis (R or Python for ecology)", "weight": 3, "category": "Computing"},
+        {"name": "Scientific writing and report preparation", "weight": 4, "category": "Communication"},
+        {"name": "Environmental sampling protocols", "weight": 3, "category": "Lab Skills"}
+      ],
+      "recommendedCourses": [
+        "Biology I (Cellular and Molecular)",
+        "General Chemistry I",
+        "Environmental Science fundamentals",
+        "Statistics for the Environmental Sciences",
+        "GIS for Environmental Applications",
+        "Environmental Policy and Regulations"
+      ],
+      "certifications": [
+        "OSHA 40-hour HAZWOPER (required for many environmental field positions)",
+        "Wilderness First Aid (helpful for field work)"
+      ],
+      "applicationTips": [
+        "PNNL and Savannah River NL have major environmental remediation programs",
+        "EPA GRO Fellowship is managed on Zintellect — apply alongside SULI/CCI",
+        "Hanford Site (PNNL) and INL have ongoing remediation work — mention interest in environmental remediation",
+        "Climate modeling roles are at LBNL, PNNL, ORNL — Python/R skills are essential for these"
+      ],
+      "lliFreeResources": [
+        "LLI internship page highlights EPA GRO alongside SULI/CCI",
+        "LinkBot Newsletter covers energy-environment interface topics"
+      ]
+    },
+    {
+      "id": "mechanical-engineering",
+      "name": "Mechanical Engineering",
+      "shortName": "Mechanical Engineering",
+      "track": "STEM Research",
+      "targetLevel": ["undergraduate", "graduate"],
+      "targetPrograms": ["doe-suli", "ornl-internship", "anl-internship", "nrel-internship", "afrl-scholars", "lockheed-martin-intern"],
+      "description": "Pathway for mechanical engineering students pursuing design, simulation, manufacturing, and thermal systems work at national labs and defense contractors.",
+      "timeToReady": "12-18 months with core ME coursework",
+      "skills": [
+        {"name": "Engineering Mechanics (Statics, Dynamics)", "weight": 5, "category": "Academic"},
+        {"name": "Thermodynamics", "weight": 5, "category": "Academic"},
+        {"name": "Fluid Mechanics", "weight": 4, "category": "Academic"},
+        {"name": "Heat Transfer", "weight": 4, "category": "Academic"},
+        {"name": "CAD Software (SolidWorks or AutoCAD)", "weight": 4, "category": "Tools"},
+        {"name": "FEA / Simulation basics (ANSYS or similar)", "weight": 3, "category": "Tools"},
+        {"name": "MATLAB or Python for engineering computation", "weight": 4, "category": "Computing"},
+        {"name": "Manufacturing processes awareness", "weight": 3, "category": "Domain"},
+        {"name": "Technical drawing and engineering documentation", "weight": 3, "category": "Communication"},
+        {"name": "Materials selection fundamentals", "weight": 3, "category": "Domain"}
+      ],
+      "recommendedCourses": [
+        "Calculus I, II, III",
+        "Physics I and II",
+        "Differential Equations",
+        "Engineering Mechanics I and II",
+        "Thermodynamics",
+        "Fluid Mechanics",
+        "Heat Transfer",
+        "Intro to CAD (SolidWorks)"
+      ],
+      "certifications": [
+        "SolidWorks CSWA (Associate Certification — industry recognized)",
+        "OSHA 10-hour General Industry"
+      ],
+      "applicationTips": [
+        "ORNL's Manufacturing Demonstration Facility (MDF) is world-class — top ME internship target",
+        "NREL has rotating equipment, wind turbine dynamics, hydrogen storage systems — strong ME relevance",
+        "AFRL aerospace and propulsion divisions are premier ME destinations",
+        "Defense contractors (Lockheed, Northrop, Boeing) actively recruit ME interns with lab backgrounds"
+      ],
+      "lliFreeResources": [
+        "LinkBot Newsletter Issue 04: Robotics at National Labs — covers ORNL MDF and related ME applications"
+      ]
+    },
+    {
+      "id": "electrical-engineering",
+      "name": "Electrical Engineering & Power Systems",
+      "shortName": "Electrical Engineering",
+      "track": "STEM Research",
+      "targetLevel": ["undergraduate", "graduate"],
+      "targetPrograms": ["doe-suli", "pnnl-internship", "anl-internship", "nrel-internship", "sandia-internship", "afrl-scholars"],
+      "description": "Pathway for electrical engineering students pursuing power systems, grid modernization, RF systems, sensors, and electronics research at national labs.",
+      "timeToReady": "12-18 months with circuits and signals coursework",
+      "skills": [
+        {"name": "Circuit Analysis (Kirchhoff's laws, AC/DC)", "weight": 5, "category": "Academic"},
+        {"name": "Electronics fundamentals (transistors, op-amps)", "weight": 4, "category": "Academic"},
+        {"name": "Signals and Systems (Fourier analysis basics)", "weight": 4, "category": "Academic"},
+        {"name": "MATLAB or Python for signal processing", "weight": 4, "category": "Computing"},
+        {"name": "Electromagnetic fields (basic Maxwell's equations)", "weight": 3, "category": "Academic"},
+        {"name": "Power systems awareness (3-phase, grid basics)", "weight": 3, "category": "Domain"},
+        {"name": "Embedded systems / microcontroller basics (Arduino/Raspberry Pi)", "weight": 3, "category": "Tools"},
+        {"name": "Lab measurement instruments (oscilloscope, multimeter)", "weight": 3, "category": "Lab Skills"},
+        {"name": "PCB design basics (KiCad or Eagle)", "weight": 2, "category": "Tools"}
+      ],
+      "recommendedCourses": [
+        "Calculus I, II",
+        "Physics II (electricity and magnetism)",
+        "Circuit Analysis I and II",
+        "Signals and Systems",
+        "Electronics I",
+        "Electromagnetic Fields",
+        "Power Systems Fundamentals"
+      ],
+      "certifications": [
+        "National Instruments LabVIEW (useful for lab measurement)",
+        "MATLAB Onramp (free at MathWorks.com)"
+      ],
+      "applicationTips": [
+        "PNNL is the leading lab for grid modernization and energy storage EE work",
+        "Sandia has strong power electronics and microgrids programs",
+        "ANL Transportation Research Center — EV and charging infrastructure EE roles",
+        "AFRL has radar, RF, and defense electronics programs requiring EE backgrounds"
+      ],
+      "lliFreeResources": [
+        "LinkBot Newsletter Issue 02: Digital Twins — covers grid digital twins and power systems"
+      ]
+    },
+    {
+      "id": "computer-science-software",
+      "name": "Computer Science & Software Engineering",
+      "shortName": "Computer Science",
+      "track": "Computing & Data",
+      "targetLevel": ["undergraduate", "graduate", "community college"],
+      "targetPrograms": ["doe-suli", "anl-internship", "ornl-internship", "llnl-internship", "sandia-internship", "microsoft-explore", "google-step"],
+      "description": "Pathway for computer science students pursuing scientific software engineering, HPC, cybersecurity, or systems research at national labs and industry.",
+      "timeToReady": "6-12 months for students with CS I under their belt",
+      "skills": [
+        {"name": "Python (or Java/C++) — solid fundamentals (functions, classes, data structures)", "weight": 5, "category": "Computing"},
+        {"name": "Algorithms and data structures (lists, trees, graphs, sorting)", "weight": 5, "category": "Computing"},
+        {"name": "Object-oriented programming", "weight": 4, "category": "Computing"},
+        {"name": "Git and GitHub (commit, branch, PR)", "weight": 4, "category": "Tools"},
+        {"name": "Unix/Linux command line", "weight": 4, "category": "Computing"},
+        {"name": "Computer architecture basics (memory, CPU, I/O)", "weight": 3, "category": "Computing"},
+        {"name": "Debugging and testing (unit tests, print debugging)", "weight": 3, "category": "Computing"},
+        {"name": "SQL basics", "weight": 3, "category": "Data"},
+        {"name": "Web development basics (HTML/CSS or APIs)", "weight": 2, "category": "Computing"},
+        {"name": "Technical communication and documentation", "weight": 3, "category": "Communication"}
+      ],
+      "recommendedCourses": [
+        "CS I (Python or Java — any language)",
+        "CS II (Data Structures)",
+        "Algorithms",
+        "Computer Architecture",
+        "Discrete Mathematics",
+        "Database Systems (SQL)",
+        "Software Engineering Principles"
+      ],
+      "certifications": [
+        "Google IT Support Certificate (if systems oriented)",
+        "AWS Cloud Practitioner",
+        "GitHub Foundations Certificate",
+        "Kaggle Python Certificate"
+      ],
+      "applicationTips": [
+        "National labs write scientific software used worldwide — this isn't CRUD apps",
+        "ANL's Aurora, ORNL's Frontier, and LBNL's NERSC are world-class supercomputing environments",
+        "Cybersecurity roles at LLNL, INL, Sandia — national security computing",
+        "A GitHub profile with real projects (not just homework) is your strongest application asset",
+        "Community college CS students: mention specific projects, not just coursework"
+      ],
+      "lliFreeResources": [
+        "LinkBot Newsletter Issue 03: AI at National Labs — covers scientific computing roles",
+        "LLI CDP provides curated learning paths for CS students targeting specific labs"
+      ]
+    },
+    {
+      "id": "biology-life-sciences",
+      "name": "Biology & Life Sciences",
+      "shortName": "Biology",
+      "track": "STEM Research",
+      "targetLevel": ["undergraduate", "graduate", "community college"],
+      "targetPrograms": ["doe-suli", "doe-cci", "nih-niaid-summer", "lbnl-internship", "ornl-internship", "epa-gro"],
+      "description": "Pathway for biology, biochemistry, and life science students pursuing molecular biology, bioinformatics, and bioenergy research at national labs and NIH.",
+      "timeToReady": "6-12 months with biology fundamentals",
+      "skills": [
+        {"name": "Biology I and II (cell, molecular, genetics)", "weight": 5, "category": "Academic"},
+        {"name": "Chemistry I (general chemistry)", "weight": 4, "category": "Academic"},
+        {"name": "Lab technique (pipetting, PCR, gel electrophoresis)", "weight": 4, "category": "Lab Skills"},
+        {"name": "Microscopy basics", "weight": 3, "category": "Lab Skills"},
+        {"name": "Scientific writing", "weight": 4, "category": "Communication"},
+        {"name": "Python or R for biological data analysis", "weight": 3, "category": "Computing"},
+        {"name": "Bioinformatics tools (BLAST, sequence alignment — basics)", "weight": 3, "category": "Tools"},
+        {"name": "Laboratory safety and hazardous material handling", "weight": 4, "category": "Lab Skills"}
+      ],
+      "recommendedCourses": [
+        "Biology I (Cell and Molecular)",
+        "Biology II (Ecology, Genetics)",
+        "General Chemistry I",
+        "Biochemistry fundamentals",
+        "Biostatistics or Statistics",
+        "Bioinformatics Introduction (Python or R)"
+      ],
+      "certifications": [
+        "NIH online training (several free modules at training.nih.gov)",
+        "Responsible Conduct of Research (required by NIH/NSF)"
+      ],
+      "applicationTips": [
+        "LBNL's Joint Genome Institute (JGI) is a world leader in microbial genomics",
+        "ORNL has computational biology and bioenergy programs",
+        "NIH SIP is the premier destination for pre-med and biology research students",
+        "Bioinformatics skills (Python/R) dramatically expand your options at national labs"
+      ],
+      "lliFreeResources": [
+        "LinkBot Newsletter Issue 05: Synthetic Biology at National Labs — covers JGI, Agile BioFoundry, ORNL biosciences"
+      ]
+    },
+    {
+      "id": "business-analytics",
+      "name": "Business Analytics & Data",
+      "shortName": "Business Analytics",
+      "track": "Business",
+      "targetLevel": ["undergraduate", "graduate", "community college"],
+      "targetPrograms": ["doe-scholars", "nrel-internship", "next-era-intern", "nasa-internships", "hacu-internship"],
+      "description": "Pathway for business analytics and data-focused students pursuing roles in operations, finance, performance analysis, and program management at federal labs and clean energy organizations.",
+      "timeToReady": "6-12 months with Excel/SQL foundation",
+      "skills": [
+        {"name": "Microsoft Excel (advanced: VLOOKUP, PivotTables, charts)", "weight": 5, "category": "Tools"},
+        {"name": "SQL (SELECT, JOIN, GROUP BY, subqueries)", "weight": 4, "category": "Data"},
+        {"name": "Data visualization (Tableau, Power BI, or Python/matplotlib)", "weight": 4, "category": "Tools"},
+        {"name": "Statistics fundamentals (mean, median, regression, hypothesis tests)", "weight": 4, "category": "Math"},
+        {"name": "Python or R basics for data analysis", "weight": 3, "category": "Computing"},
+        {"name": "Business communication and presentation", "weight": 5, "category": "Communication"},
+        {"name": "Project management basics (Gantt charts, project scoping)", "weight": 3, "category": "Business"},
+        {"name": "Financial analysis basics (P&L, budgeting)", "weight": 3, "category": "Business"},
+        {"name": "Process improvement awareness (Lean, Six Sigma concepts)", "weight": 2, "category": "Business"}
+      ],
+      "recommendedCourses": [
+        "Introduction to Statistics",
+        "Business Data Analysis (Excel + SQL)",
+        "Data Visualization",
+        "Introduction to Business or Principles of Management",
+        "Accounting Fundamentals",
+        "Business Communication"
+      ],
+      "certifications": [
+        "Google Data Analytics Certificate (free via Coursera, widely recognized)",
+        "Tableau Public certification",
+        "Microsoft Excel Specialist",
+        "Project Management fundamentals (PMI or Google PM cert)"
+      ],
+      "applicationTips": [
+        "DOE Office of Science has business operations roles at labs and HQ (DOE Scholars program)",
+        "NREL has program analysts, finance, and operations roles for business students",
+        "Michael Sarmiento (LLI ED) has a Business Analytics background and went to INL + LLNL — proof this works",
+        "Federal agencies (EPA, DOE, NASA) have significant operations and analytics needs",
+        "Emphasize quantitative skills — SQL, Python, and Excel fluency are what separate applicants"
+      ],
+      "lliFreeResources": [
+        "Michael Sarmiento's career path (Business Analytics → INL → CARB → LLNL) is a direct model for this pathway",
+        "LLI CDP provides business-specific internship matching alongside STEM programs"
+      ]
+    },
+    {
+      "id": "energy-policy",
+      "name": "Energy Policy & Public Affairs",
+      "shortName": "Energy Policy",
+      "track": "Policy",
+      "targetLevel": ["undergraduate", "graduate"],
+      "targetPrograms": ["doe-scholars", "epa-gro", "nasa-internships", "hacu-internship"],
+      "description": "Pathway for policy, political science, public administration, and communications students pursuing energy policy, regulatory affairs, and public engagement roles at federal agencies.",
+      "timeToReady": "3-9 months for students with writing and policy coursework",
+      "skills": [
+        {"name": "Policy writing and analysis (briefing memos, regulatory summaries)", "weight": 5, "category": "Communication"},
+        {"name": "Research methodology (primary and secondary sources)", "weight": 4, "category": "Research"},
+        {"name": "Energy systems fundamentals (electricity grid, oil & gas, renewables)", "weight": 3, "category": "Domain"},
+        {"name": "Environmental regulations (NEPA, Clean Air Act — awareness)", "weight": 3, "category": "Domain"},
+        {"name": "Public speaking and stakeholder communication", "weight": 4, "category": "Communication"},
+        {"name": "Quantitative reasoning (reading charts, interpreting data)", "weight": 3, "category": "Math"},
+        {"name": "Government process and rulemaking", "weight": 3, "category": "Domain"},
+        {"name": "Professional writing (reports, correspondence, presentations)", "weight": 5, "category": "Communication"}
+      ],
+      "recommendedCourses": [
+        "Introduction to Public Policy",
+        "Environmental Law and Regulation",
+        "Energy Policy and Economics",
+        "Research Methods in Social Science",
+        "Technical and Professional Writing",
+        "Statistics for Policy Analysis"
+      ],
+      "certifications": [
+        "Google Project Management Certificate",
+        "Grant writing workshops (many free at community foundations)"
+      ],
+      "applicationTips": [
+        "DOE Scholars program specifically places policy and communications students at DOE offices",
+        "EPA has significant policy and regulatory affairs roles accessible to undergrads",
+        "Energy law and policy skills are increasingly valuable — grid, permitting, and climate regulation are expanding",
+        "Writing samples are critical for policy roles — compile 2-3 strong examples"
+      ],
+      "lliFreeResources": [
+        "LinkBot Newsletter grant pipeline section covers energy policy funding landscape",
+        "LLI grant pipeline work gives real exposure to how federal energy programs are funded and managed"
+      ]
+    },
+    {
+      "id": "cybersecurity",
+      "name": "Cybersecurity & Information Assurance",
+      "shortName": "Cybersecurity",
+      "track": "Computing & Data",
+      "targetLevel": ["undergraduate", "graduate", "community college"],
+      "targetPrograms": ["doe-suli", "inl-internship", "sandia-internship", "llnl-internship", "pnnl-internship", "afrl-scholars"],
+      "description": "Pathway for cybersecurity students pursuing critical infrastructure protection, network security, and national security computing at DOE labs and federal agencies.",
+      "timeToReady": "6-12 months with networking and OS fundamentals",
+      "skills": [
+        {"name": "Networking fundamentals (TCP/IP, DNS, HTTP, firewalls)", "weight": 5, "category": "Computing"},
+        {"name": "Operating systems (Linux and Windows administration basics)", "weight": 4, "category": "Computing"},
+        {"name": "Security concepts (authentication, encryption, vulnerabilities)", "weight": 4, "category": "Security"},
+        {"name": "Python scripting for security automation", "weight": 4, "category": "Computing"},
+        {"name": "Risk assessment and security frameworks (NIST CSF basics)", "weight": 3, "category": "Security"},
+        {"name": "Incident response concepts", "weight": 3, "category": "Security"},
+        {"name": "Industrial control systems awareness (SCADA, ICS/OT — for national labs)", "weight": 3, "category": "Domain"},
+        {"name": "US citizenship (required for most national lab cybersecurity)", "weight": 5, "category": "Eligibility"}
+      ],
+      "recommendedCourses": [
+        "Computer Networks",
+        "Operating Systems",
+        "Introduction to Cybersecurity",
+        "Linux Administration",
+        "Ethical Hacking / Penetration Testing basics",
+        "Python Programming"
+      ],
+      "certifications": [
+        "CompTIA Security+ (industry baseline — widely required for federal positions)",
+        "CompTIA Network+ (if networking is weak)",
+        "Google Cybersecurity Certificate (free via Coursera)",
+        "TryHackMe or Hack The Box (practical skills)"
+      ],
+      "applicationTips": [
+        "INL is the national leader in industrial control system (ICS/SCADA) cybersecurity — unique specialization",
+        "PNNL has grid cybersecurity programs — overlap with energy systems",
+        "LLNL and Sandia have significant national security computing / cyber programs",
+        "Security clearance eligibility (US citizenship + clean background) is often required",
+        "CTF participation shows practical skills — enter competitions and list them"
+      ],
+      "lliFreeResources": [
+        "INL is LLI's anchor lab partner — direct pathway to INL cybersecurity programs through our network"
+      ]
+    },
+    {
+      "id": "robotics-autonomous-systems",
+      "name": "Robotics & Autonomous Systems",
+      "shortName": "Robotics",
+      "track": "STEM Research",
+      "targetLevel": ["undergraduate", "graduate"],
+      "targetPrograms": ["doe-suli", "inl-internship", "ornl-internship", "pnnl-internship", "afrl-scholars", "nasa-internships"],
+      "description": "Pathway for robotics, autonomous systems, and mechatronics students pursuing unmanned systems, teleoperation, and autonomous inspection work at national labs and federal agencies.",
+      "timeToReady": "12-18 months with programming and physics foundation",
+      "skills": [
+        {"name": "Python or C++ programming", "weight": 5, "category": "Computing"},
+        {"name": "ROS (Robot Operating System) basics", "weight": 4, "category": "Tools"},
+        {"name": "Controls systems fundamentals (feedback loops, PID)", "weight": 4, "category": "Domain"},
+        {"name": "Linear algebra and kinematics", "weight": 4, "category": "Math"},
+        {"name": "Computer vision basics (OpenCV or equivalent)", "weight": 3, "category": "AI/ML"},
+        {"name": "Electronics and microcontrollers (Arduino or similar)", "weight": 3, "category": "Hardware"},
+        {"name": "Mechanical design basics (linkages, actuators)", "weight": 3, "category": "Hardware"},
+        {"name": "Simulation tools (Gazebo, Isaac Sim — awareness)", "weight": 2, "category": "Tools"}
+      ],
+      "recommendedCourses": [
+        "Physics I (mechanics)",
+        "Calculus I and II",
+        "Linear Algebra",
+        "Python or C++ Programming",
+        "Introduction to Robotics",
+        "Controls Systems",
+        "Computer Vision (if available)"
+      ],
+      "certifications": [
+        "ROS2 training (free online — The Construct or Udemy)",
+        "NVIDIA Isaac Sim (free certification for simulation)"
+      ],
+      "applicationTips": [
+        "INL operates robots in nuclear hot cells — one of the most demanding robotics environments in the world",
+        "ORNL's MDF has autonomous manufacturing research",
+        "PNNL deploys AUVs and remote systems for Hanford environmental characterization",
+        "NASA JPL has the most famous robotics program — extremely competitive but worth applying",
+        "Build a physical robot project — even a basic one on an Arduino shows hands-on capability"
+      ],
+      "lliFreeResources": [
+        "LinkBot Newsletter Issue 04: Robotics at National Labs — covers INL nuclear robots, ORNL MDF, PNNL AUVs, Sandia autonomy"
+      ]
+    },
+    {
+      "id": "clean-energy-engineering",
+      "name": "Clean Energy Engineering",
+      "shortName": "Clean Energy Eng.",
+      "track": "STEM Research",
+      "targetLevel": ["undergraduate", "graduate"],
+      "targetPrograms": ["nrel-internship", "doe-suli", "inl-internship", "anl-internship", "tesla-energy-intern", "next-era-intern"],
+      "description": "Pathway for students pursuing solar, wind, energy storage, hydrogen, and grid technology engineering careers at national labs and clean energy industry.",
+      "timeToReady": "12-18 months with physics/engineering foundation",
+      "skills": [
+        {"name": "Physics II (electricity and magnetism)", "weight": 4, "category": "Academic"},
+        {"name": "Thermodynamics", "weight": 4, "category": "Academic"},
+        {"name": "Electrical circuits basics", "weight": 4, "category": "Academic"},
+        {"name": "Renewable energy systems overview (solar PV, wind, storage)", "weight": 4, "category": "Domain"},
+        {"name": "Energy systems analysis and efficiency metrics", "weight": 3, "category": "Domain"},
+        {"name": "MATLAB or Python for engineering analysis", "weight": 3, "category": "Computing"},
+        {"name": "Grid fundamentals (AC systems, power flow basics)", "weight": 3, "category": "Domain"},
+        {"name": "Sustainability and lifecycle analysis concepts", "weight": 2, "category": "Domain"}
+      ],
+      "recommendedCourses": [
+        "Physics I and II",
+        "Calculus I and II",
+        "Circuit Analysis",
+        "Introduction to Renewable Energy",
+        "Energy Storage Technology",
+        "Thermodynamics"
+      ],
+      "certifications": [
+        "NABCEP PV Associate Exam (solar — entry level)",
+        "ACORE or Clean Energy States Alliance resources (free policy + tech courses)"
+      ],
+      "applicationTips": [
+        "NREL is the definitive clean energy research lab — the top target for this pathway",
+        "INL is building the world's first advanced nuclear microreactor — advanced energy, not just renewables",
+        "Business Analytics students: NREL and NextEra both have analytics roles for energy data",
+        "Tesla and NextEra Energy offer industry paths that complement lab research"
+      ],
+      "lliFreeResources": [
+        "LinkBot Newsletter Issue 01: Quantum Computing and its clean energy applications",
+        "LinkBot Newsletter Issue 02: Digital Twins at national labs (NREL wind/solar twins)"
+      ]
+    }
+  ],
+  "trackIndex": {
+    "STEM Research": ["doe-research-stem", "nuclear-engineering", "materials-science", "environmental-science", "mechanical-engineering", "electrical-engineering", "biology-life-sciences", "robotics-autonomous-systems", "clean-energy-engineering"],
+    "Computing & Data": ["computational-data-science", "ai-ml-research", "computer-science-software", "cybersecurity"],
+    "Business": ["business-analytics"],
+    "Policy": ["energy-policy"]
+  },
+  "quickMatchQuestions": [
+    {
+      "id": "q1",
+      "question": "What is your primary academic focus?",
+      "options": [
+        {"label": "Physical Sciences (Physics, Chemistry)", "pathwayHints": ["doe-research-stem", "nuclear-engineering", "materials-science", "clean-energy-engineering"]},
+        {"label": "Life Sciences (Biology, Biochemistry, Pre-Med)", "pathwayHints": ["biology-life-sciences", "environmental-science"]},
+        {"label": "Engineering (ME, EE, ChE, NE, Aerospace)", "pathwayHints": ["mechanical-engineering", "electrical-engineering", "nuclear-engineering", "clean-energy-engineering", "robotics-autonomous-systems"]},
+        {"label": "Computing (CS, Data Science, IT, Cybersecurity)", "pathwayHints": ["computer-science-software", "computational-data-science", "ai-ml-research", "cybersecurity"]},
+        {"label": "Business (Analytics, Finance, Operations, Management)", "pathwayHints": ["business-analytics"]},
+        {"label": "Social Sciences / Policy (Political Science, Enviro Policy, Public Admin)", "pathwayHints": ["energy-policy"]},
+        {"label": "Environmental Science / Ecology", "pathwayHints": ["environmental-science", "biology-life-sciences"]}
+      ]
+    },
+    {
+      "id": "q2",
+      "question": "What type of school are you currently at?",
+      "options": [
+        {"label": "Community College (2-year)", "pathwayHints": ["doe-research-stem"], "programPriority": ["doe-cci", "doe-suli", "ptk-connect"]},
+        {"label": "4-year University", "pathwayHints": [], "programPriority": ["doe-suli", "nsf-reu", "nasa-internships"]},
+        {"label": "Graduate School (Masters or PhD)", "pathwayHints": [], "programPriority": ["doe-wdts-eci", "nsf-grad-research-fellowship", "doe-office-science-scgsr"]}
+      ]
+    },
+    {
+      "id": "q3",
+      "question": "What excites you most about a career at a national lab?",
+      "options": [
+        {"label": "Doing cutting-edge research on a specific scientific topic", "pathwayHints": ["doe-research-stem", "materials-science", "biology-life-sciences", "nuclear-engineering"]},
+        {"label": "Computing, AI, or software that powers scientific discovery", "pathwayHints": ["computational-data-science", "ai-ml-research", "computer-science-software"]},
+        {"label": "Protecting national security and critical infrastructure", "pathwayHints": ["cybersecurity", "nuclear-engineering"]},
+        {"label": "Solving the clean energy and climate challenge", "pathwayHints": ["clean-energy-engineering", "environmental-science", "electrical-engineering"]},
+        {"label": "Building, designing, and making things work", "pathwayHints": ["mechanical-engineering", "robotics-autonomous-systems", "electrical-engineering"]},
+        {"label": "The business, operations, and policy that makes it all run", "pathwayHints": ["business-analytics", "energy-policy"]}
+      ]
+    },
+    {
+      "id": "q4",
+      "question": "Where are you in your academic journey?",
+      "options": [
+        {"label": "Just starting (freshman or first-semester CC)", "priorityActions": ["Build Zintellect profile", "Identify 3 labs of interest", "Read LLI free guide"]},
+        {"label": "Sophomore or midway through CC program", "priorityActions": ["Apply to NSF REU", "Apply to CCI (CC students) or SULI (4-year)", "Connect with PTK chapter"]},
+        {"label": "Junior year", "priorityActions": ["Apply to SULI/AFRL/NASA", "Consider NSF GRFP preparation", "Secure faculty research letter"]},
+        {"label": "Senior year", "priorityActions": ["Apply to NSF GRFP", "Apply to graduate programs", "Target lab direct-hire positions"]},
+        {"label": "Graduate student", "priorityActions": ["Apply to SCGSR (DOE)", "Target NSF GRFP if not yet held", "Publish and present research"]}
+      ]
+    }
+  ]
+}
