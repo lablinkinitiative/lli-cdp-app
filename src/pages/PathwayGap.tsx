@@ -118,7 +118,7 @@ export default function PathwayGap() {
               {/* Radar chart */}
               {analysis && analysis.radarData.axes.length > 2 && (
                 <div className="card" style={{ position: 'relative' }}>
-                  <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-muted)', marginBottom: 'var(--sp-sm)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-muted)', marginBottom: 'var(--sp-sm)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                     Skills Radar
                   </h3>
                   <RadarChart
@@ -135,7 +135,7 @@ export default function PathwayGap() {
               {/* Skill breakdown */}
               {analysis && (
                 <div className="card" style={{ marginBottom: 'var(--sp-md)' }}>
-                  <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)', marginBottom: 'var(--sp-md)' }}>
+                  <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)', marginBottom: 'var(--sp-md)' }}>
                     Skill Breakdown
                   </h3>
                   <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto auto', gap: '0.5rem 1rem', alignItems: 'center', fontSize: 'var(--text-xs)' }}>
@@ -171,7 +171,7 @@ export default function PathwayGap() {
               {/* Recommendations */}
               {analysis && (
                 <div className="card" style={{ marginBottom: 'var(--sp-md)' }}>
-                  <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)', marginBottom: 'var(--sp-md)' }}>
+                  <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)', marginBottom: 'var(--sp-md)' }}>
                     Top Recommendations
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-sm)' }}>
@@ -217,7 +217,7 @@ export default function PathwayGap() {
 
               {/* Matched programs */}
               <div className="card">
-                <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)', marginBottom: 'var(--sp-md)' }}>
+                <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)', marginBottom: 'var(--sp-md)' }}>
                   Programs Aligned with this Pathway
                 </h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -254,7 +254,7 @@ export default function PathwayGap() {
 
           {/* All pathways */}
           <div style={{ marginTop: 'var(--sp-xl)', padding: 'var(--sp-lg)', background: 'var(--surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
-            <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, marginBottom: 'var(--sp-md)', color: 'var(--text-strong)' }}>
+            <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, marginBottom: 'var(--sp-md)', color: 'var(--text-strong)' }}>
               All 14 Career Pathways
             </h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>

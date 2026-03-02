@@ -53,7 +53,7 @@ export default function Landing() {
       {/* Nav */}
       <nav style={{ background: 'var(--brand-900)', height: 'var(--nav-height)', display: 'flex', alignItems: 'center', padding: '0 1.25rem', position: 'sticky', top: 0, zIndex: 200 }}>
         <div style={{ maxWidth: 1160, width: '100%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
-          <a href="https://lablinkinitiative.org" style={{ color: 'var(--white)', fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-lg)', fontWeight: 700, textDecoration: 'none', letterSpacing: '-0.01em' }}>
+          <a href="https://lablinkinitiative.org" style={{ color: 'var(--white)', fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-lg)', fontWeight: 700, textDecoration: 'none', letterSpacing: '-0.01em' }}>
             Lab<em style={{ fontStyle: 'normal', color: 'var(--accent-lime)' }}>Link</em> Initiative
           </a>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -104,7 +104,7 @@ export default function Landing() {
               <div key={f.title} className="card" style={{ display: 'flex', gap: 'var(--sp-md)', alignItems: 'flex-start' }}>
                 <div style={{ fontSize: '2rem', lineHeight: 1 }}>{f.icon}</div>
                 <div>
-                  <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-lg)', color: 'var(--text-strong)', marginBottom: '0.375rem' }}>
+                  <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-lg)', color: 'var(--text-strong)', marginBottom: '0.375rem' }}>
                     {f.title}
                   </h3>
                   <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', lineHeight: 1.65 }}>{f.desc}</p>

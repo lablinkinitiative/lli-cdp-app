@@ -149,7 +149,7 @@ export default function Onboarding() {
       <div style={{ maxWidth: 640, margin: '0 auto' }}>
         {/* Header */}
         <div style={{ marginBottom: 'var(--sp-lg)' }}>
-          <a href="https://lablinkinitiative.org" style={{ color: 'var(--brand-700)', fontFamily: 'Inter, sans-serif', fontWeight: 700, textDecoration: 'none', fontSize: 'var(--text-lg)', display: 'block', marginBottom: 'var(--sp-md)' }}>
+          <a href="https://lablinkinitiative.org" style={{ color: 'var(--brand-700)', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 700, textDecoration: 'none', fontSize: 'var(--text-lg)', display: 'block', marginBottom: 'var(--sp-md)' }}>
             Lab<em style={{ fontStyle: 'normal', color: 'var(--accent-lime)' }}>Link</em> CDP
           </a>
           <h1 style={{ fontSize: 'var(--text-2xl)', color: 'var(--text-strong)', marginBottom: '0.25rem' }}>
@@ -176,7 +176,7 @@ export default function Onboarding() {
           {/* Step 0 — About You */}
           {step === 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-md)' }}>
-              <h2 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-xl)', marginBottom: 'var(--sp-xs)' }}>About You</h2>
+              <h2 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-xl)', marginBottom: 'var(--sp-xs)' }}>About You</h2>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-md)' }}>
                 <div className="form-group">
                   <label className="form-label" htmlFor="firstName">First name <span aria-hidden="true">*</span></label>
@@ -222,7 +222,7 @@ export default function Onboarding() {
           {/* Step 1 — Career Interests */}
           {step === 1 && (
             <div>
-              <h2 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-xl)', marginBottom: '0.375rem' }}>Career Interests</h2>
+              <h2 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-xl)', marginBottom: '0.375rem' }}>Career Interests</h2>
               <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', marginBottom: 'var(--sp-md)' }}>What type of career experience are you most interested in? Select all that apply.</p>
               <div className="checkbox-group">
                 {INTERESTS.map(i => (
@@ -238,7 +238,7 @@ export default function Onboarding() {
           {/* Step 2 — Skills */}
           {step === 2 && (
             <div>
-              <h2 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-xl)', marginBottom: '0.375rem' }}>Your Skills</h2>
+              <h2 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-xl)', marginBottom: '0.375rem' }}>Your Skills</h2>
               <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', marginBottom: 'var(--sp-md)' }}>What skills do you already have? Check all that apply.</p>
               {SKILL_GROUPS.map(group => (
                 <div key={group.label} style={{ marginBottom: 'var(--sp-md)' }}>
@@ -287,7 +287,7 @@ export default function Onboarding() {
           {/* Step 3 — Goals */}
           {step === 3 && (
             <div>
-              <h2 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-xl)', marginBottom: '0.375rem' }}>Your Goals</h2>
+              <h2 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-xl)', marginBottom: '0.375rem' }}>Your Goals</h2>
               <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', marginBottom: 'var(--sp-md)' }}>What are you hoping to achieve? Select all that apply.</p>
               <div className="checkbox-group mb-lg">
                 {GOALS.map(g => (

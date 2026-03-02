@@ -139,7 +139,7 @@ export default function Dashboard() {
                       <div style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--brand-500)', marginBottom: '0.125rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         {program.category}
                       </div>
-                      <h3 style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-strong)', lineHeight: 1.3, fontFamily: 'Inter, sans-serif' }}>
+                      <h3 style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-strong)', lineHeight: 1.3, fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
                         {program.shortName || program.name}
                       </h3>
                     </div>

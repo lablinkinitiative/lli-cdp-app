@@ -88,7 +88,7 @@ export default function RadarChart({ axes, studentScores, requiredScores, size =
               dominantBaseline="middle"
               fontSize="10"
               fill="var(--text-muted)"
-              fontFamily="Inter, sans-serif"
+              fontFamily="Plus Jakarta Sans, sans-serif"
               fontWeight="600"
             >
               {axis.length > 16 ? axis.slice(0, 14) + '…' : axis}

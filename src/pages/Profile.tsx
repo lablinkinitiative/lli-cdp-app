@@ -148,7 +148,7 @@ export default function Profile() {
 
   const SectionHeader = ({ section, title }: { section: Section; title: string }) => (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--sp-md)' }}>
-      <h2 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)' }}>{title}</h2>
+      <h2 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)' }}>{title}</h2>
       <div style={{ display: 'flex', gap: 'var(--sp-sm)', alignItems: 'center' }}>
         {wasSaved(section) && (
           <span style={{ fontSize: 'var(--text-xs)', color: 'var(--success)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
@@ -464,7 +464,7 @@ export default function Profile() {
               {/* Saved gap analyses */}
               {student?.gapAnalyses && student.gapAnalyses.length > 0 && (
                 <div className="card">
-                  <h2 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)', marginBottom: 'var(--sp-md)' }}>
+                  <h2 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)', marginBottom: 'var(--sp-md)' }}>
                     Saved Gap Analyses
                   </h2>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -494,7 +494,7 @@ export default function Profile() {
 
               {/* Danger zone */}
               <div className="card" style={{ border: '1px solid rgba(185,28,28,0.2)' }}>
-                <h2 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)', marginBottom: 'var(--sp-sm)' }}>Account</h2>
+                <h2 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)', marginBottom: 'var(--sp-sm)' }}>Account</h2>
                 <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', marginBottom: 'var(--sp-md)' }}>
                   Signed in as <strong>{user.email}</strong>
                 </p>

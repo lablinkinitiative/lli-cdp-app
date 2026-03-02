@@ -239,7 +239,7 @@ export default function ResumePage() {
                   {/* Contact */}
                   <div className="card">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--sp-sm)' }}>
-                      <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Contact</h3>
+                      <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Contact</h3>
                       <button className="btn btn-ghost btn-sm" onClick={() => setEditingSection(editingSection === 'contact' ? null : 'contact')} style={{ fontSize: 'var(--text-xs)' }}>
                         {editingSection === 'contact' ? 'Done' : 'Edit'}
                       </button>
@@ -251,7 +251,7 @@ export default function ResumePage() {
 
                   {/* Education */}
                   <div className="card">
-                    <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 'var(--sp-sm)' }}>Education</h3>
+                    <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 'var(--sp-sm)' }}>Education</h3>
                     {parsed.education.map((edu, i) => (
                       <div key={i} style={{ paddingBottom: i < parsed.education.length - 1 ? 'var(--sp-sm)' : 0, borderBottom: i < parsed.education.length - 1 ? '1px solid var(--border)' : 'none', marginBottom: i < parsed.education.length - 1 ? 'var(--sp-sm)' : 0 }}>
                         <div style={{ fontWeight: 700, color: 'var(--text-strong)', fontSize: 'var(--text-sm)' }}>{edu.school}</div>
@@ -263,7 +263,7 @@ export default function ResumePage() {
 
                   {/* Experience */}
                   <div className="card">
-                    <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 'var(--sp-sm)' }}>Experience</h3>
+                    <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 'var(--sp-sm)' }}>Experience</h3>
                     {parsed.experience.map((exp, i) => (
                       <div key={i} style={{ paddingBottom: i < parsed.experience.length - 1 ? 'var(--sp-md)' : 0, borderBottom: i < parsed.experience.length - 1 ? '1px solid var(--border)' : 'none', marginBottom: i < parsed.experience.length - 1 ? 'var(--sp-md)' : 0 }}>
                         <div style={{ fontWeight: 700, color: 'var(--text-strong)', fontSize: 'var(--text-sm)' }}>{exp.title}</div>
@@ -280,7 +280,7 @@ export default function ResumePage() {
 
                   {/* Skills */}
                   <div className="card">
-                    <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 'var(--sp-sm)' }}>
+                    <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 'var(--sp-sm)' }}>
                       Skills detected
                     </h3>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>

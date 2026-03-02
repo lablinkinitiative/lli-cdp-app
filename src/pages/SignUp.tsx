@@ -57,7 +57,7 @@ export default function SignUp() {
     <div className="auth-page">
       <div className="auth-card">
         <div className="auth-logo">
-          <a href="https://lablinkinitiative.org" style={{ color: 'var(--brand-700)', fontFamily: 'Inter, sans-serif', fontWeight: 700, textDecoration: 'none', fontSize: 'var(--text-lg)' }}>
+          <a href="https://lablinkinitiative.org" style={{ color: 'var(--brand-700)', fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 700, textDecoration: 'none', fontSize: 'var(--text-lg)' }}>
             Lab<em style={{ fontStyle: 'normal', color: 'var(--accent-lime)' }}>Link</em> CDP
           </a>
         </div>

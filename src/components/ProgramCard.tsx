@@ -55,7 +55,7 @@ export default function ProgramCard({ program, student, userId, savedIds = [], o
           <div style={{ fontSize: 'var(--text-xs)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--brand-500)', marginBottom: '0.1rem' }}>
             {program.category}
           </div>
-          <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)', lineHeight: 1.3, fontFamily: 'Inter, sans-serif' }}>
+          <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)', lineHeight: 1.3, fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
             {program.name}
           </h3>
         </div>
