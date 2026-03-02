@@ -1,86 +1,107 @@
-// ─── Mock Auth Layer ───────────────────────────────────────────────────────────
-// TODO: Replace with Firebase Auth when credentials are available.
-// All functions mirror the Firebase Auth API surface so swapping is mechanical.
+// ─── Real Auth Layer — LabLink CDP API ─────────────────────────────────────────
+// Uses the backend at VITE_API_URL for real auth + persistence.
+// localStorage acts as a sync cache so all pages stay compatible.
 
 import type { User, StudentData } from './types';
 
-const AUTH_KEY = 'cdp_user';
-const DATA_KEY = 'cdp_student_data';
+const API_BASE = (import.meta.env.VITE_API_URL as string) || 'https://app.lablinkinitiative.org';
+const TOKEN_KEY = 'cdp_token';
+const DATA_KEY  = 'cdp_student_data';
+const USER_KEY  = 'cdp_user';
+
+// ─── Token helpers ─────────────────────────────────────────────────────────────
+
+function getToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+function setToken(token: string): void {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+function authHeader(): Record<string, string> {
+  const token = getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 // ─── Auth State ───────────────────────────────────────────────────────────────
 
 export function getCurrentUser(): User | null {
+  const token = getToken();
+  if (!token) return null;
   try {
-    const raw = localStorage.getItem(AUTH_KEY);
-    return raw ? JSON.parse(raw) : null;
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    if (payload.exp < Date.now() / 1000) { signOut(); return null; }
+    const cached = localStorage.getItem(USER_KEY);
+    const extra: Partial<User> = cached ? JSON.parse(cached) : {};
+    return { uid: payload.uid, email: payload.email, ...extra };
   } catch {
     return null;
   }
 }
 
 export function setCurrentUser(user: User): void {
-  localStorage.setItem(AUTH_KEY, JSON.stringify(user));
+  const { uid: _uid, email: _email, ...extra } = user;
+  localStorage.setItem(USER_KEY, JSON.stringify(extra));
 }
 
 export function signOut(): void {
-  localStorage.removeItem(AUTH_KEY);
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
 }
 
 // ─── Sign Up ─────────────────────────────────────────────────────────────────
 
-export async function signUp(email: string, _password: string): Promise<User> {
-  // TODO: Replace with Firebase Auth createUserWithEmailAndPassword
-  const existing = getAllUsers().find(u => u.email === email);
-  if (existing) {
-    throw new Error('An account with this email already exists.');
-  }
+export async function signUp(email: string, password: string): Promise<User> {
+  const res = await fetch(`${API_BASE}/api/cdp/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, firstName: '', lastName: '' }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Registration failed');
 
-  const user: User = {
-    uid: `mock-uid-${Date.now()}`,
-    email,
-    onboardingComplete: false,
-  };
-
-  saveUser(user);
+  setToken(data.token);
+  const user: User = { uid: data.uid, email: data.email, onboardingComplete: false };
   setCurrentUser(user);
-  initStudentData(user.uid, email);
+  if (!getStudentData(data.uid)) {
+    localStorage.setItem(`${DATA_KEY}_${data.uid}`, JSON.stringify(getDefaultStudentData(data.uid, email)));
+  }
   return user;
 }
 
 // ─── Sign In ─────────────────────────────────────────────────────────────────
 
-export async function signIn(email: string, _password: string): Promise<User> {
-  // TODO: Replace with Firebase Auth signInWithEmailAndPassword
-  const user = getAllUsers().find(u => u.email === email);
-  if (!user) {
-    // In mock mode, create user on first sign-in
-    return signUp(email, _password);
-  }
+export async function signIn(email: string, password: string): Promise<User> {
+  const res = await fetch(`${API_BASE}/api/cdp/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Invalid email or password');
 
+  setToken(data.token);
+  const user: User = {
+    uid: data.uid,
+    email: data.email,
+    firstName: data.firstName || undefined,
+    lastName: data.lastName || undefined,
+    onboardingComplete: true,
+  };
   setCurrentUser(user);
+  // Fetch full student data and cache (enables cross-device sync)
+  await syncStudentDataFromApi(data.uid);
   return user;
 }
 
-// ─── Google OAuth (Mock) ─────────────────────────────────────────────────────
+// ─── Google OAuth (stub) ──────────────────────────────────────────────────────
 
 export async function signInWithGoogle(): Promise<User> {
-  // TODO: Replace with Firebase Auth signInWithPopup(googleProvider)
-  const email = `google-user-${Date.now()}@gmail.com`;
-  const user: User = {
-    uid: `google-uid-${Date.now()}`,
-    email,
-    firstName: 'Google',
-    lastName: 'User',
-    onboardingComplete: false,
-  };
-  saveUser(user);
-  setCurrentUser(user);
-  initStudentData(user.uid, email);
-  return user;
+  throw new Error('Google sign-in is not yet available. Please use email + password.');
 }
 
-// ─── Student Data (Mock Firestore) ───────────────────────────────────────────
-// TODO: Replace with Firestore reads/writes
+// ─── Student Data — sync read from localStorage ────────────────────────────────
 
 export function getStudentData(uid: string): StudentData | null {
   try {
@@ -92,19 +113,74 @@ export function getStudentData(uid: string): StudentData | null {
 }
 
 export function saveStudentData(uid: string, data: Partial<StudentData>): void {
-  // TODO: Replace with Firestore setDoc / updateDoc
-  const existing = getStudentData(uid) || getDefaultStudentData('', '');
-  const merged = { ...existing, ...data, updatedAt: new Date().toISOString() };
+  const existing = getStudentData(uid) || getDefaultStudentData(uid, '');
+  const merged: StudentData = {
+    ...existing,
+    ...data,
+    profile: { ...existing.profile, ...(data.profile || {}), updatedAt: new Date().toISOString() },
+  };
   merged.profileCompleteness = calculateCompleteness(merged);
   localStorage.setItem(`${DATA_KEY}_${uid}`, JSON.stringify(merged));
+  // Fire-and-forget API sync
+  syncStudentDataToApi(merged).catch(() => {});
 }
 
 export function initStudentData(uid: string, email: string): void {
   if (!getStudentData(uid)) {
-    const data = getDefaultStudentData(uid, email);
-    localStorage.setItem(`${DATA_KEY}_${uid}`, JSON.stringify(data));
+    localStorage.setItem(`${DATA_KEY}_${uid}`, JSON.stringify(getDefaultStudentData(uid, email)));
   }
 }
+
+// ─── Saved Programs ───────────────────────────────────────────────────────────
+
+export function saveProgram(uid: string, programId: string): void {
+  const data = getStudentData(uid);
+  if (!data) return;
+  if (!data.savedPrograms.includes(programId)) {
+    data.savedPrograms = [...data.savedPrograms, programId];
+    saveStudentData(uid, { savedPrograms: data.savedPrograms });
+  }
+}
+
+export function unsaveProgram(uid: string, programId: string): void {
+  const data = getStudentData(uid);
+  if (!data) return;
+  data.savedPrograms = data.savedPrograms.filter(id => id !== programId);
+  saveStudentData(uid, { savedPrograms: data.savedPrograms });
+}
+
+// ─── Update current user metadata ─────────────────────────────────────────────
+
+export function updateCurrentUser(updates: Partial<User>): void {
+  const cached = localStorage.getItem(USER_KEY);
+  const extra = cached ? JSON.parse(cached) : {};
+  localStorage.setItem(USER_KEY, JSON.stringify({ ...extra, ...updates }));
+}
+
+// ─── API sync helpers ──────────────────────────────────────────────────────────
+
+async function syncStudentDataFromApi(uid: string): Promise<void> {
+  try {
+    const res = await fetch(`${API_BASE}/api/cdp/students/me/full-data`, {
+      headers: authHeader(),
+    });
+    if (!res.ok) return;
+    const data: StudentData = await res.json();
+    localStorage.setItem(`${DATA_KEY}_${uid}`, JSON.stringify(data));
+  } catch {
+    // Network error — local cache is the fallback
+  }
+}
+
+async function syncStudentDataToApi(data: StudentData): Promise<void> {
+  await fetch(`${API_BASE}/api/cdp/students/me/full-data`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+    body: JSON.stringify(data),
+  });
+}
+
+// ─── Internal helpers ──────────────────────────────────────────────────────────
 
 function getDefaultStudentData(_uid: string, email: string): StudentData {
   return {
@@ -146,47 +222,4 @@ function calculateCompleteness(data: StudentData): number {
   if (data.gpa) score += 5;
   if (data.resumeUploaded) score += 5;
   return Math.min(100, score);
-}
-
-// ─── Saved Programs ───────────────────────────────────────────────────────────
-
-export function saveProgram(uid: string, programId: string): void {
-  const data = getStudentData(uid);
-  if (!data) return;
-  if (!data.savedPrograms.includes(programId)) {
-    data.savedPrograms = [...data.savedPrograms, programId];
-    saveStudentData(uid, { savedPrograms: data.savedPrograms });
-  }
-}
-
-export function unsaveProgram(uid: string, programId: string): void {
-  const data = getStudentData(uid);
-  if (!data) return;
-  data.savedPrograms = data.savedPrograms.filter(id => id !== programId);
-  saveStudentData(uid, { savedPrograms: data.savedPrograms });
-}
-
-// ─── Internal helpers ─────────────────────────────────────────────────────────
-
-function getAllUsers(): User[] {
-  try {
-    const raw = localStorage.getItem('cdp_all_users');
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveUser(user: User): void {
-  const users = getAllUsers().filter(u => u.uid !== user.uid);
-  users.push(user);
-  localStorage.setItem('cdp_all_users', JSON.stringify(users));
-}
-
-export function updateCurrentUser(updates: Partial<User>): void {
-  const user = getCurrentUser();
-  if (!user) return;
-  const updated = { ...user, ...updates };
-  saveUser(updated);
-  setCurrentUser(updated);
 }
