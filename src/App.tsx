@@ -3,6 +3,7 @@ import { getCurrentUser } from './auth';
 import Landing from './pages/Landing';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
+import OAuthCallback from './pages/OAuthCallback';
 import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import Opportunities from './pages/Opportunities';
@@ -26,6 +27,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/oauth-callback" element={<OAuthCallback />} />
         <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/opportunities" element={<ProtectedRoute><Opportunities /></ProtectedRoute>} />

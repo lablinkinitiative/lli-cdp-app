@@ -95,10 +95,10 @@ export async function signIn(email: string, password: string): Promise<User> {
   return user;
 }
 
-// ─── Google OAuth (stub) ──────────────────────────────────────────────────────
+// ─── Google OAuth ─────────────────────────────────────────────────────────────
 
-export async function signInWithGoogle(): Promise<User> {
-  throw new Error('Google sign-in is not yet available. Please use email + password.');
+export function signInWithGoogle(): void {
+  window.location.href = `${API_BASE}/api/cdp/auth/google`;
 }
 
 // ─── Student Data — sync read from localStorage ────────────────────────────────
