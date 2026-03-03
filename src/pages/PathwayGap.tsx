@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Nav from '../components/Nav';
 import RadarChart from '../components/RadarChart';
@@ -144,11 +144,11 @@ export default function PathwayGap() {
                     <div style={{ fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Required</div>
                     <div style={{ fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Status</div>
                     {analysis.skillBreakdown.slice(0, 8).map(item => (
-                      <>
-                        <div key={`name-${item.skill}`} style={{ color: 'var(--text-default)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 160 }}>
+                      <Fragment key={item.skill}>
+                        <div style={{ color: 'var(--text-default)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 160 }}>
                           {item.skill.length > 28 ? item.skill.slice(0, 26) + '…' : item.skill}
                         </div>
-                        <div key={`bar-${item.skill}`} style={{ height: 8, background: 'var(--surface-2)', borderRadius: 99, overflow: 'hidden' }}>
+                        <div style={{ height: 8, background: 'var(--surface-2)', borderRadius: 99, overflow: 'hidden' }}>
                           <div style={{
                             height: '100%',
                             width: `${Math.round(item.studentLevel * 100)}%`,
@@ -156,13 +156,13 @@ export default function PathwayGap() {
                             borderRadius: 99,
                           }} />
                         </div>
-                        <div key={`req-${item.skill}`} style={{ color: 'var(--text-muted)', textAlign: 'center' }}>
+                        <div style={{ color: 'var(--text-muted)', textAlign: 'center' }}>
                           {Math.round(item.requiredLevel * 100)}%
                         </div>
-                        <div key={`status-${item.skill}`} className={`status-${item.status}`} style={{ fontWeight: 700, textTransform: 'capitalize' }}>
+                        <div className={`status-${item.status}`} style={{ fontWeight: 700, textTransform: 'capitalize' }}>
                           {item.status}
                         </div>
-                      </>
+                      </Fragment>
                     ))}
                   </div>
                 </div>

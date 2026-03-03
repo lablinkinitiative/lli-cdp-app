@@ -195,10 +195,10 @@ export default function ResumePage() {
 
               {/* AI parsing note */}
               <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: 'var(--sp-md)', fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>
-                <strong style={{ color: 'var(--text-default)', display: 'block', marginBottom: '0.25rem' }}>How resume parsing works</strong>
-                Our AI extracts your education, experience, and skills — then automatically updates your profile and match scores. Review the results before saving.
+                <strong style={{ color: 'var(--text-default)', display: 'block', marginBottom: '0.25rem' }}>Resume parsing — preview</strong>
+                Upload your resume to preview how your skills and experience are extracted — then save them to your profile to improve match scores.
                 <br /><br />
-                <span style={{ color: 'var(--text-faint)' }}>AI parsing powered by OpenAI. Your resume is not stored on our servers.</span>
+                <span style={{ color: 'var(--text-faint)' }}>Full AI parsing coming soon. Your file is not stored on our servers.</span>
               </div>
 
               {/* Current resume status */}
