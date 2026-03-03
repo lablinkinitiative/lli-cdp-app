@@ -20,7 +20,7 @@ const FEATURES = [
   {
     icon: '🔖',
     title: 'Save & Track Programs',
-    desc: 'Bookmark programs and track your application progress across 200+ curated opportunities.',
+    desc: 'Bookmark programs and track your application progress across 390+ curated opportunities.',
   },
 ];
 
