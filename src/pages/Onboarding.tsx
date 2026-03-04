@@ -320,10 +320,18 @@ export default function Onboarding() {
                   background: dragging ? 'var(--brand-50)' : resumeParsed ? 'var(--success-bg)' : 'var(--surface)',
                   borderRadius: 'var(--radius-lg)',
                   textAlign: 'center',
-                  padding: 'var(--sp-2xl) var(--sp-xl)',
+                  padding: '3.5rem var(--sp-lg)',
                   cursor: uploading ? 'wait' : 'pointer',
-                  transition: 'all 0.15s',
+                  transition: 'all 0.2s',
                   marginBottom: 'var(--sp-md)',
+                  minHeight: 260,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  maxWidth: 340,
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
                 }}
               >
                 <input
@@ -337,7 +345,7 @@ export default function Onboarding() {
                 {uploading ? (
                   <div>
                     <div style={{ fontSize: '2.5rem', marginBottom: 'var(--sp-sm)' }}>⏳</div>
-                    <p style={{ color: 'var(--text-default)', fontWeight: 600, marginBottom: '0.25rem' }}>Parsing with AI…</p>
+                    <p style={{ color: 'var(--text-default)', fontWeight: 600, marginBottom: '0.25rem' }}>Reading your resume…</p>
                     <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}>Extracting your info from {resumeFileName}</p>
                   </div>
                 ) : resumeParsed ? (
@@ -348,15 +356,15 @@ export default function Onboarding() {
                     <p style={{ color: 'var(--text-faint)', fontSize: 'var(--text-xs)', marginTop: '0.5rem' }}>Click to upload a different file</p>
                   </div>
                 ) : (
-                  <div>
-                    <svg style={{ marginBottom: 'var(--sp-sm)', opacity: 0.4 }} width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                    <svg style={{ marginBottom: '0.75rem', opacity: 0.35 }} width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
                       <polyline points="17 8 12 3 7 8"/>
                       <line x1="12" y1="3" x2="12" y2="15"/>
                     </svg>
-                    <p style={{ color: 'var(--text-default)', fontWeight: 600, marginBottom: '0.375rem', fontSize: 'var(--text-lg)' }}>Drop your resume here</p>
-                    <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', marginBottom: 'var(--sp-sm)' }}>or click to browse files</p>
-                    <p style={{ color: 'var(--text-faint)', fontSize: 'var(--text-xs)' }}>PDF, Word, or plain text · Max 5MB</p>
+                    <p style={{ color: 'var(--text-default)', fontWeight: 700, fontSize: 'var(--text-lg)', margin: 0 }}>Drop your resume here</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', margin: 0 }}>or click to browse files</p>
+                    <p style={{ color: 'var(--text-faint)', fontSize: 'var(--text-xs)', marginTop: '0.25rem' }}>PDF, Word, or plain text · Max 5MB</p>
                   </div>
                 )}
               </div>
