@@ -64,6 +64,16 @@ export interface Recommendation {
   resource?: string;
 }
 
+export interface ProgramTags {
+  career_stage?: string[];
+  benefits?: string[];
+  duration?: string[];
+  location_type?: string[];
+  focus_type?: string[];
+  special_eligibility?: string[];
+  keywords?: string[];
+}
+
 export interface Program {
   id: string;
   name: string;
@@ -77,7 +87,7 @@ export interface Program {
     notes?: string;
   };
   duration: {
-    weeks: number[] | null;
+    weeks: number | null;
     terms: string[];
   };
   compensation: {
@@ -93,6 +103,8 @@ export interface Program {
   applicationPlatform: string;
   keyFacts: string[];
   lliBridgeNote: string;
+  tags?: ProgramTags | null;
+  sector?: string;
 }
 
 export interface Pathway {

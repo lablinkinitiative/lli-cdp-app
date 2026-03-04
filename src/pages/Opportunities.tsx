@@ -8,7 +8,7 @@ import programsData from '../data/programs.json';
 
 const programs = programsData.programs as unknown as Program[];
 
-const CATEGORIES = ['All', 'DOE National Labs', 'Federal / Space', 'Federal / Environment', 'Federal / Biomedical', 'Federal / Science', 'Federal / Defense', 'Academic Research', 'Industry / Tech', 'Industry / Clean Energy', 'Equity / Federal', 'Platform'];
+const CATEGORIES = ['All', 'DOE National Labs', 'Federal Science Agencies', 'Space & Defense', 'Biomedical & Health', 'Equity & Access', 'High School Programs', 'Competitive Fellowships', 'Industry: Tech & Computing', 'Community College', 'Academic Research'];
 
 type SortMode = 'match' | 'az' | 'deadline';
 
@@ -19,6 +19,14 @@ export default function Opportunities() {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
   const [sortMode, setSortMode] = useState<SortMode>('match');
+  const [showTagFilters, setShowTagFilters] = useState(false);
+
+  // Tag-based filters
+  const [filterPaid, setFilterPaid] = useState(false);
+  const [filterRemote, setFilterRemote] = useState(false);
+  const [filterCareerStage, setFilterCareerStage] = useState('');
+  const [filterBenefit, setFilterBenefit] = useState('');
+  const [filterKeyword, setFilterKeyword] = useState('');
 
   useEffect(() => {
     const data = getStudentData(user.uid);
@@ -26,18 +34,51 @@ export default function Opportunities() {
     setSavedIds(data?.savedPrograms || []);
   }, [user.uid]);
 
+  const hasActiveFilters = filterPaid || filterRemote || !!filterCareerStage || !!filterBenefit || !!filterKeyword;
+
   const filtered = useMemo(() => {
     let result = programs.filter(p => {
-      if (category !== 'All' && !p.category.startsWith(category.split(' /')[0])) {
-        // More flexible category matching
-        if (!p.category.toLowerCase().includes(category.toLowerCase().split('/')[0].trim())) {
+      // Category filter
+      if (category !== 'All') {
+        const catLower = category.toLowerCase();
+        if (!p.category.toLowerCase().includes(catLower.split(':')[0].trim())) {
           return false;
         }
       }
+
+      // Text search
       if (query) {
-        const haystack = (p.name + ' ' + p.shortName + ' ' + p.category + ' ' + (p.researchAreas || []).join(' ') + ' ' + (p.keyFacts || []).join(' ')).toLowerCase();
+        const haystack = (
+          p.name + ' ' + p.shortName + ' ' + p.category + ' ' +
+          (p.researchAreas || []).join(' ') + ' ' +
+          (p.keyFacts || []).join(' ')
+        ).toLowerCase();
         if (!haystack.includes(query.toLowerCase())) return false;
       }
+
+      // Tag-based filters
+      if (filterPaid && !p.compensation?.paid) return false;
+
+      if (filterRemote) {
+        const isRemote = (p.tags?.location_type || []).includes('remote') ||
+          (p.locations || []).some(l => /remote|virtual|online/i.test(l));
+        if (!isRemote) return false;
+      }
+
+      if (filterCareerStage) {
+        const stageMatch = (p.tags?.career_stage || []).includes(filterCareerStage) ||
+          (p.eligibility?.level || []).some(l => l.toLowerCase().includes(filterCareerStage.replace('_', ' ')));
+        if (!stageMatch) return false;
+      }
+
+      if (filterBenefit) {
+        if (!(p.tags?.benefits || []).includes(filterBenefit)) return false;
+      }
+
+      if (filterKeyword) {
+        if (!(p.tags?.keywords || []).includes(filterKeyword)) return false;
+      }
+
       return true;
     });
 
@@ -51,7 +92,13 @@ export default function Opportunities() {
     }
 
     return result;
-  }, [query, category, sortMode, student]);
+  }, [query, category, sortMode, student, filterPaid, filterRemote, filterCareerStage, filterBenefit, filterKeyword]);
+
+  const clearAll = () => {
+    setQuery(''); setCategory('All');
+    setFilterPaid(false); setFilterRemote(false);
+    setFilterCareerStage(''); setFilterBenefit(''); setFilterKeyword('');
+  };
 
   const handleSaveToggle = (id: string, saved: boolean) => {
     setSavedIds(prev => saved ? [...prev, id] : prev.filter(x => x !== id));
@@ -63,6 +110,8 @@ export default function Opportunities() {
     }
   };
 
+  const activeFilterCount = [filterPaid, filterRemote, !!filterCareerStage, !!filterBenefit, !!filterKeyword].filter(Boolean).length;
+
   return (
     <>
       <Nav />
@@ -70,12 +119,12 @@ export default function Opportunities() {
         <div className="page-header">
           <div className="page-container">
             <h1>Browse Opportunities</h1>
-            <p>{programs.length} curated programs — with personalized match scores</p>
+            <p>{programs.length} curated STEM programs — with personalized match scores</p>
           </div>
         </div>
 
         <div className="page-container" style={{ padding: 'var(--sp-lg) 1.25rem var(--sp-2xl)' }}>
-          {/* Search & Filter */}
+          {/* Search, Sort & Filter Toggle */}
           <div style={{ display: 'flex', gap: 'var(--sp-sm)', flexWrap: 'wrap', marginBottom: 'var(--sp-md)', alignItems: 'center' }}>
             <div className="search-bar" style={{ flex: 1, minWidth: 240 }}>
               <input
@@ -89,6 +138,14 @@ export default function Opportunities() {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               </button>
             </div>
+            <button
+              type="button"
+              className={`btn btn-sm ${showTagFilters ? 'btn-primary' : 'btn-outline'}`}
+              onClick={() => setShowTagFilters(v => !v)}
+              aria-expanded={showTagFilters}
+            >
+              Filters {activeFilterCount > 0 ? `(${activeFilterCount})` : ''}
+            </button>
             <select
               className="form-select"
               style={{ width: 'auto', flex: 'none' }}
@@ -101,6 +158,98 @@ export default function Opportunities() {
               <option value="deadline">Deadline</option>
             </select>
           </div>
+
+          {/* Tag-based Filter Panel */}
+          {showTagFilters && (
+            <div style={{
+              background: 'var(--surface-secondary, #f8fafc)',
+              border: '1px solid var(--border, #e2e8f0)',
+              borderRadius: 'var(--radius-md)',
+              padding: 'var(--sp-md)',
+              marginBottom: 'var(--sp-md)',
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 'var(--sp-md)',
+              alignItems: 'flex-start',
+            }}>
+              {/* Quick toggles */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: 'var(--text-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>Quick Filters</label>
+                <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', cursor: 'pointer', fontSize: 'var(--text-sm)' }}>
+                  <input type="checkbox" checked={filterPaid} onChange={e => setFilterPaid(e.target.checked)} />
+                  Paid / Stipend
+                </label>
+                <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', cursor: 'pointer', fontSize: 'var(--text-sm)' }}>
+                  <input type="checkbox" checked={filterRemote} onChange={e => setFilterRemote(e.target.checked)} />
+                  Remote / Virtual
+                </label>
+              </div>
+
+              {/* Career stage */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: 'var(--text-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>Career Stage</label>
+                <select
+                  className="form-select"
+                  style={{ width: 'auto' }}
+                  value={filterCareerStage}
+                  onChange={e => setFilterCareerStage(e.target.value)}
+                >
+                  <option value="">Any stage</option>
+                  <option value="high_school">High School</option>
+                  <option value="undergraduate">Undergraduate</option>
+                  <option value="graduate">Graduate</option>
+                  <option value="phd">PhD</option>
+                  <option value="postdoc">Postdoc</option>
+                </select>
+              </div>
+
+              {/* Benefits */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: 'var(--text-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>Benefits</label>
+                <select
+                  className="form-select"
+                  style={{ width: 'auto' }}
+                  value={filterBenefit}
+                  onChange={e => setFilterBenefit(e.target.value)}
+                >
+                  <option value="">Any</option>
+                  <option value="housing">Housing</option>
+                  <option value="travel_funding">Travel Funding</option>
+                  <option value="academic_credit">Academic Credit</option>
+                  <option value="health_insurance">Health Insurance</option>
+                </select>
+              </div>
+
+              {/* Keywords */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: 'var(--text-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>Keywords</label>
+                <select
+                  className="form-select"
+                  style={{ width: 'auto' }}
+                  value={filterKeyword}
+                  onChange={e => setFilterKeyword(e.target.value)}
+                >
+                  <option value="">Any</option>
+                  <option value="prestigious">Prestigious</option>
+                  <option value="beginner_friendly">Beginner Friendly</option>
+                  <option value="research_intensive">Research Intensive</option>
+                  <option value="federal_program">Federal Program</option>
+                  <option value="industry_partner">Industry Partner</option>
+                </select>
+              </div>
+
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  style={{ alignSelf: 'flex-end' }}
+                  onClick={() => { setFilterPaid(false); setFilterRemote(false); setFilterCareerStage(''); setFilterBenefit(''); setFilterKeyword(''); }}
+                >
+                  Clear tag filters
+                </button>
+              )}
+            </div>
+          )}
 
           {/* Category chips */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem', marginBottom: 'var(--sp-lg)', overflowX: 'auto', paddingBottom: '0.25rem' }}>
@@ -123,13 +272,11 @@ export default function Opportunities() {
               <strong style={{ color: 'var(--text-strong)' }}>{filtered.length}</strong> programs
               {query ? ` matching "${query}"` : ''}
               {category !== 'All' ? ` in ${category}` : ''}
+              {hasActiveFilters ? ' (filtered)' : ''}
             </p>
-            {(query || category !== 'All') && (
-              <button
-                onClick={() => { setQuery(''); setCategory('All'); }}
-                className="btn btn-ghost btn-sm"
-              >
-                Clear filters
+            {(query || category !== 'All' || hasActiveFilters) && (
+              <button onClick={clearAll} className="btn btn-ghost btn-sm">
+                Clear all filters
               </button>
             )}
           </div>
@@ -153,7 +300,7 @@ export default function Opportunities() {
             <div className="empty-state">
               <h3>No programs found</h3>
               <p>Try adjusting your search or clearing filters.</p>
-              <button onClick={() => { setQuery(''); setCategory('All'); }} className="btn btn-outline" style={{ marginTop: 'var(--sp-md)' }}>
+              <button onClick={clearAll} className="btn btn-outline" style={{ marginTop: 'var(--sp-md)' }}>
                 Clear all filters
               </button>
             </div>
