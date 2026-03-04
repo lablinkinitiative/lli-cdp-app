@@ -160,6 +160,22 @@ export default function Onboarding() {
     }
   };
 
+  const pollResumeJob = async (jobId: string, token: string | null): Promise<ParsedResume> => {
+    const maxAttempts = 45; // poll every 2s, max 90s
+    for (let i = 0; i < maxAttempts; i++) {
+      await new Promise(r => setTimeout(r, 2000));
+      const statusRes = await fetch(`${API_BASE}/api/cdp/resume/status/${jobId}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!statusRes.ok) throw new Error('Could not check parse status');
+      const status = await statusRes.json();
+      if (status.status === 'complete') return status.parsed as ParsedResume;
+      if (status.status === 'error') throw new Error(status.error || 'Parse failed');
+      // still processing — keep polling
+    }
+    throw new Error('Parsing timed out. You can enter your info manually.');
+  };
+
   const handleResumeFile = async (file: File) => {
     if (!file) return;
     const allowed = /\.(pdf|doc|docx|txt)$/i;
@@ -188,7 +204,8 @@ export default function Onboarding() {
         throw new Error(data.error || `Parse failed (${res.status})`);
       }
 
-      const { parsed } = await res.json();
+      const { job_id } = await res.json();
+      const parsed = await pollResumeJob(job_id, token);
       applyParsed(parsed);
       setResumeParsed(true);
     } catch (err: unknown) {
@@ -345,8 +362,8 @@ export default function Onboarding() {
                 {uploading ? (
                   <div>
                     <div style={{ fontSize: '2.5rem', marginBottom: 'var(--sp-sm)' }}>⏳</div>
-                    <p style={{ color: 'var(--text-default)', fontWeight: 600, marginBottom: '0.25rem' }}>Reading your resume…</p>
-                    <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}>Extracting your info from {resumeFileName}</p>
+                    <p style={{ color: 'var(--text-default)', fontWeight: 600, marginBottom: '0.25rem' }}>Analyzing your resume with AI…</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}>Extracting your info from {resumeFileName} (may take ~30s)</p>
                   </div>
                 ) : resumeParsed ? (
                   <div>
