@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser, getStudentData, saveStudentData, updateCurrentUser } from '../auth';
 
+const API_BASE = (import.meta.env.VITE_API_URL as string) || 'https://app.lablinkinitiative.org';
+
+// Step -1 = Resume upload (pre-step, not shown in progress bar)
+// Steps 0-3 = About You, Career Interests, Your Skills, Your Goals
 const STEPS = ['About You', 'Career Interests', 'Your Skills', 'Your Goals'];
 
 const YEARS = ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate', 'PhD', 'Community College', 'Other'];
@@ -45,6 +49,9 @@ const SKILL_GROUPS = [
   },
 ];
 
+// All known skills for matching against resume-extracted skills
+const ALL_KNOWN_SKILLS = SKILL_GROUPS.flatMap(g => g.skills);
+
 const EXPERIENCE_LEVELS = [
   'No professional experience yet',
   '1 internship or research position',
@@ -70,12 +77,25 @@ const TIMELINES = [
   'Just exploring',
 ];
 
+interface ParsedResume {
+  name: string | null;
+  email: string | null;
+  gpa: string | null;
+  school: string | null;
+  major: string | null;
+  year: string | null;
+  gradYear: string | null;
+  skills: string[];
+  experience: { title: string; org: string; duration: string }[];
+}
+
 export default function Onboarding() {
   const navigate = useNavigate();
   const user = getCurrentUser()!;
   const existing = getStudentData(user.uid);
 
-  const [step, setStep] = useState(0);
+  // -1 = resume upload step, 0-3 = existing steps
+  const [step, setStep] = useState(-1);
   const [firstName, setFirstName] = useState(existing?.profile?.firstName || '');
   const [lastName, setLastName] = useState(existing?.profile?.lastName || '');
   const [school, setSchool] = useState(existing?.profile?.school || '');
@@ -91,8 +111,107 @@ export default function Onboarding() {
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
+  // Resume step state
+  const [dragging, setDragging] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [resumeFileName, setResumeFileName] = useState('');
+  const [resumeParsed, setResumeParsed] = useState(false);
+  const [parseError, setParseError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const toggleItem = (arr: string[], setArr: (v: string[]) => void, val: string) => {
     setArr(arr.includes(val) ? arr.filter(x => x !== val) : [...arr, val]);
+  };
+
+  // Pre-fill form fields from parsed resume data
+  const applyParsed = (parsed: ParsedResume) => {
+    if (parsed.name) {
+      const parts = parsed.name.trim().split(/\s+/);
+      if (parts[0] && !firstName) setFirstName(parts[0]);
+      if (parts.length > 1 && !lastName) setLastName(parts.slice(1).join(' '));
+    }
+    if (parsed.school && !school) setSchool(parsed.school);
+    if (parsed.major && !major) setMajor(parsed.major);
+    if (parsed.gpa && !gpa) setGpa(parsed.gpa);
+    if (parsed.year && YEARS.includes(parsed.year) && !year) setYear(parsed.year);
+    if (parsed.gradYear && GRAD_YEARS.includes(parsed.gradYear) && !gradYear) setGradYear(parsed.gradYear);
+    if (parsed.skills && parsed.skills.length > 0) {
+      // Match against our known skills list (case-insensitive partial match)
+      const matched = ALL_KNOWN_SKILLS.filter(known =>
+        parsed.skills.some(s =>
+          s.toLowerCase().includes(known.toLowerCase()) ||
+          known.toLowerCase().includes(s.toLowerCase())
+        )
+      );
+      // Also keep any extra skills from resume that don't match known ones
+      const extras = parsed.skills.filter(s =>
+        !ALL_KNOWN_SKILLS.some(known =>
+          s.toLowerCase().includes(known.toLowerCase()) ||
+          known.toLowerCase().includes(s.toLowerCase())
+        )
+      );
+      const merged = Array.from(new Set([...skills, ...matched, ...extras]));
+      setSkills(merged);
+    }
+    // Infer experience level from number of positions
+    if (parsed.experience && parsed.experience.length > 0 && !experienceLevel) {
+      if (parsed.experience.length >= 2) setExperienceLevel('2+ internships or research positions');
+      else setExperienceLevel('1 internship or research position');
+    }
+  };
+
+  const handleResumeFile = async (file: File) => {
+    if (!file) return;
+    const allowed = /\.(pdf|doc|docx|txt)$/i;
+    if (!allowed.test(file.name)) {
+      setParseError('Please upload a PDF, Word document, or plain text file.');
+      return;
+    }
+    setResumeFileName(file.name);
+    setUploading(true);
+    setParseError('');
+    setResumeParsed(false);
+
+    try {
+      const token = localStorage.getItem('cdp_token');
+      const formData = new FormData();
+      formData.append('resume', file);
+
+      const res = await fetch(`${API_BASE}/api/cdp/resume/parse`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Parse failed (${res.status})`);
+      }
+
+      const { parsed } = await res.json();
+      applyParsed(parsed);
+      setResumeParsed(true);
+    } catch (err: unknown) {
+      setParseError(err instanceof Error ? err.message : 'Failed to parse resume. You can enter your info manually.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) handleResumeFile(file);
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleResumeFile(file);
+  };
+
+  const skipResume = () => {
+    setStep(0);
   };
 
   const validateStep = (): string | null => {
@@ -112,7 +231,6 @@ export default function Onboarding() {
     if (err) { setError(err); return; }
     setError('');
 
-    // Save current step data
     const partial: Record<string, unknown> = {};
     if (step === 0) {
       partial.profile = {
@@ -132,7 +250,6 @@ export default function Onboarding() {
     if (step < STEPS.length - 1) {
       setStep(s => s + 1);
     } else {
-      // Complete onboarding
       setSaving(true);
       updateCurrentUser({ firstName, lastName, onboardingComplete: true });
       navigate('/dashboard');
@@ -141,7 +258,8 @@ export default function Onboarding() {
 
   const handleBack = () => {
     setError('');
-    setStep(s => s - 1);
+    if (step === 0) setStep(-1);
+    else setStep(s => s - 1);
   };
 
   return (
@@ -153,19 +271,23 @@ export default function Onboarding() {
             Lab<em style={{ fontStyle: 'normal', color: 'var(--accent-lime)' }}>Link</em> CDP
           </a>
           <h1 style={{ fontSize: 'var(--text-2xl)', color: 'var(--text-strong)', marginBottom: '0.25rem' }}>
-            Set up your profile
+            {step === -1 ? 'Set up your profile' : `Set up your profile`}
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}>
-            Step {step + 1} of {STEPS.length} — {STEPS[step]}
+            {step === -1
+              ? 'Upload your resume to get started instantly'
+              : `Step ${step + 1} of ${STEPS.length} — ${STEPS[step]}`}
           </p>
         </div>
 
-        {/* Progress */}
-        <div className="onboarding-progress" role="progressbar" aria-valuenow={step + 1} aria-valuemin={1} aria-valuemax={STEPS.length}>
-          {STEPS.map((_, i) => (
-            <div key={i} className={`onboarding-step-dot ${i < step ? 'complete' : i === step ? 'active' : ''}`} />
-          ))}
-        </div>
+        {/* Progress — only show on steps 0-3 */}
+        {step >= 0 && (
+          <div className="onboarding-progress" role="progressbar" aria-valuenow={step + 1} aria-valuemin={1} aria-valuemax={STEPS.length}>
+            {STEPS.map((_, i) => (
+              <div key={i} className={`onboarding-step-dot ${i < step ? 'complete' : i === step ? 'active' : ''}`} />
+            ))}
+          </div>
+        )}
 
         {/* Card */}
         <div className="card" style={{ padding: 'var(--sp-xl)' }}>
@@ -173,10 +295,116 @@ export default function Onboarding() {
             <div className="alert alert-error mb-md" role="alert">{error}</div>
           )}
 
+          {/* Step -1 — Resume Upload */}
+          {step === -1 && (
+            <div>
+              <h2 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-xl)', marginBottom: '0.375rem' }}>
+                Upload your resume
+              </h2>
+              <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', marginBottom: 'var(--sp-lg)' }}>
+                We'll extract your info automatically — review and confirm before finishing.
+              </p>
+
+              {/* Drop zone */}
+              <div
+                onDragOver={e => { e.preventDefault(); setDragging(true); }}
+                onDragLeave={() => setDragging(false)}
+                onDrop={handleDrop}
+                onClick={() => !uploading && fileInputRef.current?.click()}
+                role="button"
+                tabIndex={0}
+                aria-label="Upload resume — click or drag and drop"
+                onKeyDown={e => e.key === 'Enter' && fileInputRef.current?.click()}
+                style={{
+                  border: `2px dashed ${dragging ? 'var(--brand-500)' : resumeParsed ? 'var(--success)' : 'var(--border)'}`,
+                  background: dragging ? 'var(--brand-50)' : resumeParsed ? 'var(--success-bg)' : 'var(--surface)',
+                  borderRadius: 'var(--radius-lg)',
+                  textAlign: 'center',
+                  padding: 'var(--sp-2xl) var(--sp-xl)',
+                  cursor: uploading ? 'wait' : 'pointer',
+                  transition: 'all 0.15s',
+                  marginBottom: 'var(--sp-md)',
+                }}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,.doc,.docx,.txt"
+                  onChange={handleFileInput}
+                  style={{ display: 'none' }}
+                  aria-hidden="true"
+                />
+                {uploading ? (
+                  <div>
+                    <div style={{ fontSize: '2.5rem', marginBottom: 'var(--sp-sm)' }}>⏳</div>
+                    <p style={{ color: 'var(--text-default)', fontWeight: 600, marginBottom: '0.25rem' }}>Parsing with AI…</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}>Extracting your info from {resumeFileName}</p>
+                  </div>
+                ) : resumeParsed ? (
+                  <div>
+                    <div style={{ fontSize: '2.5rem', marginBottom: 'var(--sp-sm)' }}>✓</div>
+                    <p style={{ color: 'var(--success)', fontWeight: 700, marginBottom: '0.25rem' }}>Resume parsed successfully!</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}>{resumeFileName}</p>
+                    <p style={{ color: 'var(--text-faint)', fontSize: 'var(--text-xs)', marginTop: '0.5rem' }}>Click to upload a different file</p>
+                  </div>
+                ) : (
+                  <div>
+                    <svg style={{ marginBottom: 'var(--sp-sm)', opacity: 0.4 }} width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <p style={{ color: 'var(--text-default)', fontWeight: 600, marginBottom: '0.375rem', fontSize: 'var(--text-lg)' }}>Drop your resume here</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', marginBottom: 'var(--sp-sm)' }}>or click to browse files</p>
+                    <p style={{ color: 'var(--text-faint)', fontSize: 'var(--text-xs)' }}>PDF, Word, or plain text · Max 5MB</p>
+                  </div>
+                )}
+              </div>
+
+              {parseError && (
+                <div className="alert alert-error mb-md" role="alert" style={{ fontSize: 'var(--text-sm)' }}>
+                  {parseError}
+                </div>
+              )}
+
+              {/* CTA row */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'var(--sp-sm)' }}>
+                <button
+                  type="button"
+                  onClick={skipResume}
+                  className="btn btn-ghost btn-sm"
+                  style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}
+                >
+                  I'll enter my info manually →
+                </button>
+                {resumeParsed && !uploading && (
+                  <button
+                    type="button"
+                    onClick={() => { setError(''); setStep(0); }}
+                    className="btn btn-primary"
+                  >
+                    Continue →
+                  </button>
+                )}
+              </div>
+
+              {/* Note */}
+              <p style={{ color: 'var(--text-faint)', fontSize: 'var(--text-xs)', marginTop: 'var(--sp-md)', textAlign: 'center' }}>
+                Your file is processed and not stored on our servers.
+              </p>
+            </div>
+          )}
+
           {/* Step 0 — About You */}
           {step === 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-md)' }}>
               <h2 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-xl)', marginBottom: 'var(--sp-xs)' }}>About You</h2>
+              {resumeParsed && (
+                <div style={{ background: 'var(--success-bg)', border: '1px solid rgba(5,150,105,0.2)', borderRadius: 'var(--radius-md)', padding: 'var(--sp-sm) var(--sp-md)', fontSize: 'var(--text-sm)', color: 'var(--success)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  Fields pre-filled from your resume — review and edit as needed.
+                </div>
+              )}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-md)' }}>
                 <div className="form-group">
                   <label className="form-label" htmlFor="firstName">First name <span aria-hidden="true">*</span></label>
@@ -239,7 +467,10 @@ export default function Onboarding() {
           {step === 2 && (
             <div>
               <h2 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-xl)', marginBottom: '0.375rem' }}>Your Skills</h2>
-              <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', marginBottom: 'var(--sp-md)' }}>What skills do you already have? Check all that apply.</p>
+              <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', marginBottom: 'var(--sp-md)' }}>
+                What skills do you already have? Check all that apply.
+                {resumeParsed && <span style={{ color: 'var(--success)', fontWeight: 600 }}> We pre-selected skills found in your resume.</span>}
+              </p>
               {SKILL_GROUPS.map(group => (
                 <div key={group.label} style={{ marginBottom: 'var(--sp-md)' }}>
                   <div style={{ fontSize: 'var(--text-xs)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
@@ -312,17 +543,15 @@ export default function Onboarding() {
           )}
         </div>
 
-        {/* Navigation */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 'var(--sp-md)' }}>
-          {step > 0 ? (
+        {/* Navigation — only on steps 0-3 */}
+        {step >= 0 && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 'var(--sp-md)' }}>
             <button onClick={handleBack} className="btn btn-ghost">← Back</button>
-          ) : (
-            <div />
-          )}
-          <button onClick={handleNext} disabled={saving} className="btn btn-primary">
-            {saving ? 'Saving…' : step === STEPS.length - 1 ? 'Complete Setup →' : 'Next →'}
-          </button>
-        </div>
+            <button onClick={handleNext} disabled={saving} className="btn btn-primary">
+              {saving ? 'Saving…' : step === STEPS.length - 1 ? 'Complete Setup →' : 'Next →'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
