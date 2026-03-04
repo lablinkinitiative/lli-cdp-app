@@ -49,8 +49,6 @@ const SKILL_GROUPS = [
   },
 ];
 
-// All known skills for matching against resume-extracted skills
-const ALL_KNOWN_SKILLS = SKILL_GROUPS.flatMap(g => g.skills);
 
 const EXPERIENCE_LEVELS = [
   'No professional experience yet',
@@ -77,17 +75,6 @@ const TIMELINES = [
   'Just exploring',
 ];
 
-interface ParsedResume {
-  name: string | null;
-  email: string | null;
-  gpa: string | null;
-  school: string | null;
-  major: string | null;
-  year: string | null;
-  gradYear: string | null;
-  skills: string[];
-  experience: { title: string; org: string; duration: string }[];
-}
 
 export default function Onboarding() {
   const navigate = useNavigate();
@@ -123,58 +110,6 @@ export default function Onboarding() {
     setArr(arr.includes(val) ? arr.filter(x => x !== val) : [...arr, val]);
   };
 
-  // Pre-fill form fields from parsed resume data
-  const applyParsed = (parsed: ParsedResume) => {
-    if (parsed.name) {
-      const parts = parsed.name.trim().split(/\s+/);
-      if (parts[0] && !firstName) setFirstName(parts[0]);
-      if (parts.length > 1 && !lastName) setLastName(parts.slice(1).join(' '));
-    }
-    if (parsed.school && !school) setSchool(parsed.school);
-    if (parsed.major && !major) setMajor(parsed.major);
-    if (parsed.gpa && !gpa) setGpa(parsed.gpa);
-    if (parsed.year && YEARS.includes(parsed.year) && !year) setYear(parsed.year);
-    if (parsed.gradYear && GRAD_YEARS.includes(parsed.gradYear) && !gradYear) setGradYear(parsed.gradYear);
-    if (parsed.skills && parsed.skills.length > 0) {
-      // Match against our known skills list (case-insensitive partial match)
-      const matched = ALL_KNOWN_SKILLS.filter(known =>
-        parsed.skills.some(s =>
-          s.toLowerCase().includes(known.toLowerCase()) ||
-          known.toLowerCase().includes(s.toLowerCase())
-        )
-      );
-      // Also keep any extra skills from resume that don't match known ones
-      const extras = parsed.skills.filter(s =>
-        !ALL_KNOWN_SKILLS.some(known =>
-          s.toLowerCase().includes(known.toLowerCase()) ||
-          known.toLowerCase().includes(s.toLowerCase())
-        )
-      );
-      const merged = Array.from(new Set([...skills, ...matched, ...extras]));
-      setSkills(merged);
-    }
-    // Infer experience level from number of positions
-    if (parsed.experience && parsed.experience.length > 0 && !experienceLevel) {
-      if (parsed.experience.length >= 2) setExperienceLevel('2+ internships or research positions');
-      else setExperienceLevel('1 internship or research position');
-    }
-  };
-
-  const pollResumeJob = async (jobId: string, token: string | null): Promise<ParsedResume> => {
-    const maxAttempts = 45; // poll every 2s, max 90s
-    for (let i = 0; i < maxAttempts; i++) {
-      await new Promise(r => setTimeout(r, 2000));
-      const statusRes = await fetch(`${API_BASE}/api/cdp/resume/status/${jobId}`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      if (!statusRes.ok) throw new Error('Could not check parse status');
-      const status = await statusRes.json();
-      if (status.status === 'complete') return status.parsed as ParsedResume;
-      if (status.status === 'error') throw new Error(status.error || 'Parse failed');
-      // still processing — keep polling
-    }
-    throw new Error('Parsing timed out. You can enter your info manually.');
-  };
 
   const handleResumeFile = async (file: File) => {
     if (!file) return;
@@ -205,9 +140,18 @@ export default function Onboarding() {
       }
 
       const { job_id } = await res.json();
-      const parsed = await pollResumeJob(job_id, token);
-      applyParsed(parsed);
-      setResumeParsed(true);
+
+      // Store job for background processing — ResumeParseNotification in App.tsx polls this
+      localStorage.setItem('cdp_resume_job', JSON.stringify({
+        job_id,
+        file_name: file.name,
+        started_at: Date.now(),
+      }));
+
+      // Mark onboarding complete and go straight to opportunities
+      updateCurrentUser({ onboardingComplete: true });
+      navigate('/opportunities');
+      return;
     } catch (err: unknown) {
       setParseError(err instanceof Error ? err.message : 'Failed to parse resume. You can enter your info manually.');
     } finally {
