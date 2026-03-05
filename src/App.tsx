@@ -9,6 +9,8 @@ import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import Opportunities from './pages/Opportunities';
 import PathwayGap from './pages/PathwayGap';
+import PathwayDashboard from './pages/PathwayDashboard';
+import PathwayExplorer from './pages/PathwayExplorer';
 import ResumePage from './pages/ResumePage';
 import Saved from './pages/Saved';
 import Profile from './pages/Profile';
@@ -176,6 +178,8 @@ function App() {
         <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/opportunities" element={<ProtectedRoute><Opportunities /></ProtectedRoute>} />
+        <Route path="/pathways" element={<ProtectedRoute><PathwayDashboard /></ProtectedRoute>} />
+        <Route path="/pathways/explore" element={<ProtectedRoute><PathwayExplorer /></ProtectedRoute>} />
         <Route path="/pathway/:id" element={<ProtectedRoute><PathwayGap /></ProtectedRoute>} />
         <Route path="/resume" element={<ProtectedRoute><ResumePage /></ProtectedRoute>} />
         <Route path="/saved" element={<ProtectedRoute><Saved /></ProtectedRoute>} />

@@ -30,22 +30,6 @@ export default function Dashboard() {
         .slice(0, 3)
     : programs.slice(0, 3).map(p => ({ program: p, score: 0 }));
 
-  // Suggested pathway based on interests
-  const interestToPathway: Record<string, string> = {
-    'Research at a National Lab': 'doe-research-stem',
-    'AI / Software / Data Science': 'ai-ml-research',
-    'Engineering (Mechanical, Electrical, Civil)': 'mechanical-engineering',
-    'Biology / Life Sciences': 'life-sciences',
-    'Environmental Science': 'environmental-science',
-    'Clean Energy': 'clean-energy',
-    'Business & Analytics': 'business-analytics',
-    'Policy & Regulatory': 'energy-policy',
-    'Federal Government Agency (NASA, EPA, DOE)': 'doe-research-stem',
-  };
-  const firstInterest = student?.interests?.[0] || '';
-  const suggestedPathwayId = interestToPathway[firstInterest] || 'doe-research-stem';
-  const suggestedPathway = pathways.find(p => p.id === suggestedPathwayId) || pathways[0];
-
   const savedCount = student?.savedPrograms?.length || 0;
   const analysesCount = student?.gapAnalyses?.length || 0;
 
@@ -119,7 +103,7 @@ export default function Dashboard() {
                   <Link to="/resume" className="btn btn-outline btn-sm">Upload your resume</Link>
                 )}
                 {analysesCount === 0 && (
-                  <Link to={`/pathway/${suggestedPathwayId}`} className="btn btn-ghost btn-sm">Run gap analysis →</Link>
+                  <Link to="/pathways" className="btn btn-ghost btn-sm">View career pathways →</Link>
                 )}
               </div>
             </div>
@@ -165,50 +149,46 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Career Pathway */}
+          {/* Career Pathways — link to new PathwayDashboard */}
           <div style={{ marginBottom: 'var(--sp-xl)' }}>
             <div className="section-header">
-              <h2>Your Career Pathway</h2>
-              <Link to="/pathway/doe-research-stem" style={{ color: 'var(--brand-700)', fontSize: 'var(--text-sm)', textDecoration: 'underline' }}>All pathways →</Link>
+              <h2>Your Career Pathways</h2>
+              <Link to="/pathways/explore" style={{ color: 'var(--brand-700)', fontSize: 'var(--text-sm)', textDecoration: 'underline' }}>Explore all pathways →</Link>
             </div>
-            <div className="card" style={{ display: 'flex', gap: 'var(--sp-lg)', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-              <div style={{ flex: 1, minWidth: 260 }}>
-                <div className="badge badge-lime" style={{ marginBottom: 'var(--sp-sm)' }}>
-                  {student?.interests?.length ? 'Based on your interests' : 'Suggested pathway'}
-                </div>
-                <h3 style={{ fontSize: 'var(--text-xl)', color: 'var(--text-strong)', marginBottom: '0.375rem' }}>
-                  {suggestedPathway.name}
-                </h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)', lineHeight: 1.6, marginBottom: 'var(--sp-md)' }}>
-                  {suggestedPathway.description}
+            {completeness >= 60 ? (
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}>
+                  Your profile is ready for personalized career pathway analysis.
                 </p>
-                <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', marginBottom: 'var(--sp-md)' }}>
-                  <strong>Time to ready:</strong> {suggestedPathway.timeToReady}
-                </div>
-                <Link to={`/pathway/${suggestedPathway.id}`} className="btn btn-primary btn-sm">
-                  Run gap analysis →
+                <Link to="/pathways" className="btn btn-primary btn-sm" style={{ alignSelf: 'flex-start' }}>
+                  View My Career Pathways →
                 </Link>
               </div>
-              <div style={{ flexShrink: 0, background: 'var(--surface)', borderRadius: 'var(--radius-md)', padding: 'var(--sp-md)', minWidth: 200 }}>
-                <div style={{ fontSize: 'var(--text-xs)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-                  Key skills needed
-                </div>
-                {suggestedPathway.skills?.slice(0, 5).map((skill: { name: string; weight: number }) => (
-                  <div key={skill.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.3rem 0', borderBottom: '1px solid var(--border)', fontSize: 'var(--text-xs)' }}>
-                    <span style={{ color: 'var(--text-default)' }}>{skill.name.length > 32 ? skill.name.slice(0, 30) + '…' : skill.name}</span>
-                    <span style={{ color: 'var(--text-muted)', flexShrink: 0, marginLeft: '0.5rem' }}>
-                      {'★'.repeat(skill.weight)}{'☆'.repeat(5 - skill.weight)}
-                    </span>
+            ) : (
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <span style={{ fontSize: '1.5rem' }}>🔒</span>
+                  <div>
+                    <div style={{ fontWeight: 700, color: 'var(--text-strong)', fontSize: 'var(--text-sm)' }}>Unlock Career Pathways</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
+                      Complete {60 - completeness}% more of your profile to unlock personalized pathways
+                    </div>
                   </div>
-                ))}
+                </div>
+                <div className="progress-bar">
+                  <div className="progress-bar-fill" style={{ width: `${Math.round((completeness / 60) * 100)}%` }} />
+                </div>
+                <Link to="/profile" className="btn btn-outline btn-sm" style={{ alignSelf: 'flex-start' }}>
+                  Complete Profile →
+                </Link>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* Other pathways */}
+          {/* Explore Pathways */}
           <div>
             <div className="section-header">
-              <h2 style={{ fontSize: 'var(--text-lg)' }}>Explore Other Pathways</h2>
+              <h2 style={{ fontSize: 'var(--text-lg)' }}>Explore Career Pathways</h2>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
               {pathways.slice(0, 8).map((p) => (
@@ -221,8 +201,8 @@ export default function Dashboard() {
                   {p.shortName}
                 </Link>
               ))}
-              <Link to="/pathway/doe-research-stem" className="badge badge-muted" style={{ textDecoration: 'none', fontSize: 'var(--text-sm)', padding: '0.4rem 0.875rem' }}>
-                View all 14 →
+              <Link to="/pathways/explore" className="badge badge-muted" style={{ textDecoration: 'none', fontSize: 'var(--text-sm)', padding: '0.4rem 0.875rem' }}>
+                View all 15 →
               </Link>
             </div>
           </div>
