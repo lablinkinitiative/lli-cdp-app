@@ -20,6 +20,20 @@ export interface StudentProfile {
   updatedAt: string;
 }
 
+export type ExperienceType = 'work' | 'research' | 'education' | 'leadership' | 'volunteer' | 'other';
+
+export interface ExperienceEntry {
+  id: string;
+  type: ExperienceType;
+  title: string;
+  org: string;
+  duration: string;        // human-readable: "May 2023 – Aug 2023"
+  startDate?: string;      // "YYYY-MM" for sorting
+  endDate?: string | null; // null = present/ongoing
+  description?: string;
+  skills?: string[];
+}
+
 export interface StudentData {
   profile: StudentProfile;
   interests: string[];
@@ -32,6 +46,7 @@ export interface StudentData {
   savedPrograms: string[];
   gapAnalyses: GapAnalysis[];
   resumeUploaded: boolean;
+  experience?: ExperienceEntry[];
 }
 
 export interface GapAnalysis {

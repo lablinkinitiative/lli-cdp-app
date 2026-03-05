@@ -205,6 +205,7 @@ function getDefaultStudentData(_uid: string, email: string): StudentData {
     savedPrograms: [],
     gapAnalyses: [],
     resumeUploaded: false,
+    experience: [],
   };
 }
 
@@ -216,10 +217,11 @@ function calculateCompleteness(data: StudentData): number {
   if (data.profile.year) score += 10;
   if (data.profile.major) score += 10;
   if (data.interests.length > 0) score += 15;
-  if (data.skills.length > 0) score += 15;
+  if (data.skills.length > 0) score += 10;
   if (data.goals.length > 0) score += 10;
   if (data.targetTimeline) score += 5;
   if (data.gpa) score += 5;
   if (data.resumeUploaded) score += 5;
+  if (data.experience && data.experience.length > 0) score += 5;
   return Math.min(100, score);
 }

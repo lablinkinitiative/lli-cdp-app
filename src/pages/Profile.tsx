@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Nav from '../components/Nav';
+import ExperienceTimeline from '../components/ExperienceTimeline';
 import { getCurrentUser, getStudentData, saveStudentData, updateCurrentUser } from '../auth';
-import type { StudentData } from '../types';
+import type { StudentData, ExperienceEntry } from '../types';
 
 const YEARS = ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate', 'PhD', 'Community College', 'Other'];
 const GRAD_YEARS = ['2025', '2026', '2027', '2028', '2029', '2030'];
@@ -73,6 +74,11 @@ export default function Profile() {
   const [goals, setGoals] = useState<string[]>([]);
   const [timeline, setTimeline] = useState('');
 
+  // Experience timeline
+  const [experience, setExperience] = useState<ExperienceEntry[]>([]);
+  const [savingTimeline, setSavingTimeline] = useState(false);
+  const [savedTimeline, setSavedTimeline] = useState(false);
+
   useEffect(() => {
     const data = getStudentData(user.uid);
     setStudent(data);
@@ -89,6 +95,7 @@ export default function Profile() {
       setExperienceLevel(data.experienceLevel || '');
       setGoals(data.goals || []);
       setTimeline(data.targetTimeline || '');
+      setExperience(data.experience || []);
     }
   }, [user.uid]);
 
@@ -121,6 +128,17 @@ export default function Profile() {
     setSavedSection(section);
     setEditingSection(null);
     setTimeout(() => setSavedSection(null), 2500);
+  };
+
+  const saveTimeline = async (entries: ExperienceEntry[]) => {
+    setSavingTimeline(true);
+    saveStudentData(user.uid, { experience: entries });
+    setExperience(entries);
+    const refreshed = getStudentData(user.uid);
+    setStudent(refreshed);
+    setSavingTimeline(false);
+    setSavedTimeline(true);
+    setTimeout(() => setSavedTimeline(false), 2500);
   };
 
   const cancelEdit = (section: Section) => {
@@ -334,6 +352,17 @@ export default function Profile() {
                     ))}
                   </div>
                 )}
+              </div>
+
+              {/* Experience Timeline */}
+              <div className="card">
+                <ExperienceTimeline
+                  entries={experience}
+                  onChange={setExperience}
+                  onSave={saveTimeline}
+                  saving={savingTimeline}
+                  saved={savedTimeline}
+                />
               </div>
 
               {/* Career Interests */}
