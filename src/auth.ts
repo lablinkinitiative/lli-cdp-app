@@ -114,6 +114,7 @@ export function getStudentData(uid: string): StudentData | null {
 
 export function saveStudentData(uid: string, data: Partial<StudentData>): void {
   const existing = getStudentData(uid) || getDefaultStudentData(uid, '');
+  const prevCompleteness = existing.profileCompleteness || 0;
   const merged: StudentData = {
     ...existing,
     ...data,
@@ -123,6 +124,23 @@ export function saveStudentData(uid: string, data: Partial<StudentData>): void {
   localStorage.setItem(`${DATA_KEY}_${uid}`, JSON.stringify(merged));
   // Fire-and-forget API sync
   syncStudentDataToApi(merged).catch(() => {});
+  // Auto-init gap analyses when completeness crosses 60% threshold
+  if (prevCompleteness < 60 && merged.profileCompleteness >= 60) {
+    triggerAutoInitGapAnalysis().catch(() => {});
+  }
+}
+
+async function triggerAutoInitGapAnalysis(): Promise<void> {
+  const token = getToken();
+  if (!token) return;
+  try {
+    await fetch(`${API_BASE}/api/cdp/gap-analysis/auto-init`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    });
+  } catch {
+    // Silently fail — auto-init is best-effort
+  }
 }
 
 export function initStudentData(uid: string, email: string): void {

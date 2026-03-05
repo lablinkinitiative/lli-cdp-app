@@ -7,16 +7,45 @@ import type { StudentData, Program } from '../types';
 import programsData from '../data/programs.json';
 import pathwaysData from '../data/pathways.json';
 
+const API_BASE = (import.meta.env.VITE_API_URL as string) || 'https://app.lablinkinitiative.org';
+
 const programs = programsData.programs as unknown as Program[];
 const pathways = pathwaysData.pathways;
+
+interface AgenticAnalysisSummary {
+  total: number;
+  complete: number;
+  queued: number;
+  processing: number;
+}
 
 export default function Dashboard() {
   const user = getCurrentUser()!;
   const [student, setStudent] = useState<StudentData | null>(null);
+  const [agenticAnalyses, setAgenticAnalyses] = useState<AgenticAnalysisSummary | null>(null);
+  const token = localStorage.getItem('cdp_token');
 
   useEffect(() => {
     setStudent(getStudentData(user.uid));
   }, [user.uid]);
+
+  useEffect(() => {
+    if (!token) return;
+    fetch(`${API_BASE}/api/cdp/gap-analyses`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.ok && data.analyses) {
+          const total = data.analyses.length;
+          const complete = data.analyses.filter((a: { status: string }) => a.status === 'complete').length;
+          const queued = data.analyses.filter((a: { status: string }) => a.status === 'queued').length;
+          const processing = data.analyses.filter((a: { status: string }) => a.status === 'processing').length;
+          setAgenticAnalyses({ total, complete, queued, processing });
+        }
+      })
+      .catch(() => {});
+  }, [token]);
 
   const firstName = user.firstName || student?.profile?.firstName || user.email.split('@')[0];
   const completeness = student?.profileCompleteness || 0;
@@ -31,7 +60,8 @@ export default function Dashboard() {
     : programs.slice(0, 3).map(p => ({ program: p, score: 0 }));
 
   const savedCount = student?.savedPrograms?.length || 0;
-  const analysesCount = student?.gapAnalyses?.length || 0;
+  const analysesCount = agenticAnalyses?.complete || student?.gapAnalyses?.length || 0;
+  const analysesPending = (agenticAnalyses?.queued || 0) + (agenticAnalyses?.processing || 0);
 
   return (
     <>
@@ -90,6 +120,51 @@ export default function Dashboard() {
         </div>
 
         <div style={{ maxWidth: 1160, margin: '0 auto', padding: 'var(--sp-lg) 1.25rem var(--sp-2xl)' }}>
+
+          {/* Agentic analysis notification */}
+          {analysesPending > 0 && (
+            <div style={{
+              background: 'rgba(154,184,46,0.08)',
+              border: '1px solid rgba(154,184,46,0.25)',
+              borderRadius: 'var(--radius-lg)',
+              padding: 'var(--sp-md)',
+              marginBottom: 'var(--sp-lg)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 'var(--sp-md)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--brand-500)', animation: 'dashPulse 1.5s ease-in-out infinite', flexShrink: 0 }} />
+                <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-default)' }}>
+                  <strong>Analyzing your profile…</strong> {analysesPending} pathway {analysesPending === 1 ? 'analysis' : 'analyses'} in progress (usually 30–60 seconds each)
+                </span>
+              </div>
+              <Link to="/pathway/doe-research-stem" className="btn btn-ghost btn-sm" style={{ flexShrink: 0 }}>
+                View →
+              </Link>
+            </div>
+          )}
+          {agenticAnalyses && agenticAnalyses.complete > 0 && analysesPending === 0 && (
+            <div style={{
+              background: 'rgba(21,128,61,0.06)',
+              border: '1px solid rgba(21,128,61,0.2)',
+              borderRadius: 'var(--radius-lg)',
+              padding: 'var(--sp-md)',
+              marginBottom: 'var(--sp-lg)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 'var(--sp-md)',
+            }}>
+              <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-default)' }}>
+                <strong style={{ color: 'var(--success)' }}>✓ {agenticAnalyses.complete} pathway {agenticAnalyses.complete === 1 ? 'analysis' : 'analyses'} ready</strong> — See your personalized career readiness scores
+              </span>
+              <Link to="/pathway/doe-research-stem" className="btn btn-primary btn-sm" style={{ flexShrink: 0 }}>
+                View Analyses →
+              </Link>
+            </div>
+          )}
 
           {/* Quick Actions */}
           {(!student?.profile?.firstName || completeness < 50 || !student?.resumeUploaded) && (
@@ -208,6 +283,13 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+
+      <style>{`
+        @keyframes dashPulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.4; transform: scale(0.85); }
+        }
+      `}</style>
     </>
   );
 }
