@@ -312,6 +312,7 @@ export default function PathwayGap() {
   const [loadingAnalyses, setLoadingAnalyses] = useState(true);
   const [runningAnalysis, setRunningAnalysis] = useState(false);
   const [pollingId, setPollingId] = useState<string | null>(null);
+  const [runError, setRunError] = useState<string | null>(null);
 
   const selectedPathway = pathways.find(p => p.id === selectedPathwayId) || pathways[0];
   const activeAnalysis = analyses.find(a => a.pathwayId === selectedPathwayId) || null;
@@ -358,6 +359,7 @@ export default function PathwayGap() {
 
   const runAnalysis = async (pathwayId: string, force = false) => {
     setRunningAnalysis(true);
+    setRunError(null);
     try {
       const res = await fetch(`${API_BASE}/api/cdp/gap-analysis/run`, {
         method: 'POST',
@@ -407,8 +409,8 @@ export default function PathwayGap() {
         });
         setPollingId(data.job_id);
       }
-    } catch (err: unknown) {
-      console.error('Run analysis error:', err);
+    } catch {
+      setRunError('Failed to start analysis. Please try again.');
       setRunningAnalysis(false);
     }
   };
@@ -532,6 +534,12 @@ export default function PathwayGap() {
                   ) : null}
                 </div>
               </div>
+
+              {runError && (
+                <div style={{ color: 'var(--error, #dc2626)', fontSize: 'var(--text-sm)', padding: '0.5rem 0.75rem', background: 'rgba(220,38,38,0.06)', borderRadius: 'var(--radius-md)', marginBottom: 'var(--sp-md)', border: '1px solid rgba(220,38,38,0.2)' }}>
+                  {runError}
+                </div>
+              )}
 
               {/* Analysis output or prompt */}
               {!activeAnalysis ? (

@@ -171,7 +171,10 @@ export function unsaveProgram(uid: string, programId: string): void {
 
 export function updateCurrentUser(updates: Partial<User>): void {
   const cached = localStorage.getItem(USER_KEY);
-  const extra = cached ? JSON.parse(cached) : {};
+  let extra: Partial<User> = {};
+  if (cached) {
+    try { extra = JSON.parse(cached); } catch { /* ignore corrupt cache */ }
+  }
   localStorage.setItem(USER_KEY, JSON.stringify({ ...extra, ...updates }));
 }
 

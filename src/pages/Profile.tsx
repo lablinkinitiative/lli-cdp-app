@@ -201,7 +201,7 @@ export default function Profile() {
 
   async function wipeAccount() {
     const confirmed = window.confirm(
-      'PERMANENT ACCOUNT WIPE\n\nThis will permanently delete your account and ALL your data:\n• Profile and settings\n• Saved programs\n• Gap analyses\n• Uploaded resumes\n• Career pathways\n\nThis CANNOT be undone. Type OK to confirm.'
+      'PERMANENT ACCOUNT WIPE\n\nThis will permanently delete your account and ALL your data:\n• Profile and settings\n• Saved programs\n• Gap analyses\n• Uploaded resumes\n• Career pathways\n\nThis CANNOT be undone. Click OK to confirm.'
     );
     if (!confirmed) return;
 

@@ -46,10 +46,12 @@ function ResumeCard({ resume, onDelete, onRename, onStatusUpdate }: ResumeCardPr
   const [labelDraft, setLabelDraft] = useState(resume.label);
   const [deleting, setDeleting] = useState(false);
 
-  // Poll status while processing
+  // Poll status while processing — max 100 attempts (~5 minutes)
   useEffect(() => {
     if (resume.status !== 'processing') return;
+    let attempts = 0;
     const interval = setInterval(async () => {
+      attempts++;
       try {
         const res = await fetch(`${API_BASE}/api/cdp/resumes/${resume.id}/status`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -60,6 +62,10 @@ function ResumeCard({ resume, onDelete, onRename, onStatusUpdate }: ResumeCardPr
           clearInterval(interval);
         }
       } catch {}
+      if (attempts >= 100) {
+        onStatusUpdate(resume.id, { status: 'error', parsed_summary: null, error: 'Parsing timed out. Please try again.' });
+        clearInterval(interval);
+      }
     }, 3000);
     return () => clearInterval(interval);
   }, [resume.id, resume.status, token, onStatusUpdate]);

@@ -89,6 +89,15 @@ export default function Opportunities() {
         .map(x => x.p);
     } else if (sortMode === 'az') {
       result = [...result].sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortMode === 'deadline') {
+      result = [...result].sort((a, b) => {
+        const aDate = a.deadlines ? Object.values(a.deadlines)[0] : null;
+        const bDate = b.deadlines ? Object.values(b.deadlines)[0] : null;
+        if (!aDate && !bDate) return 0;
+        if (!aDate) return 1;
+        if (!bDate) return -1;
+        return aDate.localeCompare(bDate);
+      });
     }
 
     return result;

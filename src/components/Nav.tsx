@@ -52,7 +52,7 @@ export default function Nav() {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/pathway/doe-research-stem" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+              <NavLink to="/pathways" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
                 Gap Analysis
               </NavLink>
             </li>

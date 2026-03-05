@@ -68,7 +68,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero */}
-      <section className="landing-hero">
+      <section id="main" className="landing-hero">
         <div className="landing-hero-inner">
           <div style={{ display: 'inline-block', background: 'var(--accent-lime)', color: 'var(--on-lime)', fontSize: 'var(--text-xs)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', padding: '0.25rem 0.75rem', borderRadius: '99px', marginBottom: '1rem' }}>
             Career Development Platform

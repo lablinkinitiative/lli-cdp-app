@@ -140,7 +140,7 @@ export default function Dashboard() {
                   <strong>Analyzing your profile…</strong> {analysesPending} pathway {analysesPending === 1 ? 'analysis' : 'analyses'} in progress (usually 30–60 seconds each)
                 </span>
               </div>
-              <Link to="/pathway/doe-research-stem" className="btn btn-ghost btn-sm" style={{ flexShrink: 0 }}>
+              <Link to="/pathways" className="btn btn-ghost btn-sm" style={{ flexShrink: 0 }}>
                 View →
               </Link>
             </div>
@@ -160,7 +160,7 @@ export default function Dashboard() {
               <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-default)' }}>
                 <strong style={{ color: 'var(--success)' }}>✓ {agenticAnalyses.complete} pathway {agenticAnalyses.complete === 1 ? 'analysis' : 'analyses'} ready</strong> — See your personalized career readiness scores
               </span>
-              <Link to="/pathway/doe-research-stem" className="btn btn-primary btn-sm" style={{ flexShrink: 0 }}>
+              <Link to="/pathways" className="btn btn-primary btn-sm" style={{ flexShrink: 0 }}>
                 View Analyses →
               </Link>
             </div>

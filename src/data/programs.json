@@ -2,7 +2,7 @@
   "meta": {
     "version": "3.0.0",
     "source": "LabLink CDP API + Pipeline",
-    "generatedAt": "2026-03-04T02:13:50.682Z",
+    "generatedAt": "2026-03-05T05:10:22.088Z",
     "count": 392
   },
   "programs": [
@@ -22622,7 +22622,8 @@
         "weeks": 10,
         "terms": [
           "summer",
-          "10_weeks"
+          "10_weeks",
+          "12_weeks"
         ]
       },
       "compensation": {
@@ -22656,19 +22657,20 @@
         ],
         "duration": [
           "summer",
-          "10_weeks"
+          "10_weeks",
+          "12_weeks"
         ],
         "location_type": [
           "in_person"
         ],
         "focus_type": [
           "policy",
-          "field_research"
+          "advocacy"
         ],
         "special_eligibility": [],
         "keywords": [
           "paid",
-          "prestigious"
+          "industry_partner"
         ]
       },
       "sector": "industry_tech"
@@ -22734,14 +22736,13 @@
           "in_person"
         ],
         "focus_type": [
-          "policy"
+          "policy",
+          "law"
         ],
-        "special_eligibility": [
-          "underrepresented_minorities"
-        ],
+        "special_eligibility": [],
         "keywords": [
           "paid",
-          "prestigious"
+          "industry_partner"
         ]
       },
       "sector": "industry_tech"
@@ -22765,7 +22766,8 @@
       "duration": {
         "weeks": null,
         "terms": [
-          "year_round"
+          "year_round",
+          "summer"
         ]
       },
       "compensation": {
@@ -22796,20 +22798,20 @@
           "stipend"
         ],
         "duration": [
-          "year_round"
+          "year_round",
+          "summer"
         ],
         "location_type": [
           "in_person"
         ],
         "focus_type": [
-          "research",
-          "policy"
+          "policy",
+          "research"
         ],
         "special_eligibility": [],
         "keywords": [
           "paid",
-          "prestigious",
-          "research_intensive"
+          "prestigious"
         ]
       },
       "sector": "industry_tech"
@@ -22833,6 +22835,7 @@
       "duration": {
         "weeks": 10,
         "terms": [
+          "summer",
           "10_weeks"
         ]
       },
@@ -22869,13 +22872,15 @@
           "housing"
         ],
         "duration": [
+          "summer",
           "10_weeks"
         ],
         "location_type": [
           "in_person"
         ],
         "focus_type": [
-          "research",
+          "wet_lab",
+          "computational",
           "engineering"
         ],
         "special_eligibility": [
@@ -22885,8 +22890,7 @@
           "paid",
           "prestigious",
           "federal_program",
-          "needs_gpa_3_0",
-          "research_intensive"
+          "needs_gpa_3_0"
         ]
       },
       "sector": "community_college"
@@ -22909,10 +22913,8 @@
         "notes": "Must be enrolled full-time at an accredited community college or two-year college. U.S. citizen or lawful permanent resident. Minimum 3.0 GPA. Age 18+. Must have completed at least one semester. Recent associate's degree graduates within 2 years also eligible."
       },
       "duration": {
-        "weeks": 10,
-        "terms": [
-          "10_weeks"
-        ]
+        "weeks": null,
+        "terms": []
       },
       "compensation": {
         "paid": true,
@@ -22946,15 +22948,14 @@
           "stipend",
           "housing"
         ],
-        "duration": [
-          "10_weeks"
-        ],
+        "duration": [],
         "location_type": [
           "in_person"
         ],
         "focus_type": [
-          "research",
-          "engineering"
+          "wet_lab",
+          "computational",
+          "research"
         ],
         "special_eligibility": [
           "us_citizen_only"
@@ -22963,8 +22964,7 @@
           "paid",
           "prestigious",
           "federal_program",
-          "needs_gpa_3_0",
-          "research_intensive"
+          "needs_gpa_3_0"
         ]
       },
       "sector": "community_college"
@@ -23032,10 +23032,8 @@
           "in_person"
         ],
         "focus_type": [
-          "research",
-          "computational",
           "wet_lab",
-          "engineering"
+          "research"
         ],
         "special_eligibility": [
           "us_citizen_only"
@@ -23107,9 +23105,11 @@
         ],
         "focus_type": [
           "wet_lab",
-          "research"
+          "research",
+          "biomedical"
         ],
         "special_eligibility": [
+          "us_citizen_only",
           "underrepresented_minorities",
           "need_based"
         ],
@@ -23183,17 +23183,13 @@
         "location_type": [
           "in_person"
         ],
-        "focus_type": [
-          "engineering",
-          "computational"
-        ],
+        "focus_type": [],
         "special_eligibility": [
           "us_citizen_only"
         ],
         "keywords": [
           "paid",
-          "federal_program",
-          "beginner_friendly"
+          "federal_program"
         ]
       },
       "sector": "community_college"
@@ -23257,17 +23253,17 @@
           "in_person"
         ],
         "focus_type": [
+          "wet_lab",
           "research"
         ],
         "special_eligibility": [
-          "underrepresented_minorities",
-          "us_citizen_only"
+          "us_citizen_only",
+          "underrepresented_minorities"
         ],
         "keywords": [
           "paid",
           "prestigious",
           "federal_program",
-          "renewable",
           "research_intensive"
         ]
       },
