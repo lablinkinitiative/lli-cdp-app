@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Nav from '../components/Nav';
 import { getCurrentUser } from '../auth';
@@ -18,14 +18,71 @@ interface PathwayItem {
   usage_count: number;
 }
 
+interface AssignedTier {
+  pathway_id: string;
+  fit_tier: 'high' | 'medium' | 'stretch';
+  title: string;
+}
+
 // ─── Career fields for filter ─────────────────────────────────────────────────
 
 const CAREER_FIELDS = ['All Fields', 'STEM Research', 'Computing & Data', 'Policy', 'Business'];
 
+const TIER_LABELS: Record<string, string> = {
+  high: 'Almost There',
+  medium: 'Achievable',
+  stretch: 'Think Big',
+};
+
 // ─── Pathway card ─────────────────────────────────────────────────────────────
 
-function PathwayCard({ pathway }: { pathway: PathwayItem }) {
+function PathwayCard({
+  pathway,
+  assignedTiers,
+  token,
+  onSwapped,
+}: {
+  pathway: PathwayItem;
+  assignedTiers: AssignedTier[];
+  token: string | null;
+  onSwapped: (tier: string, pathway: PathwayItem) => void;
+}) {
   const navigate = useNavigate();
+  const [swapping, setSwapping] = useState(false);
+  const [showSwapMenu, setShowSwapMenu] = useState(false);
+  const [swapMsg, setSwapMsg] = useState<string | null>(null);
+
+  const isAssigned = assignedTiers.some(t => t.pathway_id === pathway.id);
+  const assignedTier = assignedTiers.find(t => t.pathway_id === pathway.id);
+  const hasAssignments = assignedTiers.length > 0;
+
+  const handleSwap = useCallback(async (tier: string) => {
+    setSwapping(true);
+    setShowSwapMenu(false);
+    try {
+      const res = await fetch(`${API_BASE}/api/cdp/students/me/pathways/swap`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ tier, pathway_id: pathway.id }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setSwapMsg(`Swapped into "${TIER_LABELS[tier]}" slot`);
+        onSwapped(tier, pathway);
+        setTimeout(() => setSwapMsg(null), 3000);
+      } else {
+        setSwapMsg(`Error: ${data.error || 'Failed to swap'}`);
+        setTimeout(() => setSwapMsg(null), 4000);
+      }
+    } catch {
+      setSwapMsg('Network error — try again');
+      setTimeout(() => setSwapMsg(null), 4000);
+    }
+    setSwapping(false);
+  }, [pathway.id, token, onSwapped]);
 
   return (
     <div
@@ -151,12 +208,103 @@ function PathwayCard({ pathway }: { pathway: PathwayItem }) {
         ))}
       </div>
 
-      {/* CTA */}
-      <div style={{ paddingTop: '0.375rem', borderTop: '1px solid var(--border)' }}>
-        <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--brand-700)' }}>
-          View pathway + run analysis →
+      {/* CTA row */}
+      <div style={{ paddingTop: '0.375rem', borderTop: '1px solid var(--border)', display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+        <span
+          style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--brand-700)', cursor: 'pointer', flex: 1 }}
+          onClick={() => navigate(`/pathway/${pathway.id}`)}
+        >
+          {isAssigned ? `Your ${TIER_LABELS[assignedTier!.fit_tier]} pathway →` : 'View + run analysis →'}
         </span>
+
+        {/* Swap button — only shown when student has 3 assigned pathways and this isn't one of them */}
+        {hasAssignments && !isAssigned && (
+          <div style={{ position: 'relative' }}>
+            <button
+              type="button"
+              disabled={swapping}
+              onClick={(e) => { e.stopPropagation(); setShowSwapMenu(v => !v); }}
+              style={{
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                padding: '3px 8px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--brand-300)',
+                background: 'var(--brand-50)',
+                color: 'var(--brand-700)',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {swapping ? 'Swapping…' : '⇄ Swap in'}
+            </button>
+
+            {showSwapMenu && (
+              <div style={{
+                position: 'absolute',
+                bottom: '110%',
+                right: 0,
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-md)',
+                boxShadow: 'var(--shadow-md)',
+                padding: '0.375rem',
+                zIndex: 100,
+                minWidth: 170,
+              }}>
+                <p style={{ fontSize: '0.65rem', color: 'var(--text-faint)', padding: '0 4px 4px', fontWeight: 600 }}>
+                  REPLACE WHICH SLOT?
+                </p>
+                {(['high', 'medium', 'stretch'] as const).map(tier => {
+                  const current = assignedTiers.find(t => t.fit_tier === tier);
+                  return (
+                    <button
+                      key={tier}
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); handleSwap(tier); }}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        textAlign: 'left',
+                        padding: '5px 8px',
+                        borderRadius: 'var(--radius-sm)',
+                        border: 'none',
+                        background: 'transparent',
+                        cursor: 'pointer',
+                        fontSize: 'var(--text-xs)',
+                        color: 'var(--text-strong)',
+                      }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--surface-2)'; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
+                    >
+                      <strong>{TIER_LABELS[tier]}</strong>
+                      {current && (
+                        <span style={{ color: 'var(--text-faint)', display: 'block', fontSize: '0.65rem' }}>
+                          Currently: {current.title.length > 28 ? current.title.slice(0, 28) + '…' : current.title}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* Swap feedback */}
+      {swapMsg && (
+        <div style={{
+          fontSize: '0.7rem',
+          padding: '4px 8px',
+          borderRadius: 'var(--radius-sm)',
+          background: swapMsg.startsWith('Error') ? 'var(--error-bg)' : 'rgba(76,175,80,0.08)',
+          color: swapMsg.startsWith('Error') ? 'var(--error)' : '#2e7d32',
+          fontWeight: 600,
+        }}>
+          {swapMsg}
+        </div>
+      )}
     </div>
   );
 }
@@ -200,8 +348,34 @@ export default function PathwayExplorer() {
   const [error, setError] = useState<string | null>(null);
   const [careerField, setCareerField] = useState('All Fields');
   const [searchQuery, setSearchQuery] = useState('');
+  const [assignedTiers, setAssignedTiers] = useState<AssignedTier[]>([]);
 
   const token = localStorage.getItem('cdp_token');
+
+  // Fetch student's assigned pathways for swap context
+  useEffect(() => {
+    if (!token) return;
+    fetch(`${API_BASE}/api/cdp/students/me/pathways`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.json())
+      .then(d => {
+        if (d.ok && d.pathways) {
+          setAssignedTiers(d.pathways.map((p: { pathway_id: string; fit_tier: string; title: string }) => ({
+            pathway_id: p.pathway_id,
+            fit_tier: p.fit_tier,
+            title: p.title,
+          })));
+        }
+      })
+      .catch(() => {});
+  }, [token]);
+
+  const handleSwapped = useCallback((tier: string, pathway: PathwayItem) => {
+    setAssignedTiers(prev => prev.map(t =>
+      t.fit_tier === tier ? { pathway_id: pathway.id, fit_tier: tier as AssignedTier['fit_tier'], title: pathway.title } : t
+    ));
+  }, []);
 
   // Fetch from API with filters
   useEffect(() => {
@@ -388,7 +562,13 @@ export default function PathwayExplorer() {
           {!loading && displayed.length > 0 && (
             <div className="explorer-grid">
               {displayed.map((pathway) => (
-                <PathwayCard key={pathway.id} pathway={pathway} />
+                <PathwayCard
+                  key={pathway.id}
+                  pathway={pathway}
+                  assignedTiers={assignedTiers}
+                  token={token}
+                  onSwapped={handleSwapped}
+                />
               ))}
             </div>
           )}
