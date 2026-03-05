@@ -10,7 +10,9 @@ export default function OAuthCallback() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
-    const dest = params.get('dest') || '/dashboard';
+    // Validate dest to prevent open redirect — only allow internal routes
+    const rawDest = params.get('dest') || '/dashboard';
+    const dest = rawDest.startsWith('/') && !rawDest.startsWith('//') ? rawDest : '/dashboard';
     const firstName = params.get('firstName') || '';
     const error = params.get('error');
 
