@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Nav from '../components/Nav';
-import { getCurrentUser } from '../auth';
+import { getCurrentUser, refreshStudentData } from '../auth';
 
 const API_BASE = (import.meta.env.VITE_API_URL as string) || 'https://app.lablinkinitiative.org';
 
@@ -197,7 +197,7 @@ function ResumeCard({ resume, onDelete, onRename, onStatusUpdate }: ResumeCardPr
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function ResumePage() {
-  getCurrentUser(); // auth guard
+  const user = getCurrentUser()!;
   const token = localStorage.getItem('cdp_token');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -275,7 +275,11 @@ export default function ResumePage() {
   const handleRename = (id: string, label: string) => setResumes(prev => prev.map(r => r.id === id ? { ...r, label } : r));
   const handleStatusUpdate = useCallback((id: string, updated: Partial<ResumeRecord>) => {
     setResumes(prev => prev.map(r => r.id === id ? { ...r, ...updated } : r));
-  }, []);
+    // When parse completes, sync profile from backend so skills/experience appear on Profile page
+    if (updated.status === 'parsed') {
+      refreshStudentData(user.uid).catch(() => {});
+    }
+  }, [user.uid]);
 
   return (
     <>

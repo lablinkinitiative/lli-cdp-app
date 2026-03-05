@@ -180,6 +180,12 @@ async function syncStudentDataToApi(data: StudentData): Promise<void> {
   });
 }
 
+// ─── Public refresh — call after async backend updates (e.g. resume parse) ────
+
+export async function refreshStudentData(uid: string): Promise<void> {
+  await syncStudentDataFromApi(uid);
+}
+
 // ─── Internal helpers ──────────────────────────────────────────────────────────
 
 function getDefaultStudentData(_uid: string, email: string): StudentData {

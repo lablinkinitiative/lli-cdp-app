@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Nav from '../components/Nav';
 import ExperienceTimeline from '../components/ExperienceTimeline';
-import { getCurrentUser, getStudentData, saveStudentData, updateCurrentUser } from '../auth';
+import { getCurrentUser, getStudentData, saveStudentData, updateCurrentUser, refreshStudentData } from '../auth';
 import type { StudentData, ExperienceEntry } from '../types';
 
 const YEARS = ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate', 'PhD', 'Community College', 'Other'];
@@ -79,24 +79,33 @@ export default function Profile() {
   const [savingTimeline, setSavingTimeline] = useState(false);
   const [savedTimeline, setSavedTimeline] = useState(false);
 
-  useEffect(() => {
-    const data = getStudentData(user.uid);
+  function applyStudentData(data: StudentData) {
     setStudent(data);
-    if (data) {
-      setFirstName(data.profile.firstName || '');
-      setLastName(data.profile.lastName || '');
-      setSchool(data.profile.school || '');
-      setYear(data.profile.year || '');
-      setMajor(data.profile.major || '');
-      setGradYear(data.profile.gradYear || '');
-      setGpa(data.gpa?.toString() || '');
-      setInterests(data.interests || []);
-      setSkills(data.skills || []);
-      setExperienceLevel(data.experienceLevel || '');
-      setGoals(data.goals || []);
-      setTimeline(data.targetTimeline || '');
-      setExperience(data.experience || []);
-    }
+    setFirstName(data.profile.firstName || '');
+    setLastName(data.profile.lastName || '');
+    setSchool(data.profile.school || '');
+    setYear(data.profile.year || '');
+    setMajor(data.profile.major || '');
+    setGradYear(data.profile.gradYear || '');
+    setGpa(data.gpa?.toString() || '');
+    setInterests(data.interests || []);
+    setSkills(data.skills || []);
+    setExperienceLevel(data.experienceLevel || '');
+    setGoals(data.goals || []);
+    setTimeline(data.targetTimeline || '');
+    setExperience(data.experience || []);
+  }
+
+  useEffect(() => {
+    // Load from localStorage immediately for instant render
+    const cached = getStudentData(user.uid);
+    if (cached) applyStudentData(cached);
+
+    // Sync from API in the background to pick up resume-parsed skills/experience
+    refreshStudentData(user.uid).then(() => {
+      const fresh = getStudentData(user.uid);
+      if (fresh) applyStudentData(fresh);
+    }).catch(() => {});
   }, [user.uid]);
 
   const toggleItem = (arr: string[], setArr: (v: string[]) => void, val: string) => {
