@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Nav from '../components/Nav';
 import ExperienceTimeline from '../components/ExperienceTimeline';
-import { getCurrentUser, getStudentData, saveStudentData, updateCurrentUser, refreshStudentData } from '../auth';
+import { getCurrentUser, getStudentData, saveStudentData, updateCurrentUser, refreshStudentData, signOut } from '../auth';
 import type { StudentData, ExperienceEntry } from '../types';
 
 const YEARS = ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate', 'PhD', 'Community College', 'Other'];
@@ -53,7 +53,9 @@ type Section = 'about' | 'interests' | 'skills' | 'goals';
 
 export default function Profile() {
   const user = getCurrentUser()!;
+  const navigate = useNavigate();
   const [student, setStudent] = useState<StudentData | null>(null);
+  const [wiping, setWiping] = useState(false);
   const [editingSection, setEditingSection] = useState<Section | null>(null);
   const [saving, setSaving] = useState(false);
   const [savedSection, setSavedSection] = useState<Section | null>(null);
@@ -196,6 +198,34 @@ export default function Profile() {
       </div>
     </div>
   );
+
+  async function wipeAccount() {
+    const confirmed = window.confirm(
+      'PERMANENT ACCOUNT WIPE\n\nThis will permanently delete your account and ALL your data:\n• Profile and settings\n• Saved programs\n• Gap analyses\n• Uploaded resumes\n• Career pathways\n\nThis CANNOT be undone. Type OK to confirm.'
+    );
+    if (!confirmed) return;
+
+    setWiping(true);
+    try {
+      const token = localStorage.getItem('cdp_token');
+      const apiBase = (import.meta.env.VITE_API_URL as string) || 'https://app.lablinkinitiative.org';
+      const res = await fetch(`${apiBase}/api/cdp/students/me`, {
+        method: 'DELETE',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error((err as { error?: string }).error || 'Failed to wipe account');
+      }
+      // Clear all local storage and redirect
+      signOut();
+      localStorage.removeItem(`cdp_student_data_${user.uid}`);
+      navigate('/');
+    } catch (e) {
+      alert('Error wiping account: ' + (e instanceof Error ? e.message : String(e)));
+      setWiping(false);
+    }
+  }
 
   return (
     <>
@@ -536,7 +566,7 @@ export default function Profile() {
                 <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', marginBottom: 'var(--sp-md)' }}>
                   Signed in as <strong>{user.email}</strong>
                 </p>
-                <div style={{ display: 'flex', gap: 'var(--sp-sm)' }}>
+                <div style={{ display: 'flex', gap: 'var(--sp-sm)', flexWrap: 'wrap' }}>
                   <button
                     onClick={() => {
                       if (confirm('Clear all your profile data? This cannot be undone.')) {
@@ -552,6 +582,14 @@ export default function Profile() {
                     style={{ color: 'var(--error)', fontSize: 'var(--text-xs)' }}
                   >
                     Clear all profile data
+                  </button>
+                  <button
+                    onClick={wipeAccount}
+                    disabled={wiping}
+                    className="btn btn-ghost btn-sm"
+                    style={{ color: 'var(--error)', fontSize: 'var(--text-xs)', fontWeight: 700, border: '1px solid rgba(185,28,28,0.4)' }}
+                  >
+                    {wiping ? 'Wiping…' : 'Wipe Account'}
                   </button>
                 </div>
               </div>
