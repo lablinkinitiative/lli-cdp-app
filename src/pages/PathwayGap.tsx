@@ -302,6 +302,17 @@ function AnalysisPanel({ analysis, pathway, onRefresh }: AnalysisPanelProps) {
 
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 
+// Minimal DB pathway shape compatible with what AnalysisPanel expects from Pathway
+interface DbPathway {
+  id: string;
+  name: string;
+  shortName?: string;
+  track?: string;
+  description?: string;
+  corePrograms?: string[];
+  skills?: { name: string; weight: number; category: string }[];
+}
+
 export default function PathwayGap() {
   const { id } = useParams<{ id: string }>();
   getCurrentUser(); // auth guard
@@ -313,11 +324,38 @@ export default function PathwayGap() {
   const [runningAnalysis, setRunningAnalysis] = useState(false);
   const [pollingId, setPollingId] = useState<string | null>(null);
   const [runError, setRunError] = useState<string | null>(null);
+  // DB pathway fallback: loaded when selectedPathwayId is not found in static JSON
+  const [dbPathway, setDbPathway] = useState<DbPathway | null>(null);
 
-  const selectedPathway = pathways.find(p => p.id === selectedPathwayId) || pathways[0];
+  const staticPathway = pathways.find(p => p.id === selectedPathwayId);
+  const selectedPathway = (staticPathway || dbPathway || pathways[0]) as unknown as Pathway;
   const activeAnalysis = analyses.find(a => a.pathwayId === selectedPathwayId) || null;
 
   useEffect(() => { if (id) setSelectedPathwayId(id); }, [id]);
+
+  // Fetch DB pathway when selected ID not in static list
+  useEffect(() => {
+    if (staticPathway) { setDbPathway(null); return; }
+    if (!selectedPathwayId || !token) return;
+    fetch(`${API_BASE}/api/cdp/pathways/${selectedPathwayId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data?.pathway) {
+          const pw = data.pathway;
+          setDbPathway({
+            id: pw.id,
+            name: pw.title,
+            shortName: pw.short_name,
+            track: pw.career_field,
+            description: pw.description,
+            skills: (pw.requirements?.skills || []).map((s: string) => ({ name: s, weight: 3, category: 'General' })),
+          });
+        }
+      })
+      .catch(() => {});
+  }, [selectedPathwayId, staticPathway, token]);
 
   // Load all analyses
   const loadAnalyses = useCallback(async () => {

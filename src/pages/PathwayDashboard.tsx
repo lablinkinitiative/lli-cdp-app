@@ -354,7 +354,8 @@ export default function PathwayDashboard() {
         });
         const data = await res.json();
         if (data.status === 'complete') {
-          setPathways(data.pathways || []);
+          // Fetch full pathway data (job result has incomplete records without title/description)
+          await loadPathways();
           setGenerating(false);
           setJobId(null);
           clearInterval(interval);
