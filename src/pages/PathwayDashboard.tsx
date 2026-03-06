@@ -798,7 +798,7 @@ export default function PathwayDashboard() {
                 )}
 
                 {/* YOUR PATHWAYS section */}
-                {(loadingAssigned || sidebarAssigned.length > 0) && (
+                {(loadingAssigned || generating || sidebarAssigned.length > 0) && (
                   <div style={{ marginBottom: 'var(--sp-md)' }}>
                     <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: '0.375rem', padding: '0 0.25rem' }}>
                       Your Pathways
@@ -806,6 +806,21 @@ export default function PathwayDashboard() {
                     {loadingAssigned ? (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                         {[1, 2, 3].map(i => <div key={i} style={{ height: 32, borderRadius: 'var(--radius-md)', background: 'var(--surface-2)', animation: 'skeletonPulse 1.5s ease-in-out infinite' }} />)}
+                      </div>
+                    ) : generating && sidebarAssigned.length === 0 ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.125rem' }}>
+                        {(['high', 'medium', 'stretch'] as const).map(tier => {
+                          const tc = TIER_CONFIG[tier];
+                          return (
+                            <div key={tier} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 0.625rem', borderRadius: 'var(--radius-md)', border: `1px solid ${tc.border}`, background: tc.bg, opacity: 0.85 }}>
+                              <span style={{ fontSize: '0.6rem', color: tc.color, flexShrink: 0, lineHeight: 1 }}>{tc.icon}</span>
+                              <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontStyle: 'italic', flex: 1 }}>
+                                Researching pathway…
+                              </span>
+                              <span style={{ fontSize: '0.6rem', fontWeight: 700, color: tc.color, flexShrink: 0 }}>{tc.label}</span>
+                            </div>
+                          );
+                        })}
                       </div>
                     ) : (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.125rem' }}>
@@ -831,7 +846,7 @@ export default function PathwayDashboard() {
                 )}
 
                 {/* Divider */}
-                {sidebarAssigned.length > 0 && <div style={{ borderTop: '1px solid var(--border)', marginBottom: 'var(--sp-md)' }} />}
+                {(sidebarAssigned.length > 0 || generating) && <div style={{ borderTop: '1px solid var(--border)', marginBottom: 'var(--sp-md)' }} />}
 
                 {/* ALL PATHWAYS section */}
                 <div>
