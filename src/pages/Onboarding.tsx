@@ -128,7 +128,7 @@ export default function Onboarding() {
       const formData = new FormData();
       formData.append('resume', file);
 
-      const res = await fetch(`${API_BASE}/api/cdp/resume/parse`, {
+      const res = await fetch(`${API_BASE}/api/cdp/resume/upload`, {
         method: 'POST',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData,
@@ -136,14 +136,15 @@ export default function Onboarding() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `Parse failed (${res.status})`);
+        throw new Error(data.error || `Upload failed (${res.status})`);
       }
 
-      const { job_id } = await res.json();
+      const { job_id, resume_id } = await res.json();
 
       // Store job for background processing — ResumeParseNotification in App.tsx polls this
       localStorage.setItem('cdp_resume_job', JSON.stringify({
         job_id,
+        resume_id,
         file_name: file.name,
         started_at: Date.now(),
       }));
@@ -359,7 +360,7 @@ export default function Onboarding() {
 
               {/* Note */}
               <p style={{ color: 'var(--text-faint)', fontSize: 'var(--text-xs)', marginTop: 'var(--sp-md)', textAlign: 'center' }}>
-                Your file is processed and not stored on our servers.
+                Your file is stored securely. You can view, download, or delete it from the Resumes page.
               </p>
             </div>
           )}
