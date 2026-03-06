@@ -196,25 +196,25 @@ function AnalysisPanel({ analysis, pathwayTitle, onRefresh, pathwayId }: Analysi
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: 'var(--sp-md)', marginBottom: 'var(--sp-md)' }}>
-        {analysis.strengths.length > 0 && (
+        {(analysis.strengths || []).length > 0 && (
           <div className="card">
             <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--success, #15803d)', marginBottom: 'var(--sp-sm)' }}>✓ Strengths</h3>
             <ul style={{ margin: 0, paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
-              {analysis.strengths.map((s, i) => <li key={i} style={{ fontSize: 'var(--text-xs)', color: 'var(--text-default)', lineHeight: 1.5 }}>{s}</li>)}
+              {(analysis.strengths || []).map((s, i) => <li key={i} style={{ fontSize: 'var(--text-xs)', color: 'var(--text-default)', lineHeight: 1.5 }}>{s}</li>)}
             </ul>
           </div>
         )}
-        {analysis.gaps.length > 0 && (
+        {(analysis.gaps || []).length > 0 && (
           <div className="card">
             <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--error, #dc2626)', marginBottom: 'var(--sp-sm)' }}>↑ Areas to Develop</h3>
             <ul style={{ margin: 0, paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
-              {analysis.gaps.map((g, i) => <li key={i} style={{ fontSize: 'var(--text-xs)', color: 'var(--text-default)', lineHeight: 1.5 }}>{g}</li>)}
+              {(analysis.gaps || []).map((g, i) => <li key={i} style={{ fontSize: 'var(--text-xs)', color: 'var(--text-default)', lineHeight: 1.5 }}>{g}</li>)}
             </ul>
           </div>
         )}
       </div>
 
-      {(analysis.radarData?.axes?.length > 2 || analysis.skillBreakdown.length > 0) && (
+      {(analysis.radarData?.axes?.length > 2 || (analysis.skillBreakdown || []).length > 0) && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: 'var(--sp-md)', marginBottom: 'var(--sp-md)' }}>
           {analysis.radarData?.axes?.length > 2 && (
             <div className="card">
@@ -222,12 +222,12 @@ function AnalysisPanel({ analysis, pathwayTitle, onRefresh, pathwayId }: Analysi
               <RadarChart axes={analysis.radarData.axes} studentScores={analysis.radarData.studentScores} requiredScores={analysis.radarData.requiredScores} />
             </div>
           )}
-          {analysis.skillBreakdown.length > 0 && (
+          {(analysis.skillBreakdown || []).length > 0 && (
             <div className="card">
               <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-strong)', marginBottom: 'var(--sp-sm)' }}>Skill Breakdown</h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto auto', gap: '0.4rem 0.75rem', alignItems: 'center', fontSize: '0.7rem' }}>
                 {['Skill', 'Level', 'Req', 'Status'].map(h => <div key={h} style={{ fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</div>)}
-                {analysis.skillBreakdown.slice(0, 8).map((item, i) => (
+                {(analysis.skillBreakdown || []).slice(0, 8).map((item, i) => (
                   <Fragment key={i}>
                     <div style={{ color: 'var(--text-default)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 130 }} title={item.skill}>
                       {item.skill.length > 22 ? item.skill.slice(0, 20) + '…' : item.skill}
@@ -247,11 +247,11 @@ function AnalysisPanel({ analysis, pathwayTitle, onRefresh, pathwayId }: Analysi
         </div>
       )}
 
-      {analysis.recommendations.length > 0 && (
+      {(analysis.recommendations || []).length > 0 && (
         <div className="card" style={{ marginBottom: 'var(--sp-md)' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)', marginBottom: 'var(--sp-md)' }}>Recommendations</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-sm)' }}>
-            {analysis.recommendations.map((rec, i) => (
+            {(analysis.recommendations || []).map((rec, i) => (
               <div key={i} style={{ display: 'flex', gap: '0.75rem', padding: 'var(--sp-sm)', background: rec.priority === 'high' ? 'rgba(220,38,38,0.05)' : rec.priority === 'medium' ? 'rgba(251,191,36,0.08)' : 'var(--surface)', borderRadius: 'var(--radius-md)', border: `1px solid ${rec.priority === 'high' ? 'rgba(185,28,28,0.12)' : rec.priority === 'medium' ? 'rgba(180,83,9,0.12)' : 'var(--border)'}` }}>
                 <div style={{ width: 20, height: 20, borderRadius: '50%', flexShrink: 0, background: rec.priority === 'high' ? 'var(--error, #dc2626)' : rec.priority === 'medium' ? 'var(--warning, #b45309)' : 'var(--text-faint)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', fontWeight: 800, textTransform: 'uppercase', marginTop: '0.125rem' }}>
                   {rec.priority[0].toUpperCase()}
@@ -557,12 +557,23 @@ export default function PathwayDashboard() {
       });
       const data = await res.json();
       if (data.ok) {
-        setAnalyses(data.analyses || []);
-        // If any analysis is in-progress from a previous session, start polling it
-        const inProgress = (data.analyses || []).find(
+        const list = data.analyses || [];
+        setAnalyses(list);
+        // Resume polling for any in-progress analysis from a previous session
+        const inProgress = list.find(
           (a: { status: string; id: string }) => a.status === 'queued' || a.status === 'processing'
         );
         if (inProgress) setAnalysisPollingId(inProgress.id);
+        // Fetch full detail for completed analyses (list endpoint returns minimal data)
+        const completed = list.filter((a: { status: string; id: string }) => a.status === 'complete');
+        for (const a of completed) {
+          fetch(`${API_BASE}/api/cdp/gap-analysis/${a.id}`, { headers: { Authorization: `Bearer ${token}` } })
+            .then(r => r.json())
+            .then(d => {
+              if (d.ok) setAnalyses(prev => prev.map(x => x.id === a.id ? d.analysis : x));
+            })
+            .catch(() => {});
+        }
       }
     } catch {}
     setLoadingAnalyses(false);
@@ -635,6 +646,28 @@ export default function PathwayDashboard() {
     }, 3000);
     return () => clearInterval(interval);
   }, [analysisPollingId, token]);
+
+  // Fetch full analysis detail when a complete analysis is selected but missing detail fields
+  // (happens when analyses loaded from list endpoint which only returns summary, not strengths/gaps/etc)
+  useEffect(() => {
+    if (!selectedId || !token) return;
+    const a = analyses.find(x => x.pathwayId === selectedId);
+    if (!a || a.status !== 'complete' || a.strengths !== undefined) return;
+    fetch(`${API_BASE}/api/cdp/gap-analysis/${a.id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data?.ok && data.analysis) {
+          setAnalyses(prev => {
+            const without = prev.filter(x => x.id !== data.analysis.id);
+            return [...without, data.analysis];
+          });
+        }
+      })
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedId, token]);
 
   const handleGenerate = async () => {
     setGenerating(true);
