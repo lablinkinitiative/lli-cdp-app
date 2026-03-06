@@ -45,6 +45,14 @@ function ResumeCard({ resume, onDelete, onRename, onStatusUpdate }: ResumeCardPr
   const [editing, setEditing] = useState(false);
   const [labelDraft, setLabelDraft] = useState(resume.label);
   const [deleting, setDeleting] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+
+  // Elapsed timer while processing
+  useEffect(() => {
+    if (resume.status !== 'processing') return;
+    const timer = setInterval(() => setElapsed(s => s + 1), 1000);
+    return () => clearInterval(timer);
+  }, [resume.status]);
 
   // Poll status while processing — max 100 attempts (~5 minutes)
   useEffect(() => {
@@ -157,12 +165,33 @@ function ResumeCard({ resume, onDelete, onRename, onStatusUpdate }: ResumeCardPr
         </div>
       </div>
 
-      {resume.status === 'processing' && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-          <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#f59e0b', animation: 'rPulse 1.5s ease-in-out infinite' }} />
-          <span style={{ fontSize: 'var(--text-xs)', color: '#b45309', fontWeight: 500 }}>Parsing with AI…</span>
-        </div>
-      )}
+      {resume.status === 'processing' && (() => {
+        const phases = [
+          { label: 'Reading PDF', maxT: 5 },
+          { label: 'Extracting text & structure', maxT: 15 },
+          { label: 'AI analyzing skills & experience', maxT: 32 },
+          { label: 'Updating your profile', maxT: Infinity },
+        ];
+        const phaseIdx = phases.findIndex(p => elapsed < p.maxT);
+        const currentPhase = phases[phaseIdx >= 0 ? phaseIdx : phases.length - 1];
+        const fakeProgress = Math.min(90, 8 + (elapsed / 42) * 82);
+        return (
+          <div style={{ marginBottom: '0.625rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.375rem' }}>
+              <span style={{ fontSize: 'var(--text-xs)', color: '#b45309', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                <span style={{ display: 'inline-block', width: 7, height: 7, borderRadius: '50%', background: '#f59e0b', flexShrink: 0, animation: 'rPulse 1.5s ease-in-out infinite' }} />
+                {currentPhase.label}…
+              </span>
+              <span style={{ fontSize: '0.65rem', color: 'var(--text-faint)', fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>
+                {elapsed}s
+              </span>
+            </div>
+            <div style={{ height: 3, background: 'rgba(245,158,11,0.15)', borderRadius: 2, overflow: 'hidden' }}>
+              <div style={{ height: '100%', background: 'linear-gradient(90deg, #f59e0b, #d97706)', borderRadius: 2, width: `${fakeProgress}%`, transition: 'width 1s ease-out' }} />
+            </div>
+          </div>
+        );
+      })()}
 
       {resume.status === 'parsed' && resume.parsed_summary && (
         <div style={{ marginBottom: '0.5rem' }}>
@@ -264,6 +293,15 @@ export default function ResumePage() {
         created_at: new Date().toISOString(),
       };
       setResumes(prev => [newResume, ...prev]);
+
+      // Persist job for global toast (survives page nav / refresh)
+      localStorage.setItem('cdp_resume_job_v2', JSON.stringify({
+        resume_id: data.resume_id,
+        file_name: file.name,
+        started_at: Date.now(),
+      }));
+      // Signal global toast in same session
+      window.dispatchEvent(new CustomEvent('cdp-resume-started', { detail: { resume_id: data.resume_id } }));
     } catch (err: unknown) {
       setUploadError(err instanceof Error ? err.message : 'Upload failed. Please try again.');
     }
@@ -281,9 +319,12 @@ export default function ResumePage() {
   const handleRename = (id: string, label: string) => setResumes(prev => prev.map(r => r.id === id ? { ...r, label } : r));
   const handleStatusUpdate = useCallback((id: string, updated: Partial<ResumeRecord>) => {
     setResumes(prev => prev.map(r => r.id === id ? { ...r, ...updated } : r));
-    // When parse completes, sync profile from backend so skills/experience appear on Profile page
     if (updated.status === 'parsed') {
       refreshStudentData(user.uid).catch(() => {});
+      // Global toast is polling on its own; just clear localStorage so stale jobs don't linger
+      localStorage.removeItem('cdp_resume_job_v2');
+    } else if (updated.status === 'error') {
+      localStorage.removeItem('cdp_resume_job_v2');
     }
   }, [user.uid]);
 
@@ -378,9 +419,11 @@ export default function ResumePage() {
                 />
                 {uploading ? (
                   <div>
-                    <div style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>⏳</div>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.625rem' }}>
+                      <div className="upload-spinner" />
+                    </div>
                     <p style={{ fontWeight: 600, color: 'var(--text-default)', marginBottom: '0.25rem', fontSize: 'var(--text-sm)' }}>Uploading…</p>
-                    <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>Parsing will run in the background</p>
+                    <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>AI parsing will start automatically</p>
                   </div>
                 ) : (
                   <div>
@@ -425,6 +468,17 @@ export default function ResumePage() {
         @keyframes rPulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.3; }
+        }
+        @keyframes rSpin {
+          to { transform: rotate(360deg); }
+        }
+        .upload-spinner {
+          width: 32px;
+          height: 32px;
+          border: 3px solid rgba(154,184,46,0.25);
+          border-top-color: var(--brand-500, #9AB82E);
+          border-radius: 50%;
+          animation: rSpin 0.75s linear infinite;
         }
       `}</style>
     </>

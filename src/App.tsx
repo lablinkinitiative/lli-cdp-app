@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { getCurrentUser } from './auth';
 import Landing from './pages/Landing';
 import SignIn from './pages/SignIn';
@@ -17,7 +17,7 @@ import Privacy from './pages/Privacy';
 import './index.css';
 
 const API_BASE = (import.meta.env.VITE_API_URL as string) || 'https://app.lablinkinitiative.org';
-const POLL_INTERVAL = 5000; // 5s
+const RESUME_JOB_KEY = 'cdp_resume_job_v2';
 
 type ParseJobState = 'processing' | 'complete' | 'error' | null;
 
@@ -25,40 +25,39 @@ function ResumeParseNotification() {
   const navigate = useNavigate();
   const [jobState, setJobState] = useState<ParseJobState>(null);
   const [dismissed, setDismissed] = useState(false);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [elapsed, setElapsed] = useState(0);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => {
-    const raw = localStorage.getItem('cdp_resume_job');
-    if (!raw) return;
+  const clearTimers = useCallback(() => {
+    if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+    if (elapsedRef.current) { clearInterval(elapsedRef.current); elapsedRef.current = null; }
+  }, []);
 
-    let job: { job_id: string; file_name: string; started_at: number };
-    try { job = JSON.parse(raw); } catch { localStorage.removeItem('cdp_resume_job'); return; }
-
-    // Don't poll stale jobs (> 10 min old)
-    if (Date.now() - job.started_at > 10 * 60 * 1000) {
-      localStorage.removeItem('cdp_resume_job');
-      return;
-    }
+  const startJob = useCallback((resumeId: string) => {
+    clearTimers();
+    setJobState('processing');
+    setDismissed(false);
+    setElapsed(0);
 
     const token = localStorage.getItem('cdp_token');
     if (!token) return;
 
-    setJobState('processing');
+    elapsedRef.current = setInterval(() => setElapsed(s => s + 1), 1000);
 
     const poll = async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/cdp/resume/status/${job.job_id}`, {
+        const res = await fetch(`${API_BASE}/api/cdp/resumes/${resumeId}/status`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) return;
         const data = await res.json();
 
-        if (data.status === 'complete') {
+        if (data.status === 'parsed') {
           setJobState('complete');
-          localStorage.removeItem('cdp_resume_job');
-          if (intervalRef.current) clearInterval(intervalRef.current);
-
-          // Sync fresh student data from API into localStorage
+          localStorage.removeItem(RESUME_JOB_KEY);
+          clearTimers();
+          // Sync fresh student data
           try {
             const syncRes = await fetch(`${API_BASE}/api/cdp/students/me/full-data`, {
               headers: { Authorization: `Bearer ${token}` },
@@ -66,95 +65,154 @@ function ResumeParseNotification() {
             if (syncRes.ok) {
               const sd = await syncRes.json();
               const user = getCurrentUser();
-              if (user) {
-                localStorage.setItem(`cdp_student_data_${user.uid}`, JSON.stringify(sd));
-              }
+              if (user) localStorage.setItem(`cdp_student_data_${user.uid}`, JSON.stringify(sd));
             }
           } catch { /* best-effort */ }
-
         } else if (data.status === 'error') {
           setJobState('error');
-          localStorage.removeItem('cdp_resume_job');
-          if (intervalRef.current) clearInterval(intervalRef.current);
+          localStorage.removeItem(RESUME_JOB_KEY);
+          clearTimers();
         }
-      } catch { /* network error — keep polling */ }
+      } catch { /* keep polling on network error */ }
     };
 
     poll();
-    intervalRef.current = setInterval(poll, POLL_INTERVAL);
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, []);
+    pollRef.current = setInterval(poll, 3000);
+  }, [clearTimers]);
+
+  // On mount: resume a pending job from a previous page/session
+  useEffect(() => {
+    const raw = localStorage.getItem(RESUME_JOB_KEY);
+    if (!raw) return;
+    try {
+      const job = JSON.parse(raw) as { resume_id: string; started_at: number };
+      if (Date.now() - job.started_at < 10 * 60 * 1000) {
+        startJob(job.resume_id);
+      } else {
+        localStorage.removeItem(RESUME_JOB_KEY);
+      }
+    } catch { localStorage.removeItem(RESUME_JOB_KEY); }
+  }, [startJob]);
+
+  // Listen for uploads that happen in the same session
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ resume_id: string }>).detail;
+      startJob(detail.resume_id);
+    };
+    window.addEventListener('cdp-resume-started', handler);
+    return () => window.removeEventListener('cdp-resume-started', handler);
+  }, [startJob]);
+
+  // Auto-dismiss success toast after 10s
+  useEffect(() => {
+    if (jobState !== 'complete') return;
+    const t = setTimeout(() => setDismissed(true), 10000);
+    return () => clearTimeout(t);
+  }, [jobState]);
+
+  useEffect(() => () => clearTimers(), [clearTimers]);
 
   if (!jobState || dismissed) return null;
 
-  const toast = {
+  const phases = [
+    { label: 'Reading PDF', maxT: 5 },
+    { label: 'Extracting text', maxT: 15 },
+    { label: 'AI analyzing skills', maxT: 32 },
+    { label: 'Updating your profile', maxT: Infinity },
+  ];
+  const phaseIdx = phases.findIndex(p => elapsed < p.maxT);
+  const currentPhase = phases[phaseIdx >= 0 ? phaseIdx : phases.length - 1];
+  const fakeProgress = Math.min(90, 8 + (elapsed / 42) * 82);
+
+  const toasts = {
     processing: {
       bg: '#1e293b',
       color: '#f8fafc',
-      icon: '⏳',
-      text: 'Parsing your resume in the background…',
-      sub: 'Skills and profile data will update automatically.',
-      action: null,
+      accentColor: '#f59e0b',
+      icon: null,
+      title: currentPhase.label + '…',
+      sub: null as string | null,
+      action: null as { label: string; to: string } | null,
     },
     complete: {
       bg: '#14532d',
       color: '#f0fdf4',
+      accentColor: '#86efac',
       icon: '✓',
-      text: 'Resume parsed! Your profile has been updated.',
-      sub: 'Skills, education, and experience extracted.',
-      action: { label: 'View full profile →', to: '/profile' },
+      title: 'Resume parsed!',
+      sub: 'Skills and experience merged into your profile.',
+      action: { label: 'View profile →', to: '/profile' },
     },
     error: {
       bg: '#7f1d1d',
       color: '#fef2f2',
+      accentColor: '#fca5a5',
       icon: '✕',
-      text: 'Resume parse failed.',
-      sub: 'Try uploading again from your profile.',
+      title: 'Resume parse failed',
+      sub: 'Please try uploading again.',
       action: { label: 'Try again →', to: '/resume' },
     },
   }[jobState];
 
   return (
     <div
+      role="status"
+      aria-live="polite"
       style={{
         position: 'fixed',
         bottom: '1.5rem',
         right: '1.5rem',
         zIndex: 9999,
-        background: toast.bg,
-        color: toast.color,
-        borderRadius: '0.75rem',
-        padding: '1rem 1.25rem',
-        maxWidth: 340,
-        boxShadow: '0 4px 24px rgba(0,0,0,0.35)',
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: '0.75rem',
-        animation: 'slideUp 0.3s ease',
+        background: toasts.bg,
+        color: toasts.color,
+        borderRadius: '0.875rem',
+        padding: '0.875rem 1rem',
+        width: 280,
+        boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+        animation: 'slideUp 0.25s ease',
       }}
-      role="status"
-      aria-live="polite"
     >
-      <span style={{ fontSize: '1.25rem', lineHeight: 1.2, flexShrink: 0 }}>{toast.icon}</span>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.2rem' }}>{toast.text}</div>
-        <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>{toast.sub}</div>
-        {toast.action && (
-          <button
-            onClick={() => { setDismissed(true); navigate(toast.action!.to); }}
-            style={{ marginTop: '0.5rem', background: 'transparent', border: 'none', color: 'inherit', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', padding: 0, textDecoration: 'underline' }}
-          >
-            {toast.action.label}
-          </button>
-        )}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem' }}>
+        {/* Icon / spinner */}
+        <div style={{ flexShrink: 0, marginTop: 1 }}>
+          {jobState === 'processing' ? (
+            <div style={{ width: 16, height: 16, border: `2px solid ${toasts.accentColor}33`, borderTop: `2px solid ${toasts.accentColor}`, borderRadius: '50%', animation: 'toastSpin 0.8s linear infinite' }} />
+          ) : (
+            <span style={{ fontSize: '1rem', lineHeight: 1 }}>{toasts.icon}</span>
+          )}
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 700, fontSize: '0.8125rem', marginBottom: '0.1rem' }}>{toasts.title}</div>
+          {jobState === 'processing' && (
+            <div style={{ fontSize: '0.7rem', opacity: 0.55, marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
+              <span>Usually 20–40 seconds</span>
+              <span>{elapsed}s elapsed</span>
+            </div>
+          )}
+          {jobState === 'processing' && (
+            <div style={{ height: 3, background: 'rgba(245,158,11,0.2)', borderRadius: 2, overflow: 'hidden', marginBottom: '0.25rem' }}>
+              <div style={{ height: '100%', background: toasts.accentColor, borderRadius: 2, width: `${fakeProgress}%`, transition: 'width 1s ease-out' }} />
+            </div>
+          )}
+          {toasts.sub && <div style={{ fontSize: '0.7rem', opacity: 0.75, marginBottom: toasts.action ? '0.375rem' : 0 }}>{toasts.sub}</div>}
+          {toasts.action && (
+            <button
+              onClick={() => { setDismissed(true); navigate(toasts.action!.to); }}
+              style={{ background: 'transparent', border: 'none', color: toasts.accentColor, fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', padding: 0, textDecoration: 'underline' }}
+            >
+              {toasts.action.label}
+            </button>
+          )}
+        </div>
+        <button
+          onClick={() => setDismissed(true)}
+          aria-label="Dismiss"
+          style={{ background: 'transparent', border: 'none', color: 'inherit', opacity: 0.45, cursor: 'pointer', padding: '0 0.125rem', fontSize: '1rem', lineHeight: 1, flexShrink: 0 }}
+        >
+          ×
+        </button>
       </div>
-      <button
-        onClick={() => setDismissed(true)}
-        aria-label="Dismiss"
-        style={{ background: 'transparent', border: 'none', color: 'inherit', opacity: 0.6, cursor: 'pointer', padding: '0 0.25rem', fontSize: '1rem', lineHeight: 1, flexShrink: 0 }}
-      >
-        ×
-      </button>
     </div>
   );
 }

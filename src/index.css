@@ -240,3 +240,6 @@ a:hover { color: var(--brand-700); }
   from { transform: translateY(1rem); opacity: 0; }
   to   { transform: translateY(0); opacity: 1; }
 }
+@keyframes toastSpin {
+  to { transform: rotate(360deg); }
+}
