@@ -23,18 +23,6 @@ const API_BASE = (import.meta.env.VITE_API_URL as string) || 'https://app.lablin
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface PathwayItem {
-  id: string;
-  title: string;
-  short_name: string;
-  description: string;
-  career_field: string;
-  entry_level: string | null;
-  keywords: string[];
-  usage_count: number;
-  requirements?: Record<string, unknown>;
-}
-
 interface AssignedPathway {
   id: number;
   pathway_id: string;
@@ -285,59 +273,6 @@ function AnalysisPanel({ analysis, pathwayTitle, onRefresh, pathwayId }: Analysi
   );
 }
 
-// ─── Sidebar Item (unassigned — plain button) ─────────────────────────────────
-
-interface SidebarItemProps {
-  pathwayId: string;
-  label: string;
-  isSelected: boolean;
-  isAssigned: boolean;
-  matchScore?: number | null;
-  fitScore?: number | null;
-  onClick: () => void;
-}
-
-function SidebarItem({ pathwayId: _pathwayId, label, isSelected, isAssigned, matchScore, fitScore, onClick }: SidebarItemProps) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        width: '100%',
-        textAlign: 'left',
-        padding: '0.5rem 0.625rem',
-        borderRadius: 'var(--radius-md)',
-        border: isSelected ? '1px solid var(--brand-500)' : '1px solid transparent',
-        background: isSelected ? 'rgba(154,184,46,0.08)' : 'transparent',
-        cursor: 'pointer',
-        transition: 'background 0.12s, border-color 0.12s',
-        opacity: isAssigned ? 1 : 0.55,
-        minWidth: 0,
-      }}
-      onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'var(--surface)'; }}
-      onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
-    >
-      <span style={{ fontSize: '0.6rem', color: isAssigned ? 'var(--brand-500)' : 'var(--text-faint)', flexShrink: 0, lineHeight: 1 }}>●</span>
-      <span style={{
-        fontSize: 'var(--text-xs)',
-        fontWeight: isSelected ? 700 : isAssigned ? 600 : 400,
-        color: isSelected ? 'var(--brand-700)' : isAssigned ? 'var(--text-strong)' : 'var(--text-muted)',
-        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1,
-      }}>
-        {label}
-      </span>
-      {isAssigned && (matchScore != null || fitScore != null) && (
-        <span style={{ fontSize: '0.65rem', fontWeight: 700, color: matchScore != null ? matchColor(matchScore) : 'var(--text-muted)', flexShrink: 0 }}>
-          {matchScore != null ? `${matchScore}%` : fitScore != null ? `${fitScore}%` : ''}
-        </span>
-      )}
-    </button>
-  );
-}
-
 // ─── Sortable Sidebar Item (assigned — full-card draggable) ───────────────────
 
 interface SortableSidebarItemProps {
@@ -433,74 +368,6 @@ function SortableSidebarItem({ pathwayId, label, isSelected, matchScore, fitScor
   );
 }
 
-// ─── Right Panel: Unassigned Pathway ─────────────────────────────────────────
-
-interface UnassignedPanelProps {
-  pathway: PathwayItem;
-  token: string | null;
-  onRunAnalysis: (pathwayId: string) => void;
-  onSave: (pathwayId: string) => void;
-  hasAnalysis: boolean;
-  runningAnalysis: boolean;
-}
-
-function UnassignedPanel({ pathway, onRunAnalysis, onSave, hasAnalysis, runningAnalysis }: UnassignedPanelProps) {
-  const keywords = Array.isArray(pathway.keywords) ? pathway.keywords : (typeof pathway.keywords === 'string' ? (pathway.keywords as string).split(',').map((k: string) => k.trim()) : []);
-
-  return (
-    <div>
-      <div className="card" style={{ marginBottom: 'var(--sp-md)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 'var(--sp-md)', marginBottom: 'var(--sp-md)' }}>
-          <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem', marginBottom: 'var(--sp-sm)' }}>
-              <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--brand-700)', background: 'var(--brand-50)', borderRadius: 'var(--radius-sm)', padding: '2px 8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                {pathway.career_field}
-              </span>
-              {pathway.entry_level && (
-                <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--text-muted)', background: 'var(--surface-2)', borderRadius: 'var(--radius-sm)', padding: '2px 6px' }}>
-                  {pathway.entry_level}
-                </span>
-              )}
-            </div>
-            <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', lineHeight: 1.6 }}>{pathway.description}</p>
-            {keywords.length > 0 && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', marginTop: 'var(--sp-sm)' }}>
-                {keywords.slice(0, 6).map((kw: string) => (
-                  <span key={kw} style={{ fontSize: '0.7rem', color: 'var(--text-faint)', background: 'var(--surface-2)', borderRadius: 'var(--radius-sm)', padding: '2px 6px' }}>{kw}</span>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', gap: 'var(--sp-sm)', flexWrap: 'wrap', alignItems: 'center' }}>
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => onRunAnalysis(pathway.id)}
-            disabled={runningAnalysis}
-          >
-            {runningAnalysis ? 'Starting…' : hasAnalysis ? 'Re-run Analysis' : '▶ Run Gap Analysis'}
-          </button>
-          <button
-            type="button"
-            onClick={() => onSave(pathway.id)}
-            style={{ fontSize: 'var(--text-xs)', fontWeight: 600, padding: '5px 10px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--brand-300)', background: 'var(--brand-50)', color: 'var(--brand-700)', cursor: 'pointer', whiteSpace: 'nowrap' }}
-          >
-            + Save to My Pathways
-          </button>
-        </div>
-      </div>
-
-      {!hasAnalysis && (
-        <div className="card" style={{ textAlign: 'center', padding: 'var(--sp-xl)', color: 'var(--text-muted)' }}>
-          <div style={{ fontSize: '2rem', marginBottom: 'var(--sp-md)', opacity: 0.4 }}>🧠</div>
-          <p style={{ fontSize: 'var(--text-sm)', marginBottom: 'var(--sp-md)' }}>No analysis yet for this pathway.</p>
-          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-faint)' }}>Run a gap analysis to see how ready you are and get personalized recommendations.</p>
-        </div>
-      )}
-    </div>
-  );
-}
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
@@ -515,12 +382,10 @@ export default function PathwayDashboard() {
   const isLocked = completeness < 60;
 
   // Data state
-  const [allPathways, setAllPathways] = useState<PathwayItem[]>([]);
   const [assignedPathways, setAssignedPathways] = useState<AssignedPathway[]>([]);
   const [analyses, setAnalyses] = useState<GapAnalysis[]>([]);
 
   // Loading state
-  const [loadingPathways, setLoadingPathways] = useState(true);
   const [loadingAssigned, setLoadingAssigned] = useState(true);
   const [loadingAnalyses, setLoadingAnalyses] = useState(true);
 
@@ -538,23 +403,12 @@ export default function PathwayDashboard() {
 
   // UI state
   const [selectedId, setSelectedId] = useState<string | null>(searchParams.get('selected'));
-  const [searchQuery, setSearchQuery] = useState('');
 
   // Redirect from old /pathway/:id route
   useEffect(() => {
     const fromId = searchParams.get('selected');
     if (fromId) setSelectedId(fromId);
   }, [searchParams]);
-
-  // Load all pathways
-  useEffect(() => {
-    if (isLocked) { setLoadingPathways(false); return; }
-    fetch(`${API_BASE}/api/cdp/pathways?limit=100`, {
-      headers: { Authorization: `Bearer ${token}` },
-    }).then(r => r.json()).then(d => {
-      if (d.ok) setAllPathways(d.pathways || []);
-    }).catch(() => {}).finally(() => setLoadingPathways(false));
-  }, [token, isLocked]);
 
   // Load assigned pathways
   const loadAssigned = useCallback(async () => {
@@ -714,7 +568,7 @@ export default function PathwayDashboard() {
     setRunError(null);
 
     // Optimistic entry
-    const selectedPathwayTitle = getPathwayById(pathwayId)?.title || pathwayId;
+    const selectedPathwayTitle = assignedPathways.find(p => p.pathway_id === pathwayId)?.title || pathwayId;
     setAnalyses(prev => {
       const without = prev.filter(a => a.pathwayId !== pathwayId);
       return [...without, {
@@ -762,21 +616,6 @@ export default function PathwayDashboard() {
     }
   };
 
-  const handleSave = async (pathwayId: string) => {
-    try {
-      const res = await fetch(`${API_BASE}/api/cdp/students/me/pathways/save`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pathway_id: pathwayId }),
-      });
-      const data = await res.json();
-      if (data.ok) {
-        await loadAssigned();
-        setSelectedId(pathwayId);
-      }
-    } catch {}
-  };
-
   const handleRemove = async (pathwayId: string) => {
     try {
       const res = await fetch(`${API_BASE}/api/cdp/students/me/pathways/${pathwayId}`, {
@@ -812,36 +651,18 @@ export default function PathwayDashboard() {
 
   // ─── Data helpers ──────────────────────────────────────────────────────────
 
-  function getPathwayById(id: string): PathwayItem | undefined {
-    return allPathways.find(p => p.id === id);
-  }
-
-  const assignedPathwayIds = new Set(assignedPathways.map(p => p.pathway_id));
-
-  // Build sidebar lists
-  const filteredAll = searchQuery.trim()
-    ? allPathways.filter(p =>
-        p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.career_field?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (Array.isArray(p.keywords) ? p.keywords : []).some((k: string) => k.toLowerCase().includes(searchQuery.toLowerCase()))
-      )
-    : allPathways;
-
   const sidebarAssigned = assignedPathways; // order from API is already correct
-
-  const sidebarUnassigned = filteredAll.filter(p => !assignedPathwayIds.has(p.id));
 
   // Selected pathway data
   const selectedAssigned = assignedPathways.find(p => p.pathway_id === selectedId);
-  const selectedItem = selectedId ? getPathwayById(selectedId) : null;
   const selectedAnalysis = selectedId ? analyses.find(a => a.pathwayId === selectedId) || null : null;
 
   // Derived title and desc for the right pane
-  const displayTitle = selectedAssigned?.title || selectedItem?.title || '';
-  const displayDesc = selectedAssigned?.description || selectedItem?.description || '';
-  const displayField = selectedAssigned?.career_field || selectedItem?.career_field || '';
+  const displayTitle = selectedAssigned?.title || '';
+  const displayDesc = selectedAssigned?.description || '';
+  const displayField = selectedAssigned?.career_field || '';
 
-  const isLoading = loadingPathways || loadingAssigned || loadingAnalyses;
+  const isLoading = loadingAssigned || loadingAnalyses;
 
   // ─── Render ────────────────────────────────────────────────────────────────
 
@@ -852,7 +673,7 @@ export default function PathwayDashboard() {
         <div className="page-header">
           <div className="page-container">
             <h1>My Career Pathways</h1>
-            <p>Your saved career pathways — explore the full library, save pathways, and run gap analyses</p>
+            <p>Your personalized career pathways — High, Medium, and Stretch tier — with gap analyses</p>
           </div>
         </div>
 
@@ -877,19 +698,6 @@ export default function PathwayDashboard() {
 
               {/* ── LEFT SIDEBAR ── */}
               <div style={{ position: 'sticky', top: '1rem' }}>
-                {/* Search */}
-                <div style={{ marginBottom: 'var(--sp-md)' }}>
-                  <input
-                    type="search"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search pathways…"
-                    style={{ width: '100%', padding: '0.5rem 0.75rem', fontSize: 'var(--text-xs)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', background: 'var(--surface)', color: 'var(--text-default)', outline: 'none', boxSizing: 'border-box' }}
-                    onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = 'var(--brand-400)'; }}
-                    onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = 'var(--border)'; }}
-                  />
-                </div>
-
                 {/* Just generated toast */}
                 {justGenerated && (
                   <div style={{ background: 'rgba(76,175,80,0.08)', border: '1px solid rgba(76,175,80,0.25)', borderRadius: 'var(--radius-md)', padding: 'var(--sp-sm)', marginBottom: 'var(--sp-md)', fontSize: 'var(--text-xs)', color: '#2e7d32', fontWeight: 600 }}>
@@ -945,37 +753,6 @@ export default function PathwayDashboard() {
                   </div>
                 )}
 
-                {/* Divider */}
-                {(sidebarAssigned.length > 0 || generating || (!isLocked && !loadingAssigned && assignedPathways.length === 0 && !generationError)) && <div style={{ borderTop: '1px solid var(--border)', marginBottom: 'var(--sp-md)' }} />}
-
-                {/* ALL PATHWAYS section */}
-                <div>
-                  <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: '0.375rem', padding: '0 0.25rem' }}>
-                    All Pathways {!loadingPathways && sidebarUnassigned.length > 0 && <span style={{ fontWeight: 400, color: 'var(--text-faint)' }}>({sidebarUnassigned.length})</span>}
-                  </div>
-                  {loadingPathways ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                      {[1,2,3,4,5].map(i => <div key={i} style={{ height: 28, borderRadius: 'var(--radius-md)', background: 'var(--surface-2)', animation: 'skeletonPulse 1.5s ease-in-out infinite' }} />)}
-                    </div>
-                  ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.125rem', maxHeight: 'calc(100vh - 380px)', overflowY: 'auto', paddingRight: '0.125rem' }}>
-                      {sidebarUnassigned.map(p => (
-                        <SidebarItem
-                          key={p.id}
-                          pathwayId={p.id}
-                          label={p.short_name || p.title}
-                          isSelected={selectedId === p.id}
-                          isAssigned={false}
-                          matchScore={analyses.find(a => a.pathwayId === p.id && a.status === 'complete')?.overallMatch}
-                          onClick={() => setSelectedId(p.id)}
-                        />
-                      ))}
-                      {sidebarUnassigned.length === 0 && searchQuery && (
-                        <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-faint)', padding: '0.375rem 0.625rem', lineHeight: 1.5 }}>No pathways match "{searchQuery}"</p>
-                      )}
-                    </div>
-                  )}
-                </div>
               </div>
 
               {/* ── RIGHT CONTENT ── */}
@@ -1069,18 +846,6 @@ export default function PathwayDashboard() {
                         pathwayTitle={displayTitle}
                         pathwayId={selectedId}
                         onRefresh={(pid) => handleRunAnalysis(pid, true)}
-                      />
-                    )}
-
-                    {/* Unassigned pathway panel — run analysis or save */}
-                    {!selectedAssigned && selectedItem && (
-                      <UnassignedPanel
-                        pathway={selectedItem}
-                        token={token}
-                        onRunAnalysis={handleRunAnalysis}
-                        onSave={handleSave}
-                        hasAnalysis={!!selectedAnalysis}
-                        runningAnalysis={runningAnalysis}
                       />
                     )}
 
