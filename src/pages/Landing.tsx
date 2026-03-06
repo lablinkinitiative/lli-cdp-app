@@ -163,6 +163,8 @@ export default function Landing() {
           <div style={{ display: 'flex', gap: '1rem' }}>
             <a href="https://intern.lablinkinitiative.org" style={{ color: 'rgba(255,255,255,0.4)', fontSize: 'var(--text-xs)', textDecoration: 'none' }}>Browse Programs</a>
             <a href="https://newsletter.lablinkinitiative.org" style={{ color: 'rgba(255,255,255,0.4)', fontSize: 'var(--text-xs)', textDecoration: 'none' }}>Newsletter</a>
+            <Link to="/terms" style={{ color: 'rgba(255,255,255,0.4)', fontSize: 'var(--text-xs)', textDecoration: 'none' }}>Terms</Link>
+            <Link to="/privacy" style={{ color: 'rgba(255,255,255,0.4)', fontSize: 'var(--text-xs)', textDecoration: 'none' }}>Privacy</Link>
             <a href="mailto:lablinkinitiative@gmail.com" style={{ color: 'rgba(255,255,255,0.4)', fontSize: 'var(--text-xs)', textDecoration: 'none' }}>Contact</a>
           </div>
         </div>
