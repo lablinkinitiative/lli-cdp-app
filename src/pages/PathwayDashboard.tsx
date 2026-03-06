@@ -27,8 +27,8 @@ interface AssignedPathway {
   short_name: string;
   description: string;
   career_field: string;
-  fit_score: number;
-  fit_tier: 'high' | 'medium' | 'stretch';
+  fit_score: number | null;
+  fit_tier: 'high' | 'medium' | 'stretch' | null;
   notes: string | null;
   is_default: boolean;
   assigned_at: string;
@@ -70,15 +70,6 @@ interface GapAnalysis {
   createdAt: string;
   updatedAt: string;
 }
-
-// ─── Tier config ──────────────────────────────────────────────────────────────
-
-const TIER_CONFIG = {
-  high: { label: 'Almost There', color: '#4caf50', bg: 'rgba(76,175,80,0.08)', border: 'rgba(76,175,80,0.25)', icon: '●' },
-  medium: { label: 'Achievable', color: '#ff9800', bg: 'rgba(255,152,0,0.08)', border: 'rgba(255,152,0,0.25)', icon: '◑' },
-  stretch: { label: 'Think Big', color: '#2196f3', bg: 'rgba(33,150,243,0.08)', border: 'rgba(33,150,243,0.25)', icon: '○' },
-};
-
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -285,67 +276,101 @@ interface SidebarItemProps {
   label: string;
   isSelected: boolean;
   isAssigned: boolean;
-  assignedTier?: 'high' | 'medium' | 'stretch';
   matchScore?: number | null;
-  fitScore?: number;
+  fitScore?: number | null;
   onClick: () => void;
+  onRemove?: (pathwayId: string) => void;
+  onReorder?: (pathwayId: string, direction: 'up' | 'down') => void;
+  showReorderUp?: boolean;
+  showReorderDown?: boolean;
 }
 
-function SidebarItem({ pathwayId: _pathwayId, label, isSelected, isAssigned, assignedTier, matchScore, fitScore, onClick }: SidebarItemProps) {
-  const tier = assignedTier ? TIER_CONFIG[assignedTier] : null;
-
+function SidebarItem({ pathwayId, label, isSelected, isAssigned, matchScore, fitScore, onClick, onRemove, onReorder, showReorderUp, showReorderDown }: SidebarItemProps) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        width: '100%',
-        textAlign: 'left',
-        padding: '0.5rem 0.625rem',
-        borderRadius: 'var(--radius-md)',
-        border: isSelected ? `1px solid ${tier?.color || 'var(--brand-500)'}` : '1px solid transparent',
-        background: isSelected ? (tier ? tier.bg : 'rgba(154,184,46,0.08)') : 'transparent',
-        cursor: 'pointer',
-        transition: 'background 0.12s, border-color 0.12s',
-        opacity: isAssigned ? 1 : 0.55,
-      }}
-      onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'var(--surface)'; }}
-      onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
-    >
-      {/* Tier dot or generic dot */}
-      <span style={{ fontSize: '0.6rem', color: tier?.color || 'var(--text-faint)', flexShrink: 0, lineHeight: 1 }}>
-        {tier ? tier.icon : '○'}
-      </span>
-
-      {/* Title */}
-      <span style={{
-        fontSize: 'var(--text-xs)',
-        fontWeight: isSelected ? 700 : isAssigned ? 600 : 400,
-        color: isSelected ? (tier?.color || 'var(--brand-700)') : isAssigned ? 'var(--text-strong)' : 'var(--text-muted)',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        flex: 1,
-      }}>
-        {label}
-      </span>
-
-      {/* Match or fit score badge */}
-      {isAssigned && (
-        <span style={{
-          fontSize: '0.65rem',
-          fontWeight: 700,
-          color: matchScore != null ? matchColor(matchScore) : (tier?.color || 'var(--text-muted)'),
-          flexShrink: 0,
-          marginLeft: '0.25rem',
-        }}>
-          {matchScore != null ? `${matchScore}%` : fitScore != null ? `${fitScore}%` : ''}
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+      <button
+        type="button"
+        onClick={onClick}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          flex: 1,
+          textAlign: 'left',
+          padding: '0.5rem 0.625rem',
+          borderRadius: 'var(--radius-md)',
+          border: isSelected ? '1px solid var(--brand-500)' : '1px solid transparent',
+          background: isSelected ? 'rgba(154,184,46,0.08)' : 'transparent',
+          cursor: 'pointer',
+          transition: 'background 0.12s, border-color 0.12s',
+          opacity: isAssigned ? 1 : 0.55,
+          minWidth: 0,
+        }}
+        onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'var(--surface)'; }}
+        onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
+      >
+        {/* Generic dot */}
+        <span style={{ fontSize: '0.6rem', color: isAssigned ? 'var(--brand-500)' : 'var(--text-faint)', flexShrink: 0, lineHeight: 1 }}>
+          ●
         </span>
+
+        {/* Title */}
+        <span style={{
+          fontSize: 'var(--text-xs)',
+          fontWeight: isSelected ? 700 : isAssigned ? 600 : 400,
+          color: isSelected ? 'var(--brand-700)' : isAssigned ? 'var(--text-strong)' : 'var(--text-muted)',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          flex: 1,
+        }}>
+          {label}
+        </span>
+
+        {/* Match or fit score badge */}
+        {isAssigned && (matchScore != null || fitScore != null) && (
+          <span style={{
+            fontSize: '0.65rem',
+            fontWeight: 700,
+            color: matchScore != null ? matchColor(matchScore) : 'var(--text-muted)',
+            flexShrink: 0,
+            marginLeft: '0.25rem',
+          }}>
+            {matchScore != null ? `${matchScore}%` : fitScore != null ? `${fitScore}%` : ''}
+          </span>
+        )}
+      </button>
+
+      {/* Reorder + remove controls for assigned pathways */}
+      {isAssigned && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', flexShrink: 0 }}>
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onReorder?.(pathwayId, 'up'); }}
+            disabled={!showReorderUp}
+            title="Move up"
+            style={{ fontSize: '0.55rem', padding: '1px 3px', border: 'none', background: 'transparent', cursor: showReorderUp ? 'pointer' : 'default', color: showReorderUp ? 'var(--text-muted)' : 'var(--text-faint)', lineHeight: 1 }}
+          >↑</button>
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onReorder?.(pathwayId, 'down'); }}
+            disabled={!showReorderDown}
+            title="Move down"
+            style={{ fontSize: '0.55rem', padding: '1px 3px', border: 'none', background: 'transparent', cursor: showReorderDown ? 'pointer' : 'default', color: showReorderDown ? 'var(--text-muted)' : 'var(--text-faint)', lineHeight: 1 }}
+          >↓</button>
+        </div>
       )}
-    </button>
+      {isAssigned && onRemove && (
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onRemove(pathwayId); }}
+          title="Remove from My Pathways"
+          style={{ fontSize: '0.6rem', padding: '2px 4px', border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--text-faint)', flexShrink: 0, lineHeight: 1, borderRadius: 'var(--radius-sm)' }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--error, #dc2626)'; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-faint)'; }}
+        >×</button>
+      )}
+    </div>
   );
 }
 
@@ -353,45 +378,14 @@ function SidebarItem({ pathwayId: _pathwayId, label, isSelected, isAssigned, ass
 
 interface UnassignedPanelProps {
   pathway: PathwayItem;
-  assignedPathways: AssignedPathway[];
   token: string | null;
   onRunAnalysis: (pathwayId: string) => void;
-  onSwapped: (tier: string, pathwayId: string, title: string) => void;
+  onSave: (pathwayId: string) => void;
   hasAnalysis: boolean;
   runningAnalysis: boolean;
 }
 
-function UnassignedPanel({ pathway, assignedPathways, token, onRunAnalysis, onSwapped, hasAnalysis, runningAnalysis }: UnassignedPanelProps) {
-  const [swapping, setSwapping] = useState(false);
-  const [showSwapMenu, setShowSwapMenu] = useState(false);
-  const [swapMsg, setSwapMsg] = useState<string | null>(null);
-  const hasAssignments = assignedPathways.length > 0;
-
-  const handleSwap = async (tier: string) => {
-    setSwapping(true);
-    setShowSwapMenu(false);
-    try {
-      const res = await fetch(`${API_BASE}/api/cdp/students/me/pathways/swap`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ tier, pathway_id: pathway.id }),
-      });
-      const data = await res.json();
-      if (data.ok) {
-        setSwapMsg(`Swapped into "${TIER_CONFIG[tier as keyof typeof TIER_CONFIG]?.label || tier}" slot`);
-        onSwapped(tier, pathway.id, pathway.title);
-        setTimeout(() => setSwapMsg(null), 3000);
-      } else {
-        setSwapMsg(`Error: ${data.error || 'Failed to swap'}`);
-        setTimeout(() => setSwapMsg(null), 4000);
-      }
-    } catch {
-      setSwapMsg('Network error — try again');
-      setTimeout(() => setSwapMsg(null), 4000);
-    }
-    setSwapping(false);
-  };
-
+function UnassignedPanel({ pathway, onRunAnalysis, onSave, hasAnalysis, runningAnalysis }: UnassignedPanelProps) {
   const keywords = Array.isArray(pathway.keywords) ? pathway.keywords : (typeof pathway.keywords === 'string' ? (pathway.keywords as string).split(',').map((k: string) => k.trim()) : []);
 
   return (
@@ -428,44 +422,14 @@ function UnassignedPanel({ pathway, assignedPathways, token, onRunAnalysis, onSw
           >
             {runningAnalysis ? 'Starting…' : hasAnalysis ? 'Re-run Analysis' : '▶ Run Gap Analysis'}
           </button>
-
-          {hasAssignments && (
-            <div style={{ position: 'relative' }}>
-              <button
-                type="button"
-                disabled={swapping}
-                onClick={() => setShowSwapMenu(v => !v)}
-                style={{ fontSize: 'var(--text-xs)', fontWeight: 600, padding: '5px 10px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--brand-300)', background: 'var(--brand-50)', color: 'var(--brand-700)', cursor: 'pointer', whiteSpace: 'nowrap' }}
-              >
-                {swapping ? 'Swapping…' : '⇄ Swap into My Pathways'}
-              </button>
-
-              {showSwapMenu && (
-                <div style={{ position: 'absolute', top: '110%', left: 0, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', padding: '0.375rem', zIndex: 100, minWidth: 200 }}>
-                  <p style={{ fontSize: '0.65rem', color: 'var(--text-faint)', padding: '0 4px 4px', fontWeight: 600 }}>REPLACE WHICH SLOT?</p>
-                  {(['high', 'medium', 'stretch'] as const).map(tier => {
-                    const current = assignedPathways.find(p => p.fit_tier === tier);
-                    return (
-                      <button key={tier} type="button" onClick={() => handleSwap(tier)} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '5px 8px', borderRadius: 'var(--radius-sm)', border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 'var(--text-xs)', color: 'var(--text-strong)' }}
-                        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--surface-2)'; }}
-                        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
-                      >
-                        <strong>{TIER_CONFIG[tier].label}</strong>
-                        {current && <span style={{ color: 'var(--text-faint)', display: 'block', fontSize: '0.65rem' }}>Currently: {current.title.length > 30 ? current.title.slice(0, 28) + '…' : current.title}</span>}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={() => onSave(pathway.id)}
+            style={{ fontSize: 'var(--text-xs)', fontWeight: 600, padding: '5px 10px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--brand-300)', background: 'var(--brand-50)', color: 'var(--brand-700)', cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >
+            + Save to My Pathways
+          </button>
         </div>
-
-        {swapMsg && (
-          <div style={{ marginTop: 'var(--sp-sm)', fontSize: 'var(--text-xs)', padding: '4px 8px', borderRadius: 'var(--radius-sm)', background: swapMsg.startsWith('Error') ? 'var(--error-bg)' : 'rgba(76,175,80,0.08)', color: swapMsg.startsWith('Error') ? 'var(--error)' : '#2e7d32', fontWeight: 600 }}>
-            {swapMsg}
-          </div>
-        )}
       </div>
 
       {!hasAnalysis && (
@@ -739,12 +703,50 @@ export default function PathwayDashboard() {
     }
   };
 
-  const handleSwapped = (tier: string, pathwayId: string, title: string) => {
-    setAssignedPathways(prev => prev.map(p =>
-      p.fit_tier === tier ? { ...p, pathway_id: pathwayId, title } : p
-    ));
-    setSelectedId(pathwayId);
-    loadAssigned();
+  const handleSave = async (pathwayId: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/cdp/students/me/pathways/save`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pathway_id: pathwayId }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        await loadAssigned();
+        setSelectedId(pathwayId);
+      }
+    } catch {}
+  };
+
+  const handleRemove = async (pathwayId: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/cdp/students/me/pathways/${pathwayId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setAssignedPathways(prev => prev.filter(p => p.pathway_id !== pathwayId));
+        if (selectedId === pathwayId) setSelectedId(null);
+      }
+    } catch {}
+  };
+
+  const handleReorder = async (pathwayId: string, direction: 'up' | 'down') => {
+    const idx = assignedPathways.findIndex(p => p.pathway_id === pathwayId);
+    if (idx < 0) return;
+    const newOrder = [...assignedPathways];
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= newOrder.length) return;
+    [newOrder[idx], newOrder[swapIdx]] = [newOrder[swapIdx], newOrder[idx]];
+    setAssignedPathways(newOrder);
+    try {
+      await fetch(`${API_BASE}/api/cdp/students/me/pathways/reorder`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order: newOrder.map(p => p.pathway_id) }),
+      });
+    } catch {}
   };
 
   // ─── Data helpers ──────────────────────────────────────────────────────────
@@ -764,10 +766,7 @@ export default function PathwayDashboard() {
       )
     : allPathways;
 
-  const sidebarAssigned = assignedPathways.slice().sort((a, b) => {
-    const tierOrder = { high: 0, medium: 1, stretch: 2 };
-    return (tierOrder[a.fit_tier] ?? 3) - (tierOrder[b.fit_tier] ?? 3);
-  });
+  const sidebarAssigned = assignedPathways; // order from API is already correct
 
   const sidebarUnassigned = filteredAll.filter(p => !assignedPathwayIds.has(p.id));
 
@@ -792,7 +791,7 @@ export default function PathwayDashboard() {
         <div className="page-header">
           <div className="page-container">
             <h1>My Career Pathways</h1>
-            <p>Your three personalized pathways — explore the full library and run gap analyses</p>
+            <p>Your saved career pathways — explore the full library, save pathways, and run gap analyses</p>
           </div>
         </div>
 
@@ -850,22 +849,18 @@ export default function PathwayDashboard() {
                       </div>
                     ) : (generating || (!isLocked && assignedPathways.length === 0 && !generationError)) && sidebarAssigned.length === 0 ? (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.125rem' }}>
-                        {(['high', 'medium', 'stretch'] as const).map(tier => {
-                          const tc = TIER_CONFIG[tier];
-                          return (
-                            <div key={tier} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 0.625rem', borderRadius: 'var(--radius-md)', border: `1px solid ${tc.border}`, background: tc.bg, opacity: 0.85 }}>
-                              <span style={{ fontSize: '0.6rem', color: tc.color, flexShrink: 0, lineHeight: 1 }}>{tc.icon}</span>
-                              <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontStyle: 'italic', flex: 1 }}>
-                                Researching pathway…
-                              </span>
-                              <span style={{ fontSize: '0.6rem', fontWeight: 700, color: tc.color, flexShrink: 0 }}>{tc.label}</span>
-                            </div>
-                          );
-                        })}
+                        {[1, 2, 3].map(i => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 0.625rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', background: 'var(--surface)', opacity: 0.85 }}>
+                            <span style={{ fontSize: '0.6rem', color: 'var(--brand-400)', flexShrink: 0, lineHeight: 1 }}>●</span>
+                            <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontStyle: 'italic', flex: 1 }}>
+                              Researching pathway…
+                            </span>
+                          </div>
+                        ))}
                       </div>
                     ) : (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.125rem' }}>
-                        {sidebarAssigned.map(ap => {
+                        {sidebarAssigned.map((ap, idx) => {
                           const matchScore = ap.gap_analysis?.status === 'complete' ? ap.gap_analysis?.overall_match : null;
                           return (
                             <SidebarItem
@@ -874,10 +869,13 @@ export default function PathwayDashboard() {
                               label={ap.short_name || ap.title}
                               isSelected={selectedId === ap.pathway_id}
                               isAssigned={true}
-                              assignedTier={ap.fit_tier}
                               matchScore={matchScore}
                               fitScore={ap.fit_score}
                               onClick={() => setSelectedId(ap.pathway_id)}
+                              onRemove={handleRemove}
+                              onReorder={handleReorder}
+                              showReorderUp={idx > 0}
+                              showReorderDown={idx < sidebarAssigned.length - 1}
                             />
                           );
                         })}
@@ -934,15 +932,14 @@ export default function PathwayDashboard() {
                     <div className="card" style={{ marginBottom: 'var(--sp-md)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 'var(--sp-md)' }}>
                         <div style={{ flex: 1 }}>
-                          {/* Tier badge if assigned */}
+                          {/* Saved pathway badges */}
                           {selectedAssigned && (
                             <div style={{ display: 'flex', gap: '0.375rem', marginBottom: 'var(--sp-sm)', alignItems: 'center', flexWrap: 'wrap' }}>
-                              <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: TIER_CONFIG[selectedAssigned.fit_tier].color, background: TIER_CONFIG[selectedAssigned.fit_tier].bg, border: `1px solid ${TIER_CONFIG[selectedAssigned.fit_tier].border}`, borderRadius: 'var(--radius-sm)', padding: '2px 8px', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                                {TIER_CONFIG[selectedAssigned.fit_tier].icon} {TIER_CONFIG[selectedAssigned.fit_tier].label}
-                              </span>
-                              <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--brand-700)', background: 'var(--brand-50)', borderRadius: 'var(--radius-sm)', padding: '2px 8px' }}>
-                                {selectedAssigned.fit_score}% fit
-                              </span>
+                              {selectedAssigned.fit_score != null && (
+                                <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--brand-700)', background: 'var(--brand-50)', borderRadius: 'var(--radius-sm)', padding: '2px 8px' }}>
+                                  {selectedAssigned.fit_score}% fit
+                                </span>
+                              )}
                               {selectedAssigned.gap_analysis?.status === 'complete' && selectedAssigned.gap_analysis?.overall_match != null && (
                                 <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--white, #fff)', background: matchColor(selectedAssigned.gap_analysis.overall_match), borderRadius: 'var(--radius-sm)', padding: '2px 8px' }}>
                                   {selectedAssigned.gap_analysis.overall_match}% match
@@ -978,20 +975,27 @@ export default function PathwayDashboard() {
                           )}
                         </div>
 
-                        {/* Re-run or Run Analysis button in header */}
+                        {/* Analysis button + Remove button for assigned pathways */}
                         {selectedAssigned && (
-                          <>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', alignItems: 'flex-end', flexShrink: 0 }}>
                             {(!selectedAnalysis || selectedAnalysis.status === 'error') && (
-                              <button className="btn btn-primary btn-sm" onClick={() => handleRunAnalysis(selectedId)} disabled={runningAnalysis} style={{ flexShrink: 0 }}>
+                              <button className="btn btn-primary btn-sm" onClick={() => handleRunAnalysis(selectedId)} disabled={runningAnalysis}>
                                 {runningAnalysis ? 'Starting…' : '▶ Run Analysis'}
                               </button>
                             )}
                             {selectedAnalysis?.status === 'complete' && (
-                              <button className="btn btn-ghost btn-sm" onClick={() => handleRunAnalysis(selectedId, true)} disabled={runningAnalysis} style={{ flexShrink: 0 }}>
+                              <button className="btn btn-ghost btn-sm" onClick={() => handleRunAnalysis(selectedId, true)} disabled={runningAnalysis}>
                                 ↺ Re-run
                               </button>
                             )}
-                          </>
+                            <button
+                              type="button"
+                              onClick={() => handleRemove(selectedId)}
+                              style={{ fontSize: '0.65rem', fontWeight: 600, padding: '3px 8px', borderRadius: 'var(--radius-sm)', border: '1px solid rgba(220,38,38,0.25)', background: 'transparent', color: 'var(--error, #dc2626)', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                            >
+                              × Remove from My Pathways
+                            </button>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -1013,14 +1017,13 @@ export default function PathwayDashboard() {
                       />
                     )}
 
-                    {/* Unassigned pathway panel — run analysis or swap */}
+                    {/* Unassigned pathway panel — run analysis or save */}
                     {!selectedAssigned && selectedItem && (
                       <UnassignedPanel
                         pathway={selectedItem}
-                        assignedPathways={assignedPathways}
                         token={token}
                         onRunAnalysis={handleRunAnalysis}
-                        onSwapped={handleSwapped}
+                        onSave={handleSave}
                         hasAnalysis={!!selectedAnalysis}
                         runningAnalysis={runningAnalysis}
                       />
