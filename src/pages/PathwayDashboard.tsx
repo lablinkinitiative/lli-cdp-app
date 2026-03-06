@@ -102,21 +102,6 @@ function readinessLabel(level: string | null, pct: number | null): string {
   return '';
 }
 
-// ─── Researching Sidebar Slot ─────────────────────────────────────────────────
-
-function ResearchingSlot({ tier }: { tier: 'high' | 'medium' | 'stretch' }) {
-  const tc = TIER_CONFIG[tier];
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 0.625rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', background: 'var(--surface)' }}>
-      <span style={{ width: 8, height: 8, borderRadius: '50%', background: tc.color, display: 'inline-block', animation: 'researchPulse 1.8s ease-in-out infinite', flexShrink: 0, opacity: 0.7 }} />
-      <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontStyle: 'italic', flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-        Researching pathway…
-      </span>
-      <span style={{ fontSize: '0.6rem', fontWeight: 700, color: tc.color, flexShrink: 0 }}>{tc.label}</span>
-    </div>
-  );
-}
-
 // ─── Locked State ─────────────────────────────────────────────────────────────
 
 function LockedState({ completeness }: { completeness: number }) {
@@ -810,7 +795,7 @@ export default function PathwayDashboard() {
                 )}
 
                 {/* YOUR PATHWAYS section */}
-                {(loadingAssigned || generating || sidebarAssigned.length > 0) && (
+                {(loadingAssigned || sidebarAssigned.length > 0) && (
                   <div style={{ marginBottom: 'var(--sp-md)' }}>
                     <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: '0.375rem', padding: '0 0.25rem' }}>
                       Your Pathways
@@ -818,12 +803,6 @@ export default function PathwayDashboard() {
                     {loadingAssigned ? (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                         {[1, 2, 3].map(i => <div key={i} style={{ height: 32, borderRadius: 'var(--radius-md)', background: 'var(--surface-2)', animation: 'skeletonPulse 1.5s ease-in-out infinite' }} />)}
-                      </div>
-                    ) : generating && sidebarAssigned.length === 0 ? (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                        {(['high', 'medium', 'stretch'] as const).map(tier => (
-                          <ResearchingSlot key={tier} tier={tier} />
-                        ))}
                       </div>
                     ) : (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.125rem' }}>
@@ -843,11 +822,6 @@ export default function PathwayDashboard() {
                             />
                           );
                         })}
-                        {sidebarAssigned.length === 0 && (
-                          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-faint)', padding: '0.375rem 0.625rem', lineHeight: 1.5 }}>
-                            Complete your profile to generate pathways
-                          </p>
-                        )}
                       </div>
                     )}
                   </div>
@@ -888,16 +862,7 @@ export default function PathwayDashboard() {
 
               {/* ── RIGHT CONTENT ── */}
               <div>
-                {!selectedId && !isLoading && generating && (
-                  <div style={{ padding: 'var(--sp-xl) var(--sp-lg)', color: 'var(--text-muted)' }}>
-                    <p style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--text-strong)', marginBottom: '0.375rem' }}>Your pathways are on the way</p>
-                    <p style={{ fontSize: 'var(--text-sm)', lineHeight: 1.65 }}>
-                      We're analyzing your profile and selecting your three best-fit paths — usually takes under a minute. In the meantime, browse all 42 pathways below to explore what's possible.
-                    </p>
-                  </div>
-                )}
-
-                {!selectedId && !isLoading && !generating && (
+                {!selectedId && !isLoading && (
                   <div style={{ textAlign: 'center', padding: 'var(--sp-2xl)', color: 'var(--text-muted)' }}>
                     <div style={{ fontSize: '2.5rem', marginBottom: 'var(--sp-md)', opacity: 0.3 }}>→</div>
                     <p style={{ fontSize: 'var(--text-sm)' }}>Select a pathway from the sidebar to view details and gap analysis</p>
