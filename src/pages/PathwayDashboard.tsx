@@ -337,7 +337,7 @@ function SidebarItem({ pathwayId: _pathwayId, label, isSelected, isAssigned, mat
   );
 }
 
-// ─── Sortable Sidebar Item (assigned — draggable) ─────────────────────────────
+// ─── Sortable Sidebar Item (assigned — full-card draggable) ───────────────────
 
 interface SortableSidebarItemProps {
   pathwayId: string;
@@ -346,44 +346,41 @@ interface SortableSidebarItemProps {
   matchScore?: number | null;
   fitScore?: number | null;
   onClick: () => void;
+  onRemove: (pathwayId: string) => void;
 }
 
-function SortableSidebarItem({ pathwayId, label, isSelected, matchScore, fitScore, onClick }: SortableSidebarItemProps) {
+function SortableSidebarItem({ pathwayId, label, isSelected, matchScore, fitScore, onClick, onRemove }: SortableSidebarItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: pathwayId });
+  const [hovered, setHovered] = useState(false);
+
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
+    transition: transition ?? 'transform 200ms cubic-bezier(0.25, 1, 0.5, 1)',
+    opacity: isDragging ? 0.45 : 1,
+    scale: isDragging ? '1.03' : '1',
+    boxShadow: isDragging ? '0 6px 20px rgba(0,0,0,0.18)' : 'none',
+    zIndex: isDragging ? 999 : undefined,
     display: 'flex',
     alignItems: 'center',
-    gap: '0.25rem',
-    zIndex: isDragging ? 999 : undefined,
+    borderRadius: 'var(--radius-md)',
+    userSelect: 'none',
+    touchAction: 'none',
   };
 
   return (
-    <div ref={setNodeRef} style={style}>
-      {/* Drag handle */}
-      <span
-        {...attributes}
-        {...listeners}
-        style={{
-          cursor: 'grab',
-          color: 'var(--text-faint)',
-          fontSize: '0.7rem',
-          padding: '0 3px',
-          flexShrink: 0,
-          lineHeight: 1,
-          userSelect: 'none',
-          touchAction: 'none',
-        }}
-        title="Drag to reorder"
-      >
-        ⠿
-      </span>
-      {/* Main button */}
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Main card — full width, click to select */}
       <button
         type="button"
         onClick={onClick}
+        onPointerDown={e => e.stopPropagation()}
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -393,13 +390,11 @@ function SortableSidebarItem({ pathwayId, label, isSelected, matchScore, fitScor
           padding: '0.5rem 0.5rem',
           borderRadius: 'var(--radius-md)',
           border: isSelected ? '1px solid var(--brand-500)' : '1px solid transparent',
-          background: isSelected ? 'rgba(154,184,46,0.08)' : 'transparent',
-          cursor: 'pointer',
+          background: isSelected ? 'rgba(154,184,46,0.08)' : hovered && !isDragging ? 'var(--surface)' : 'transparent',
+          cursor: isDragging ? 'grabbing' : 'grab',
           transition: 'background 0.12s, border-color 0.12s',
           minWidth: 0,
         }}
-        onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'var(--surface)'; }}
-        onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
       >
         <span style={{ fontSize: '0.6rem', color: 'var(--brand-500)', flexShrink: 0, lineHeight: 1 }}>●</span>
         <span style={{
@@ -415,6 +410,28 @@ function SortableSidebarItem({ pathwayId, label, isSelected, matchScore, fitScor
             {matchScore != null ? `${matchScore}%` : fitScore != null ? `${fitScore}%` : ''}
           </span>
         )}
+      </button>
+      {/* Hover-reveal remove button */}
+      <button
+        type="button"
+        onPointerDown={e => e.stopPropagation()}
+        onClick={e => { e.stopPropagation(); onRemove(pathwayId); }}
+        style={{
+          opacity: hovered && !isDragging ? 0.55 : 0,
+          transition: 'opacity 0.15s',
+          flexShrink: 0,
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          color: 'var(--text-faint)',
+          fontSize: '0.7rem',
+          padding: '2px 5px',
+          lineHeight: 1,
+          borderRadius: 'var(--radius-sm)',
+        }}
+        title="Remove from My Pathways"
+      >
+        ✕
       </button>
     </div>
   );
@@ -921,6 +938,7 @@ export default function PathwayDashboard() {
                                   matchScore={matchScore}
                                   fitScore={ap.fit_score}
                                   onClick={() => setSelectedId(ap.pathway_id)}
+                                  onRemove={handleRemove}
                                 />
                               );
                             })}
@@ -1035,13 +1053,7 @@ export default function PathwayDashboard() {
                                 ↺ Re-run
                               </button>
                             )}
-                            <button
-                              type="button"
-                              onClick={() => handleRemove(selectedId)}
-                              style={{ fontSize: '0.65rem', fontWeight: 600, padding: '3px 8px', borderRadius: 'var(--radius-sm)', border: '1px solid rgba(220,38,38,0.25)', background: 'transparent', color: 'var(--error, #dc2626)', cursor: 'pointer', whiteSpace: 'nowrap' }}
-                            >
-                              × Remove from My Pathways
-                            </button>
+
                           </div>
                         )}
                       </div>
