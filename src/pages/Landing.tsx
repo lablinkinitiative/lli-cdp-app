@@ -25,20 +25,20 @@ const FEATURES = [
 ];
 
 const PATHWAYS = [
-  'DOE National Lab Research',
-  'Nuclear Engineering',
-  'Computational Science',
+  'Software / CS',
   'AI / ML Research',
-  'Materials Science',
+  'Life Sciences Research',
   'Environmental Science',
+  'Materials Science',
+  'Computational Science',
   'Mechanical Engineering',
   'Electrical Engineering',
-  'Software / CS',
-  'Life Sciences Research',
+  'Cybersecurity',
   'Business Analytics',
   'Energy Policy',
-  'Cybersecurity',
   'Robotics Engineering',
+  'Nuclear Engineering',
+  'National Lab Research',
 ];
 
 export default function Landing() {
@@ -73,9 +73,9 @@ export default function Landing() {
           <div style={{ display: 'inline-block', background: 'var(--accent-lime)', color: 'var(--on-lime)', fontSize: 'var(--text-xs)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', padding: '0.25rem 0.75rem', borderRadius: '99px', marginBottom: '1rem' }}>
             Career Development Platform
           </div>
-          <h1>Your personalized path to a national lab career</h1>
+          <h1>Your personalized path to a STEM career</h1>
           <p>
-            Create your profile, discover your best-fit internships, and get a personalized gap analysis — free, no fluff, built for students.
+            Create your profile, discover your best-fit internships across federal agencies, national labs, and industry — and get a personalized gap analysis. Free, no fluff, built for students.
           </p>
           <div className="landing-hero-actions">
             <Link to="/signup" className="btn btn-lime btn-lg">
