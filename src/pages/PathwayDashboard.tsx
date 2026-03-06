@@ -56,6 +56,130 @@ const TIER_CONFIG = {
   },
 };
 
+// ─── Generation steps ─────────────────────────────────────────────────────────
+
+const GEN_STEPS = [
+  { icon: '👤', label: 'Reading your profile', sub: 'Analyzing skills, goals, interests, and background…' },
+  { icon: '🔍', label: 'Searching pathway library', sub: 'Scanning 42 career pathways for potential matches…' },
+  { icon: '🤖', label: 'AI scoring candidates', sub: 'Evaluating fit, readiness, and alignment with your goals…' },
+  { icon: '🎯', label: 'Selecting your pathways', sub: 'One achievable, one strong fit, one ambitious reach…' },
+  { icon: '📊', label: 'Running gap analyses', sub: 'Identifying skills and experiences to develop for each path…' },
+  { icon: '✨', label: 'Finalizing your roadmap', sub: 'Mapping internship programs to your pathways…' },
+];
+
+// ─── Generating banner ────────────────────────────────────────────────────────
+
+function GeneratingBanner() {
+  const [stepIdx, setStepIdx] = useState(0);
+
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setStepIdx(s => Math.min(s + 1, GEN_STEPS.length - 1));
+    }, 9000);
+    return () => clearInterval(iv);
+  }, []);
+
+  const progress = Math.min(95, Math.round(((stepIdx + 1) / GEN_STEPS.length) * 100));
+  const current = GEN_STEPS[stepIdx];
+
+  return (
+    <div style={{
+      background: 'linear-gradient(135deg, rgba(154,184,46,0.07) 0%, rgba(37,99,235,0.05) 100%)',
+      border: '1px solid rgba(154,184,46,0.22)',
+      borderRadius: 'var(--radius-lg)',
+      padding: 'var(--sp-lg)',
+      marginBottom: 'var(--sp-lg)',
+    }}>
+      {/* Header row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: 'var(--sp-md)' }}>
+        <div style={{
+          width: 44,
+          height: 44,
+          borderRadius: '50%',
+          border: '3px solid rgba(154,184,46,0.2)',
+          borderTopColor: 'var(--brand-500)',
+          animation: 'spin 0.9s linear infinite',
+          flexShrink: 0,
+        }} />
+        <div>
+          <p style={{ fontSize: 'var(--text-base)', fontWeight: 800, color: 'var(--text-strong)', fontFamily: 'Plus Jakarta Sans, sans-serif', marginBottom: '0.15rem' }}>
+            Generating Your Career Pathways
+          </p>
+          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>
+            Usually takes 30–60 seconds — we'll show your results automatically
+          </p>
+        </div>
+      </div>
+
+      {/* Progress bar */}
+      <div style={{ marginBottom: 'var(--sp-md)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.375rem' }}>
+          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 600 }}>
+            {current.icon} {current.label}…
+          </span>
+          <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--brand-700)' }}>
+            {progress}%
+          </span>
+        </div>
+        <div style={{ height: 8, background: 'var(--surface-2)', borderRadius: 99, overflow: 'hidden' }}>
+          <div style={{
+            height: '100%',
+            width: `${progress}%`,
+            background: 'linear-gradient(90deg, var(--brand-500), #9AB82E)',
+            borderRadius: 99,
+            transition: 'width 1.2s ease',
+          }} />
+        </div>
+        <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-faint)', marginTop: '0.3rem' }}>
+          {current.sub}
+        </p>
+      </div>
+
+      {/* Step list */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        {GEN_STEPS.map((step, i) => {
+          const done = i < stepIdx;
+          const active = i === stepIdx;
+          return (
+            <div key={i} style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.625rem',
+              opacity: i > stepIdx ? 0.38 : 1,
+              transition: 'opacity 0.5s',
+            }}>
+              <div style={{
+                width: 22,
+                height: 22,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.68rem',
+                flexShrink: 0,
+                background: done ? '#4caf50' : active ? 'rgba(37,99,235,0.12)' : 'var(--surface-2)',
+                border: active ? '2px solid var(--brand-400)' : 'none',
+                animation: active ? 'stepPulse 1.6s ease-in-out infinite' : 'none',
+                color: done ? '#fff' : 'var(--text-muted)',
+                fontWeight: 700,
+              }}>
+                {done ? '✓' : (i + 1)}
+              </div>
+              <span style={{
+                fontSize: 'var(--text-xs)',
+                fontWeight: active ? 700 : 500,
+                color: active ? 'var(--text-strong)' : done ? 'var(--text-muted)' : 'var(--text-faint)',
+              }}>
+                {step.icon} {step.label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // ─── Skeleton card ────────────────────────────────────────────────────────────
 
 function SkeletonCard() {
@@ -217,93 +341,105 @@ function LockedState({ completeness }: { completeness: number }) {
   const needed = 60 - completeness;
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 'var(--sp-2xl) var(--sp-lg)',
-      textAlign: 'center',
-    }}>
+    <div style={{ position: 'relative' }}>
+      {/* Blurred skeleton preview — gives sense of what's waiting */}
       <div style={{
-        width: 80,
-        height: 80,
-        borderRadius: '50%',
-        background: 'var(--surface)',
-        border: '2px solid var(--border)',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: 'var(--sp-md)',
+        marginBottom: 'var(--sp-xl)',
+        opacity: 0.22,
+        filter: 'blur(3px)',
+        pointerEvents: 'none',
+        userSelect: 'none',
+      }}>
+        <SkeletonCard />
+        <SkeletonCard />
+        <SkeletonCard />
+      </div>
+
+      {/* Lock overlay */}
+      <div style={{
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '2rem',
-        marginBottom: 'var(--sp-md)',
+        textAlign: 'center',
+        padding: 'var(--sp-xl) var(--sp-lg)',
+        background: 'linear-gradient(to bottom, transparent, var(--bg) 30%)',
+        marginTop: '-6rem',
+        paddingTop: '6rem',
       }}>
-        {/* Lock icon using Unicode */}
-        <span style={{ lineHeight: 1 }}>&#128274;</span>
-      </div>
-
-      <h2 style={{
-        fontSize: 'var(--text-xl)',
-        fontWeight: 800,
-        color: 'var(--text-strong)',
-        fontFamily: 'Plus Jakarta Sans, sans-serif',
-        marginBottom: '0.5rem',
-      }}>
-        Unlock Career Pathways
-      </h2>
-
-      <p style={{
-        fontSize: 'var(--text-sm)',
-        color: 'var(--text-muted)',
-        lineHeight: 1.6,
-        maxWidth: 400,
-        marginBottom: 'var(--sp-lg)',
-      }}>
-        Complete your profile to {needed > 0 ? `${needed}% more (reach 60%)` : '60%'} to unlock personalized career pathways tailored to your background and goals.
-      </p>
-
-      {/* Progress bar */}
-      <div style={{ width: '100%', maxWidth: 360, marginBottom: 'var(--sp-lg)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.375rem' }}>
-          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 600 }}>
-            Your progress
-          </span>
-          <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--brand-700)' }}>
-            {completeness}% / 60%
-          </span>
-        </div>
         <div style={{
-          height: 10,
-          background: 'var(--surface-2)',
-          borderRadius: 99,
-          overflow: 'hidden',
-          position: 'relative',
+          width: 72,
+          height: 72,
+          borderRadius: '50%',
+          background: 'var(--surface)',
+          border: '2px solid var(--border)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '1.75rem',
+          marginBottom: 'var(--sp-md)',
+          boxShadow: 'var(--shadow-sm)',
         }}>
-          <div style={{
-            height: '100%',
-            width: `${Math.min(100, (completeness / 60) * 100)}%`,
-            background: completeness >= 40 ? 'var(--brand-500)' : 'var(--brand-300)',
-            borderRadius: 99,
-            transition: 'width 0.4s ease',
-          }} />
-          {/* 60% threshold marker */}
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: '100%',
-            height: '100%',
-            width: 2,
-            background: 'rgba(0,0,0,0.15)',
-            transform: 'translateX(-2px)',
-          }} />
+          <span style={{ lineHeight: 1 }}>&#128274;</span>
         </div>
-        <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-faint)', marginTop: '0.375rem' }}>
-          {needed > 0 ? `${needed}% more to unlock` : 'Almost there!'}
-        </p>
-      </div>
 
-      <Link to="/profile" className="btn btn-primary">
-        Complete my profile →
-      </Link>
+        <h2 style={{
+          fontSize: 'var(--text-xl)',
+          fontWeight: 800,
+          color: 'var(--text-strong)',
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
+          marginBottom: '0.5rem',
+        }}>
+          Complete Your Profile to Unlock Pathways
+        </h2>
+
+        <p style={{
+          fontSize: 'var(--text-sm)',
+          color: 'var(--text-muted)',
+          lineHeight: 1.6,
+          maxWidth: 420,
+          marginBottom: 'var(--sp-lg)',
+        }}>
+          {needed > 0
+            ? `You're ${completeness}% complete — add ${needed}% more and we'll automatically generate your personalized career pathways.`
+            : 'Almost there! Finish your profile and your pathways will generate automatically.'}
+        </p>
+
+        {/* Progress bar */}
+        <div style={{ width: '100%', maxWidth: 360, marginBottom: 'var(--sp-lg)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.375rem' }}>
+            <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 600 }}>
+              Profile progress
+            </span>
+            <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--brand-700)' }}>
+              {completeness}% / 60% needed
+            </span>
+          </div>
+          <div style={{
+            height: 10,
+            background: 'var(--surface-2)',
+            borderRadius: 99,
+            overflow: 'hidden',
+          }}>
+            <div style={{
+              height: '100%',
+              width: `${Math.min(100, (completeness / 60) * 100)}%`,
+              background: completeness >= 40 ? 'var(--brand-500)' : 'var(--brand-300)',
+              borderRadius: 99,
+              transition: 'width 0.4s ease',
+            }} />
+          </div>
+          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-faint)', marginTop: '0.375rem' }}>
+            {needed > 0 ? `${needed}% more to unlock` : 'Almost there!'}
+          </p>
+        </div>
+
+        <Link to="/profile" className="btn btn-primary">
+          Complete My Profile →
+        </Link>
+      </div>
     </div>
   );
 }
@@ -322,6 +458,7 @@ export default function PathwayDashboard() {
   const [generating, setGenerating] = useState(false);
   const [jobId, setJobId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [justGenerated, setJustGenerated] = useState(false);
   const autoTriggeredRef = useRef(false);
 
   const isLocked = completeness < 60;
@@ -368,6 +505,7 @@ export default function PathwayDashboard() {
           await loadPathways();
           setGenerating(false);
           setJobId(null);
+          setJustGenerated(true);
           clearInterval(interval);
         } else if (data.status === 'error') {
           setError(data.error || 'Pathway generation failed. Please try again.');
@@ -452,6 +590,26 @@ export default function PathwayDashboard() {
           {/* Pathways loaded — 3 cards */}
           {!isLocked && !loading && pathways.length === 3 && (
             <>
+              {/* Success toast — shown once after auto-generation completes */}
+              {justGenerated && (
+                <div style={{
+                  background: 'rgba(76,175,80,0.08)',
+                  border: '1px solid rgba(76,175,80,0.25)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: 'var(--sp-sm) var(--sp-md)',
+                  marginBottom: 'var(--sp-lg)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.625rem',
+                  animation: 'fadeInUp 0.45s ease',
+                }}>
+                  <span style={{ fontSize: '1.1rem' }}>🎉</span>
+                  <p style={{ fontSize: 'var(--text-sm)', color: '#2e7d32', fontWeight: 600 }}>
+                    Your career pathways are ready! Gap analyses are running in the background.
+                  </p>
+                </div>
+              )}
+
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -492,48 +650,10 @@ export default function PathwayDashboard() {
             </div>
           )}
 
-          {/* Generating — skeleton + status */}
+          {/* Generating — step-by-step animated banner + skeleton cards */}
           {generating && (
             <div>
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(154,184,46,0.08) 0%, rgba(37,99,235,0.06) 100%)',
-                border: '1px solid rgba(154,184,46,0.25)',
-                borderRadius: 'var(--radius-lg)',
-                padding: 'var(--sp-lg)',
-                marginBottom: 'var(--sp-lg)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textAlign: 'center',
-                gap: 'var(--sp-sm)',
-              }}>
-                <div style={{
-                  width: 52,
-                  height: 52,
-                  borderRadius: '50%',
-                  border: '4px solid rgba(154,184,46,0.2)',
-                  borderTopColor: 'var(--accent-lime)',
-                  animation: 'spin 0.9s linear infinite',
-                  marginBottom: '0.25rem',
-                }} />
-                <div>
-                  <p style={{ fontSize: 'var(--text-base)', fontWeight: 800, color: 'var(--text-strong)', marginBottom: '0.35rem', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-                    Building your career pathways…
-                  </p>
-                  <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', maxWidth: 420, lineHeight: 1.6 }}>
-                    We're analyzing your skills, experience, and goals to find your best-fit trajectories. This takes about 30–60 seconds.
-                  </p>
-                </div>
-                <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-                  {['Reviewing your profile', 'Scoring 42 pathways', 'Selecting your 3 best fits'].map((step, i) => (
-                    <span key={i} style={{ fontSize: 'var(--text-xs)', color: 'var(--text-faint)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent-lime)', display: 'inline-block', animation: `pulse ${1 + i * 0.3}s ease-in-out infinite` }} />
-                      {step}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
+              <GeneratingBanner />
               <div className="grid-3">
                 <SkeletonCard />
                 <SkeletonCard />
@@ -555,6 +675,14 @@ export default function PathwayDashboard() {
         @keyframes pulse {
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.5; transform: scale(0.85); }
+        }
+        @keyframes stepPulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(37,99,235,0.4); }
+          50% { box-shadow: 0 0 0 5px rgba(37,99,235,0); }
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(14px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         @media (max-width: 700px) {
           .grid-3 { grid-template-columns: 1fr !important; }
