@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { getCurrentUser } from './auth';
 import Landing from './pages/Landing';
@@ -8,9 +8,7 @@ import OAuthCallback from './pages/OAuthCallback';
 import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import Opportunities from './pages/Opportunities';
-import PathwayGap from './pages/PathwayGap';
 import PathwayDashboard from './pages/PathwayDashboard';
-import PathwayExplorer from './pages/PathwayExplorer';
 import ResumePage from './pages/ResumePage';
 import Saved from './pages/Saved';
 import Profile from './pages/Profile';
@@ -167,6 +165,12 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+// Redirect /pathway/:id → /pathways?selected=:id
+function PathwayIdRedirect() {
+  const { id } = useParams<{ id: string }>();
+  return <Navigate to={`/pathways${id ? `?selected=${id}` : ''}`} replace />;
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -181,8 +185,8 @@ function App() {
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/opportunities" element={<ProtectedRoute><Opportunities /></ProtectedRoute>} />
         <Route path="/pathways" element={<ProtectedRoute><PathwayDashboard /></ProtectedRoute>} />
-        <Route path="/pathways/explore" element={<ProtectedRoute><PathwayExplorer /></ProtectedRoute>} />
-        <Route path="/pathway/:id" element={<ProtectedRoute><PathwayGap /></ProtectedRoute>} />
+        <Route path="/pathways/explore" element={<Navigate to="/pathways" replace />} />
+        <Route path="/pathway/:id" element={<ProtectedRoute><PathwayIdRedirect /></ProtectedRoute>} />
         <Route path="/resume" element={<ProtectedRoute><ResumePage /></ProtectedRoute>} />
         <Route path="/saved" element={<ProtectedRoute><Saved /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />

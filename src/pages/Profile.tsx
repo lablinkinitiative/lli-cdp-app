@@ -550,7 +550,7 @@ export default function Profile() {
                           <span className={`match-badge ${analysis.overallMatch >= 70 ? 'match-high' : analysis.overallMatch >= 45 ? 'match-medium' : 'match-low'}`}>
                             {analysis.overallMatch}%
                           </span>
-                          <Link to={`/pathway/${analysis.pathwayId}`} className="btn btn-ghost btn-sm">
+                          <Link to={`/pathways?selected=${analysis.pathwayId}`} className="btn btn-ghost btn-sm">
                             View →
                           </Link>
                         </div>
@@ -562,35 +562,42 @@ export default function Profile() {
 
               {/* Danger zone */}
               <div className="card" style={{ border: '1px solid rgba(185,28,28,0.2)' }}>
-                <h2 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)', marginBottom: 'var(--sp-sm)' }}>Account</h2>
+                <h2 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--text-strong)', marginBottom: 'var(--sp-sm)' }}>Account Settings</h2>
                 <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', marginBottom: 'var(--sp-md)' }}>
                   Signed in as <strong>{user.email}</strong>
                 </p>
-                <div style={{ display: 'flex', gap: 'var(--sp-sm)', flexWrap: 'wrap' }}>
-                  <button
-                    onClick={() => {
-                      if (confirm('Clear all your profile data? This cannot be undone.')) {
-                        saveStudentData(user.uid, {
-                          profile: { firstName: '', lastName: '', school: '', year: '', major: '', gradYear: '', email: user.email, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-                          interests: [], skills: [], goals: [], targetTimeline: '', gpa: null, experienceLevel: '',
-                          savedPrograms: [], gapAnalyses: [], resumeUploaded: false,
-                        });
-                        window.location.reload();
-                      }
-                    }}
-                    className="btn btn-ghost btn-sm"
-                    style={{ color: 'var(--error)', fontSize: 'var(--text-xs)' }}
-                  >
-                    Clear all profile data
-                  </button>
-                  <button
-                    onClick={wipeAccount}
-                    disabled={wiping}
-                    className="btn btn-ghost btn-sm"
-                    style={{ color: 'var(--error)', fontSize: 'var(--text-xs)', fontWeight: 700, border: '1px solid rgba(185,28,28,0.4)' }}
-                  >
-                    {wiping ? 'Wiping…' : 'Wipe Account'}
-                  </button>
+
+                <div style={{ borderTop: '1px solid rgba(185,28,28,0.15)', paddingTop: 'var(--sp-md)', marginTop: 'var(--sp-sm)' }}>
+                  <h3 style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--error, #dc2626)', marginBottom: '0.375rem' }}>Danger Zone</h3>
+                  <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', marginBottom: 'var(--sp-md)', lineHeight: 1.5 }}>
+                    Permanently delete your account and all associated data. This cannot be undone.
+                  </p>
+                  <div style={{ display: 'flex', gap: 'var(--sp-sm)', flexWrap: 'wrap' }}>
+                    <button
+                      onClick={() => {
+                        if (confirm('Clear all your profile data? This cannot be undone.')) {
+                          saveStudentData(user.uid, {
+                            profile: { firstName: '', lastName: '', school: '', year: '', major: '', gradYear: '', email: user.email, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+                            interests: [], skills: [], goals: [], targetTimeline: '', gpa: null, experienceLevel: '',
+                            savedPrograms: [], gapAnalyses: [], resumeUploaded: false,
+                          });
+                          window.location.reload();
+                        }
+                      }}
+                      className="btn btn-ghost btn-sm"
+                      style={{ color: 'var(--error)', fontSize: 'var(--text-xs)' }}
+                    >
+                      Clear profile data
+                    </button>
+                    <button
+                      onClick={wipeAccount}
+                      disabled={wiping}
+                      className="btn btn-sm"
+                      style={{ background: 'rgba(220,38,38,0.08)', color: 'var(--error, #dc2626)', fontSize: 'var(--text-xs)', fontWeight: 700, border: '1px solid rgba(185,28,28,0.35)', borderRadius: 'var(--radius-sm)', padding: '0.375rem 0.875rem', cursor: wiping ? 'not-allowed' : 'pointer' }}
+                    >
+                      {wiping ? 'Deleting…' : 'Delete Account'}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
