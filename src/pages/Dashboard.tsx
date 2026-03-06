@@ -228,7 +228,7 @@ export default function Dashboard() {
           <div style={{ marginBottom: 'var(--sp-xl)' }}>
             <div className="section-header">
               <h2>Your Career Pathways</h2>
-              <Link to="/pathways/explore" style={{ color: 'var(--brand-700)', fontSize: 'var(--text-sm)', textDecoration: 'underline' }}>Explore all pathways →</Link>
+              <Link to="/pathways" style={{ color: 'var(--brand-700)', fontSize: 'var(--text-sm)', textDecoration: 'underline' }}>Explore all pathways →</Link>
             </div>
             {completeness >= 60 ? (
               <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -269,15 +269,15 @@ export default function Dashboard() {
               {pathways.slice(0, 8).map((p) => (
                 <Link
                   key={p.id}
-                  to={`/pathway/${p.id}`}
+                  to={`/pathways?selected=${p.id}`}
                   className="badge badge-green"
                   style={{ textDecoration: 'none', fontSize: 'var(--text-sm)', padding: '0.4rem 0.875rem' }}
                 >
                   {p.shortName}
                 </Link>
               ))}
-              <Link to="/pathways/explore" className="badge badge-muted" style={{ textDecoration: 'none', fontSize: 'var(--text-sm)', padding: '0.4rem 0.875rem' }}>
-                View all 15 →
+              <Link to="/pathways" className="badge badge-muted" style={{ textDecoration: 'none', fontSize: 'var(--text-sm)', padding: '0.4rem 0.875rem' }}>
+                View all →
               </Link>
             </div>
           </div>

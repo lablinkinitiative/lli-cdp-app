@@ -314,8 +314,8 @@ export default function Profile() {
                   <Link to="/opportunities" className="btn btn-ghost btn-sm btn-block" style={{ justifyContent: 'flex-start' }}>
                     Browse programs →
                   </Link>
-                  <Link to="/pathway/doe-research-stem" className="btn btn-ghost btn-sm btn-block" style={{ justifyContent: 'flex-start' }}>
-                    Run gap analysis →
+                  <Link to="/pathways" className="btn btn-ghost btn-sm btn-block" style={{ justifyContent: 'flex-start' }}>
+                    View pathways →
                   </Link>
                   <Link to="/saved" className="btn btn-ghost btn-sm btn-block" style={{ justifyContent: 'flex-start' }}>
                     View saved programs →
