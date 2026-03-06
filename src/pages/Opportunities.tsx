@@ -30,6 +30,7 @@ export default function Opportunities() {
   // Pathway filter state
   const [pathwayTitle, setPathwayTitle] = useState<string | null>(null);
   const [pathwayProgramSlugs, setPathwayProgramSlugs] = useState<string[] | null>(null);
+  const [isLoadingPathway, setIsLoadingPathway] = useState(!!pathwayParam);
 
   // Tag-based filters
   const [filterPaid, setFilterPaid] = useState(false);
@@ -48,8 +49,10 @@ export default function Opportunities() {
     if (!pathwayParam) {
       setPathwayTitle(null);
       setPathwayProgramSlugs(null);
+      setIsLoadingPathway(false);
       return;
     }
+    setIsLoadingPathway(true);
     const token = localStorage.getItem('cdp_token') || '';
     fetch(`${API_BASE}/api/cdp/pathways/${pathwayParam}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -59,9 +62,12 @@ export default function Opportunities() {
         if (data.ok && data.pathway) {
           setPathwayTitle(data.pathway.title || pathwayParam);
           setPathwayProgramSlugs((data.pathway.programs || []).map((p: { slug: string }) => p.slug).filter(Boolean));
+        } else {
+          setPathwayProgramSlugs(null);
         }
       })
-      .catch(() => {});
+      .catch(() => { setPathwayProgramSlugs(null); })
+      .finally(() => setIsLoadingPathway(false));
   }, [pathwayParam]);
 
   const hasActiveFilters = filterPaid || filterRemote || !!filterCareerStage || !!filterBenefit || !!filterKeyword;
@@ -165,12 +171,14 @@ export default function Opportunities() {
           </div>
         </div>
 
-        {pathwayParam && pathwayTitle && (
+        {pathwayParam && (isLoadingPathway || pathwayTitle) && (
           <div style={{ background: 'var(--brand-50)', borderBottom: '1px solid var(--brand-200, #d1fae5)', padding: '0.625rem 1.25rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div className="page-container" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%', padding: 0 }}>
               <span style={{ fontSize: 'var(--text-sm)', color: 'var(--brand-700)' }}>
-                Showing programs for pathway: <strong>{pathwayTitle}</strong>
-                {pathwayProgramSlugs !== null && ` — ${filtered.length} matched`}
+                {isLoadingPathway
+                  ? 'Loading pathway programs…'
+                  : <>Showing programs for pathway: <strong>{pathwayTitle}</strong>{pathwayProgramSlugs !== null && ` — ${filtered.length} matched`}</>
+                }
               </span>
               <button
                 type="button"
@@ -343,7 +351,11 @@ export default function Opportunities() {
           </div>
 
           {/* Program list */}
-          {filtered.length > 0 ? (
+          {isLoadingPathway ? (
+            <div className="empty-state">
+              <p style={{ color: 'var(--text-muted)' }}>Loading pathway programs…</p>
+            </div>
+          ) : filtered.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
               {filtered.map(program => (
                 <ProgramCard
