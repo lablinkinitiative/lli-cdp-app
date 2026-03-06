@@ -282,8 +282,8 @@ function AnalysisPanel({ analysis, pathway, onRefresh }: AnalysisPanelProps) {
             </div>
           ))}
         </div>
-        <Link to="/opportunities" className="btn btn-outline btn-sm btn-block" style={{ marginTop: 'var(--sp-md)' }}>
-          Browse all {programs.length} programs →
+        <Link to={`/opportunities?pathway=${pathway.id}`} className="btn btn-outline btn-sm btn-block" style={{ marginTop: 'var(--sp-md)' }}>
+          Browse all programs for this pathway →
         </Link>
       </div>
 
