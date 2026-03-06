@@ -52,11 +52,6 @@ export default function Nav() {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/pathways" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
-                Gap Analysis
-              </NavLink>
-            </li>
-            <li>
               <NavLink to="/resume" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
                 Resume
               </NavLink>
