@@ -128,7 +128,10 @@ function LockedState({ completeness }: { completeness: number }) {
           <div style={{ height: '100%', width: `${Math.min(100, (completeness / 60) * 100)}%`, background: completeness >= 40 ? 'var(--brand-500)' : 'var(--brand-300)', borderRadius: 99, transition: 'width 0.4s ease' }} />
         </div>
       </div>
-      <Link to="/profile" className="btn btn-primary">Complete My Profile →</Link>
+      <div style={{ display: 'flex', gap: 'var(--sp-sm)', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <Link to="/profile" className="btn btn-primary">Update Profile →</Link>
+        <Link to="/resume" className="btn btn-secondary">Upload Resume</Link>
+      </div>
     </div>
   );
 }
