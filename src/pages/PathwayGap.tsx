@@ -364,7 +364,14 @@ export default function PathwayGap() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      if (data.ok) setAnalyses(data.analyses || []);
+      if (data.ok) {
+        setAnalyses(data.analyses || []);
+        // If any analysis is stuck in-progress from a previous session, start polling it
+        const inProgress = (data.analyses || []).find(
+          (a: { status: string; id: string }) => a.status === 'queued' || a.status === 'processing'
+        );
+        if (inProgress) setPollingId(inProgress.id);
+      }
     } catch {}
     setLoadingAnalyses(false);
   }, [token]);
