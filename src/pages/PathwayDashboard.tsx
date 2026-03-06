@@ -357,7 +357,6 @@ function SortableSidebarItem({ pathwayId, label, isSelected, matchScore, fitScor
     transform: CSS.Transform.toString(transform),
     transition: transition ?? 'transform 200ms cubic-bezier(0.25, 1, 0.5, 1)',
     opacity: isDragging ? 0.45 : 1,
-    scale: isDragging ? '1.03' : '1',
     boxShadow: isDragging ? '0 6px 20px rgba(0,0,0,0.18)' : 'none',
     zIndex: isDragging ? 999 : undefined,
     display: 'flex',
@@ -365,6 +364,11 @@ function SortableSidebarItem({ pathwayId, label, isSelected, matchScore, fitScor
     borderRadius: 'var(--radius-md)',
     userSelect: 'none',
     touchAction: 'none',
+    cursor: isDragging ? 'grabbing' : 'grab',
+    border: isSelected ? '1px solid var(--brand-500)' : '1px solid transparent',
+    background: isSelected ? 'rgba(154,184,46,0.08)' : hovered && !isDragging ? 'var(--surface)' : 'transparent',
+    padding: '0.5rem 0.375rem',
+    gap: '0.375rem',
   };
 
   return (
@@ -372,60 +376,37 @@ function SortableSidebarItem({ pathwayId, label, isSelected, matchScore, fitScor
       ref={setNodeRef}
       style={style}
       {...attributes}
+      {...listeners}
+      onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Drag handle — only element with listeners so button clicks don't block drag */}
-      <span
-        {...listeners}
-        style={{
-          cursor: isDragging ? 'grabbing' : 'grab',
-          color: 'var(--text-faint)',
-          fontSize: '0.75rem',
-          padding: '0 3px 0 4px',
-          flexShrink: 0,
-          lineHeight: 1,
-          opacity: hovered ? 0.65 : 0.25,
-          transition: 'opacity 0.15s',
-          touchAction: 'none',
-        }}
-        title="Drag to reorder"
-      >⠿</span>
-      {/* Main card — full width, click to select */}
-      <button
-        type="button"
-        onClick={onClick}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          flex: 1,
-          textAlign: 'left',
-          padding: '0.5rem 0.5rem',
-          borderRadius: 'var(--radius-md)',
-          border: isSelected ? '1px solid var(--brand-500)' : '1px solid transparent',
-          background: isSelected ? 'rgba(154,184,46,0.08)' : hovered && !isDragging ? 'var(--surface)' : 'transparent',
-          cursor: 'pointer',
-          transition: 'background 0.12s, border-color 0.12s',
-          minWidth: 0,
-        }}
-      >
-        <span style={{ fontSize: '0.6rem', color: 'var(--brand-500)', flexShrink: 0, lineHeight: 1 }}>●</span>
-        <span style={{
-          fontSize: 'var(--text-xs)',
-          fontWeight: isSelected ? 700 : 600,
-          color: isSelected ? 'var(--brand-700)' : 'var(--text-strong)',
-          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1,
-        }}>
-          {label}
+      {/* Drag hint — visual only, no pointer events */}
+      <span style={{
+        color: 'var(--text-faint)',
+        fontSize: '0.7rem',
+        flexShrink: 0,
+        lineHeight: 1,
+        opacity: hovered ? 0.5 : 0.2,
+        transition: 'opacity 0.15s',
+        pointerEvents: 'none',
+      }}>⠿</span>
+      <span style={{ fontSize: '0.6rem', color: 'var(--brand-500)', flexShrink: 0, lineHeight: 1, pointerEvents: 'none' }}>●</span>
+      <span style={{
+        fontSize: 'var(--text-xs)',
+        fontWeight: isSelected ? 700 : 600,
+        color: isSelected ? 'var(--brand-700)' : 'var(--text-strong)',
+        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1,
+        pointerEvents: 'none',
+      }}>
+        {label}
+      </span>
+      {(matchScore != null || fitScore != null) && (
+        <span style={{ fontSize: '0.65rem', fontWeight: 700, color: matchScore != null ? matchColor(matchScore) : 'var(--text-muted)', flexShrink: 0, pointerEvents: 'none' }}>
+          {matchScore != null ? `${matchScore}%` : fitScore != null ? `${fitScore}%` : ''}
         </span>
-        {(matchScore != null || fitScore != null) && (
-          <span style={{ fontSize: '0.65rem', fontWeight: 700, color: matchScore != null ? matchColor(matchScore) : 'var(--text-muted)', flexShrink: 0 }}>
-            {matchScore != null ? `${matchScore}%` : fitScore != null ? `${fitScore}%` : ''}
-          </span>
-        )}
-      </button>
-      {/* Hover-reveal remove button */}
+      )}
+      {/* Remove button — stopPropagation prevents drag and click-select */}
       <button
         type="button"
         onPointerDown={e => e.stopPropagation()}
