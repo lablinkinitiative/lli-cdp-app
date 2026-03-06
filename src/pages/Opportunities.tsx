@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import Nav from '../components/Nav';
 import ProgramCard from '../components/ProgramCard';
 import { getCurrentUser, getStudentData, saveStudentData } from '../auth';
