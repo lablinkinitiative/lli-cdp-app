@@ -1,10 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
 import Nav from '../components/Nav';
 import ProgramCard from '../components/ProgramCard';
 import { getCurrentUser, getStudentData, saveStudentData } from '../auth';
 import { computeMatchScore } from '../matching';
 import type { StudentData, Program } from '../types';
 import programsData from '../data/programs.json';
+
+const API_BASE = (import.meta.env.VITE_API_URL as string) || 'https://app.lablinkinitiative.org';
 
 const programs = programsData.programs as unknown as Program[];
 
@@ -14,12 +17,19 @@ type SortMode = 'match' | 'az' | 'deadline';
 
 export default function Opportunities() {
   const user = getCurrentUser()!;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pathwayParam = searchParams.get('pathway');
+
   const [student, setStudent] = useState<StudentData | null>(null);
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
   const [sortMode, setSortMode] = useState<SortMode>('match');
   const [showTagFilters, setShowTagFilters] = useState(false);
+
+  // Pathway filter state
+  const [pathwayTitle, setPathwayTitle] = useState<string | null>(null);
+  const [pathwayProgramSlugs, setPathwayProgramSlugs] = useState<string[] | null>(null);
 
   // Tag-based filters
   const [filterPaid, setFilterPaid] = useState(false);
@@ -34,10 +44,33 @@ export default function Opportunities() {
     setSavedIds(data?.savedPrograms || []);
   }, [user.uid]);
 
+  useEffect(() => {
+    if (!pathwayParam) {
+      setPathwayTitle(null);
+      setPathwayProgramSlugs(null);
+      return;
+    }
+    const token = localStorage.getItem('cdp_token') || '';
+    fetch(`${API_BASE}/api/cdp/pathways/${pathwayParam}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.ok && data.pathway) {
+          setPathwayTitle(data.pathway.title || pathwayParam);
+          setPathwayProgramSlugs((data.pathway.programs || []).map((p: { slug: string }) => p.slug).filter(Boolean));
+        }
+      })
+      .catch(() => {});
+  }, [pathwayParam]);
+
   const hasActiveFilters = filterPaid || filterRemote || !!filterCareerStage || !!filterBenefit || !!filterKeyword;
 
   const filtered = useMemo(() => {
     let result = programs.filter(p => {
+      // Pathway filter
+      if (pathwayProgramSlugs !== null && !pathwayProgramSlugs.includes(p.id)) return false;
+
       // Category filter
       if (category !== 'All') {
         const catLower = category.toLowerCase();
@@ -101,7 +134,7 @@ export default function Opportunities() {
     }
 
     return result;
-  }, [query, category, sortMode, student, filterPaid, filterRemote, filterCareerStage, filterBenefit, filterKeyword]);
+  }, [query, category, sortMode, student, filterPaid, filterRemote, filterCareerStage, filterBenefit, filterKeyword, pathwayProgramSlugs]);
 
   const clearAll = () => {
     setQuery(''); setCategory('All');
@@ -131,6 +164,25 @@ export default function Opportunities() {
             <p>{programs.length} curated STEM programs — with personalized match scores</p>
           </div>
         </div>
+
+        {pathwayParam && pathwayTitle && (
+          <div style={{ background: 'var(--brand-50)', borderBottom: '1px solid var(--brand-200, #d1fae5)', padding: '0.625rem 1.25rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div className="page-container" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%', padding: 0 }}>
+              <span style={{ fontSize: 'var(--text-sm)', color: 'var(--brand-700)' }}>
+                Showing programs for pathway: <strong>{pathwayTitle}</strong>
+                {pathwayProgramSlugs !== null && ` — ${filtered.length} matched`}
+              </span>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                style={{ marginLeft: 'auto', fontSize: 'var(--text-xs)' }}
+                onClick={() => { setSearchParams({}); }}
+              >
+                ✕ Show all programs
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="page-container" style={{ padding: 'var(--sp-lg) 1.25rem var(--sp-2xl)' }}>
           {/* Search, Sort & Filter Toggle */}

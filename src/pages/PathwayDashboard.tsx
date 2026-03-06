@@ -275,7 +275,7 @@ function AnalysisPanel({ analysis, pathwayTitle, onRefresh, pathwayId }: Analysi
       <div style={{ marginTop: 'var(--sp-sm)', display: 'flex', gap: 'var(--sp-sm)', alignItems: 'center', flexWrap: 'wrap' }}>
         <button onClick={() => onRefresh(pathwayId)} className="btn btn-ghost btn-sm">↺ Re-run analysis</button>
         <Link to="/profile" className="btn btn-ghost btn-sm">Update skills →</Link>
-        <Link to="/opportunities" className="btn btn-ghost btn-sm">Browse programs →</Link>
+        <Link to={`/opportunities?pathway=${pathwayId}`} className="btn btn-ghost btn-sm">Browse programs →</Link>
         <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-faint)' }}>
           {analysis.updatedAt ? `Last run: ${new Date(analysis.updatedAt).toLocaleDateString()}` : ''}
         </span>
@@ -1030,7 +1030,7 @@ export default function PathwayDashboard() {
                           {selectedAssigned && (
                             <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-faint)', marginTop: '0.375rem' }}>
                               {selectedAssigned.mapped_programs_count} internship program{selectedAssigned.mapped_programs_count !== 1 ? 's' : ''} aligned ·{' '}
-                              <Link to="/opportunities" style={{ color: 'var(--brand-700)' }}>Browse opportunities →</Link>
+                              <Link to={`/opportunities?pathway=${selectedId}`} style={{ color: 'var(--brand-700)' }}>Browse opportunities →</Link>
                             </p>
                           )}
                         </div>
