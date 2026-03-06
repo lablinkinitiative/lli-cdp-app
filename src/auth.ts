@@ -204,7 +204,13 @@ async function syncStudentDataToApi(data: StudentData): Promise<void> {
 // ─── Public refresh — call after async backend updates (e.g. resume parse) ────
 
 export async function refreshStudentData(uid: string): Promise<void> {
+  const prevCompleteness = getStudentData(uid)?.profileCompleteness || 0;
   await syncStudentDataFromApi(uid);
+  // Trigger auto-init if completeness crossed 60% (e.g. after resume parse)
+  const newCompleteness = getStudentData(uid)?.profileCompleteness || 0;
+  if (prevCompleteness < 60 && newCompleteness >= 60) {
+    triggerAutoInitGapAnalysis().catch(() => {});
+  }
 }
 
 // ─── Internal helpers ──────────────────────────────────────────────────────────
