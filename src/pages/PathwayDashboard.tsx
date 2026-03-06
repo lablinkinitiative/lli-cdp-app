@@ -372,15 +372,29 @@ function SortableSidebarItem({ pathwayId, label, isSelected, matchScore, fitScor
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...listeners}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
+      {/* Drag handle — only element with listeners so button clicks don't block drag */}
+      <span
+        {...listeners}
+        style={{
+          cursor: isDragging ? 'grabbing' : 'grab',
+          color: 'var(--text-faint)',
+          fontSize: '0.75rem',
+          padding: '0 3px 0 4px',
+          flexShrink: 0,
+          lineHeight: 1,
+          opacity: hovered ? 0.65 : 0.25,
+          transition: 'opacity 0.15s',
+          touchAction: 'none',
+        }}
+        title="Drag to reorder"
+      >⠿</span>
       {/* Main card — full width, click to select */}
       <button
         type="button"
         onClick={onClick}
-        onPointerDown={e => e.stopPropagation()}
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -391,7 +405,7 @@ function SortableSidebarItem({ pathwayId, label, isSelected, matchScore, fitScor
           borderRadius: 'var(--radius-md)',
           border: isSelected ? '1px solid var(--brand-500)' : '1px solid transparent',
           background: isSelected ? 'rgba(154,184,46,0.08)' : hovered && !isDragging ? 'var(--surface)' : 'transparent',
-          cursor: isDragging ? 'grabbing' : 'grab',
+          cursor: 'pointer',
           transition: 'background 0.12s, border-color 0.12s',
           minWidth: 0,
         }}
