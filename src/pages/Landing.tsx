@@ -25,6 +25,7 @@ const FEATURES = [
 ];
 
 const PATHWAYS = [
+  'Business Analytics',
   'Software / CS',
   'AI / ML Research',
   'Life Sciences Research',
@@ -34,7 +35,6 @@ const PATHWAYS = [
   'Mechanical Engineering',
   'Electrical Engineering',
   'Cybersecurity',
-  'Business Analytics',
   'Energy Policy',
   'Robotics Engineering',
   'Nuclear Engineering',
@@ -73,7 +73,7 @@ export default function Landing() {
           <div style={{ display: 'inline-block', background: 'var(--accent-lime)', color: 'var(--on-lime)', fontSize: 'var(--text-xs)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', padding: '0.25rem 0.75rem', borderRadius: '99px', marginBottom: '1rem' }}>
             Career Development Platform
           </div>
-          <h1>Your personalized path to a STEM career</h1>
+          <h1>Your personalized path to a STEM or Business career</h1>
           <p>
             Create your profile, discover your best-fit internships across federal agencies, national labs, and industry — and get a personalized gap analysis. Free, no fluff, built for students.
           </p>
@@ -120,7 +120,7 @@ export default function Landing() {
         <div style={{ maxWidth: 1160, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 'var(--sp-lg)' }}>
             <h2 style={{ fontSize: 'var(--text-3xl)', color: 'var(--text-strong)', marginBottom: '0.375rem' }}>
-              14 career pathways mapped
+              50+ career pathways mapped
             </h2>
             <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-base)' }}>
               Each pathway has a skills radar, gap analysis, and matched programs.
