@@ -31,16 +31,18 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!token) return;
-    fetch(`${API_BASE}/api/cdp/gap-analyses`, {
+    // Count analyses for assigned pathways only (not explorer/auto-init analyses for unassigned pathways)
+    fetch(`${API_BASE}/api/cdp/students/me/pathways`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(r => r.json())
       .then(data => {
-        if (data.ok && data.analyses) {
-          const total = data.analyses.length;
-          const complete = data.analyses.filter((a: { status: string }) => a.status === 'complete').length;
-          const queued = data.analyses.filter((a: { status: string }) => a.status === 'queued').length;
-          const processing = data.analyses.filter((a: { status: string }) => a.status === 'processing').length;
+        if (data.ok && data.pathways) {
+          const analyses = data.pathways.map((p: { gap_analysis: { status: string } | null }) => p.gap_analysis).filter(Boolean);
+          const total = analyses.length;
+          const complete = analyses.filter((a: { status: string }) => a.status === 'complete').length;
+          const queued = analyses.filter((a: { status: string }) => a.status === 'queued').length;
+          const processing = analyses.filter((a: { status: string }) => a.status === 'processing').length;
           setAgenticAnalyses({ total, complete, queued, processing });
         }
       })
