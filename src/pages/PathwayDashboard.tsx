@@ -1,5 +1,20 @@
 import { useState, useEffect, useCallback, useRef, Fragment } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import Nav from '../components/Nav';
 import RadarChart from '../components/RadarChart';
 import { getCurrentUser, getStudentData } from '../auth';
@@ -269,7 +284,7 @@ function AnalysisPanel({ analysis, pathwayTitle, onRefresh, pathwayId }: Analysi
   );
 }
 
-// ─── Sidebar Item ─────────────────────────────────────────────────────────────
+// ─── Sidebar Item (unassigned — plain button) ─────────────────────────────────
 
 interface SidebarItemProps {
   pathwayId: string;
@@ -279,15 +294,93 @@ interface SidebarItemProps {
   matchScore?: number | null;
   fitScore?: number | null;
   onClick: () => void;
-  onRemove?: (pathwayId: string) => void;
-  onReorder?: (pathwayId: string, direction: 'up' | 'down') => void;
-  showReorderUp?: boolean;
-  showReorderDown?: boolean;
 }
 
-function SidebarItem({ pathwayId, label, isSelected, isAssigned, matchScore, fitScore, onClick, onRemove, onReorder, showReorderUp, showReorderDown }: SidebarItemProps) {
+function SidebarItem({ pathwayId: _pathwayId, label, isSelected, isAssigned, matchScore, fitScore, onClick }: SidebarItemProps) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        width: '100%',
+        textAlign: 'left',
+        padding: '0.5rem 0.625rem',
+        borderRadius: 'var(--radius-md)',
+        border: isSelected ? '1px solid var(--brand-500)' : '1px solid transparent',
+        background: isSelected ? 'rgba(154,184,46,0.08)' : 'transparent',
+        cursor: 'pointer',
+        transition: 'background 0.12s, border-color 0.12s',
+        opacity: isAssigned ? 1 : 0.55,
+        minWidth: 0,
+      }}
+      onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'var(--surface)'; }}
+      onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
+    >
+      <span style={{ fontSize: '0.6rem', color: isAssigned ? 'var(--brand-500)' : 'var(--text-faint)', flexShrink: 0, lineHeight: 1 }}>●</span>
+      <span style={{
+        fontSize: 'var(--text-xs)',
+        fontWeight: isSelected ? 700 : isAssigned ? 600 : 400,
+        color: isSelected ? 'var(--brand-700)' : isAssigned ? 'var(--text-strong)' : 'var(--text-muted)',
+        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1,
+      }}>
+        {label}
+      </span>
+      {isAssigned && (matchScore != null || fitScore != null) && (
+        <span style={{ fontSize: '0.65rem', fontWeight: 700, color: matchScore != null ? matchColor(matchScore) : 'var(--text-muted)', flexShrink: 0 }}>
+          {matchScore != null ? `${matchScore}%` : fitScore != null ? `${fitScore}%` : ''}
+        </span>
+      )}
+    </button>
+  );
+}
+
+// ─── Sortable Sidebar Item (assigned — draggable) ─────────────────────────────
+
+interface SortableSidebarItemProps {
+  pathwayId: string;
+  label: string;
+  isSelected: boolean;
+  matchScore?: number | null;
+  fitScore?: number | null;
+  onClick: () => void;
+}
+
+function SortableSidebarItem({ pathwayId, label, isSelected, matchScore, fitScore, onClick }: SortableSidebarItemProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: pathwayId });
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.25rem',
+    zIndex: isDragging ? 999 : undefined,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      {/* Drag handle */}
+      <span
+        {...attributes}
+        {...listeners}
+        style={{
+          cursor: 'grab',
+          color: 'var(--text-faint)',
+          fontSize: '0.7rem',
+          padding: '0 3px',
+          flexShrink: 0,
+          lineHeight: 1,
+          userSelect: 'none',
+          touchAction: 'none',
+        }}
+        title="Drag to reorder"
+      >
+        ⠿
+      </span>
+      {/* Main button */}
       <button
         type="button"
         onClick={onClick}
@@ -297,79 +390,32 @@ function SidebarItem({ pathwayId, label, isSelected, isAssigned, matchScore, fit
           gap: '0.5rem',
           flex: 1,
           textAlign: 'left',
-          padding: '0.5rem 0.625rem',
+          padding: '0.5rem 0.5rem',
           borderRadius: 'var(--radius-md)',
           border: isSelected ? '1px solid var(--brand-500)' : '1px solid transparent',
           background: isSelected ? 'rgba(154,184,46,0.08)' : 'transparent',
           cursor: 'pointer',
           transition: 'background 0.12s, border-color 0.12s',
-          opacity: isAssigned ? 1 : 0.55,
           minWidth: 0,
         }}
         onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'var(--surface)'; }}
         onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
       >
-        {/* Generic dot */}
-        <span style={{ fontSize: '0.6rem', color: isAssigned ? 'var(--brand-500)' : 'var(--text-faint)', flexShrink: 0, lineHeight: 1 }}>
-          ●
-        </span>
-
-        {/* Title */}
+        <span style={{ fontSize: '0.6rem', color: 'var(--brand-500)', flexShrink: 0, lineHeight: 1 }}>●</span>
         <span style={{
           fontSize: 'var(--text-xs)',
-          fontWeight: isSelected ? 700 : isAssigned ? 600 : 400,
-          color: isSelected ? 'var(--brand-700)' : isAssigned ? 'var(--text-strong)' : 'var(--text-muted)',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-          flex: 1,
+          fontWeight: isSelected ? 700 : 600,
+          color: isSelected ? 'var(--brand-700)' : 'var(--text-strong)',
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1,
         }}>
           {label}
         </span>
-
-        {/* Match or fit score badge */}
-        {isAssigned && (matchScore != null || fitScore != null) && (
-          <span style={{
-            fontSize: '0.65rem',
-            fontWeight: 700,
-            color: matchScore != null ? matchColor(matchScore) : 'var(--text-muted)',
-            flexShrink: 0,
-            marginLeft: '0.25rem',
-          }}>
+        {(matchScore != null || fitScore != null) && (
+          <span style={{ fontSize: '0.65rem', fontWeight: 700, color: matchScore != null ? matchColor(matchScore) : 'var(--text-muted)', flexShrink: 0 }}>
             {matchScore != null ? `${matchScore}%` : fitScore != null ? `${fitScore}%` : ''}
           </span>
         )}
       </button>
-
-      {/* Reorder + remove controls for assigned pathways */}
-      {isAssigned && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', flexShrink: 0 }}>
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); onReorder?.(pathwayId, 'up'); }}
-            disabled={!showReorderUp}
-            title="Move up"
-            style={{ fontSize: '0.55rem', padding: '1px 3px', border: 'none', background: 'transparent', cursor: showReorderUp ? 'pointer' : 'default', color: showReorderUp ? 'var(--text-muted)' : 'var(--text-faint)', lineHeight: 1 }}
-          >↑</button>
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); onReorder?.(pathwayId, 'down'); }}
-            disabled={!showReorderDown}
-            title="Move down"
-            style={{ fontSize: '0.55rem', padding: '1px 3px', border: 'none', background: 'transparent', cursor: showReorderDown ? 'pointer' : 'default', color: showReorderDown ? 'var(--text-muted)' : 'var(--text-faint)', lineHeight: 1 }}
-          >↓</button>
-        </div>
-      )}
-      {isAssigned && onRemove && (
-        <button
-          type="button"
-          onClick={(e) => { e.stopPropagation(); onRemove(pathwayId); }}
-          title="Remove from My Pathways"
-          style={{ fontSize: '0.6rem', padding: '2px 4px', border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--text-faint)', flexShrink: 0, lineHeight: 1, borderRadius: 'var(--radius-sm)' }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--error, #dc2626)'; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-faint)'; }}
-        >×</button>
-      )}
     </div>
   );
 }
@@ -732,13 +778,13 @@ export default function PathwayDashboard() {
     } catch {}
   };
 
-  const handleReorder = async (pathwayId: string, direction: 'up' | 'down') => {
-    const idx = assignedPathways.findIndex(p => p.pathway_id === pathwayId);
-    if (idx < 0) return;
-    const newOrder = [...assignedPathways];
-    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
-    if (swapIdx < 0 || swapIdx >= newOrder.length) return;
-    [newOrder[idx], newOrder[swapIdx]] = [newOrder[swapIdx], newOrder[idx]];
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIdx = assignedPathways.findIndex(p => p.pathway_id === active.id);
+    const newIdx = assignedPathways.findIndex(p => p.pathway_id === over.id);
+    if (oldIdx < 0 || newIdx < 0) return;
+    const newOrder = arrayMove(assignedPathways, oldIdx, newIdx);
     setAssignedPathways(newOrder);
     try {
       await fetch(`${API_BASE}/api/cdp/students/me/pathways/reorder`, {
@@ -748,6 +794,8 @@ export default function PathwayDashboard() {
       });
     } catch {}
   };
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
   // ─── Data helpers ──────────────────────────────────────────────────────────
 
@@ -859,27 +907,26 @@ export default function PathwayDashboard() {
                         ))}
                       </div>
                     ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.125rem' }}>
-                        {sidebarAssigned.map((ap, idx) => {
-                          const matchScore = ap.gap_analysis?.status === 'complete' ? ap.gap_analysis?.overall_match : null;
-                          return (
-                            <SidebarItem
-                              key={ap.id}
-                              pathwayId={ap.pathway_id}
-                              label={ap.short_name || ap.title}
-                              isSelected={selectedId === ap.pathway_id}
-                              isAssigned={true}
-                              matchScore={matchScore}
-                              fitScore={ap.fit_score}
-                              onClick={() => setSelectedId(ap.pathway_id)}
-                              onRemove={handleRemove}
-                              onReorder={handleReorder}
-                              showReorderUp={idx > 0}
-                              showReorderDown={idx < sidebarAssigned.length - 1}
-                            />
-                          );
-                        })}
-                      </div>
+                      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                        <SortableContext items={sidebarAssigned.map(ap => ap.pathway_id)} strategy={verticalListSortingStrategy}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.125rem' }}>
+                            {sidebarAssigned.map((ap) => {
+                              const matchScore = ap.gap_analysis?.status === 'complete' ? ap.gap_analysis?.overall_match : null;
+                              return (
+                                <SortableSidebarItem
+                                  key={ap.pathway_id}
+                                  pathwayId={ap.pathway_id}
+                                  label={ap.short_name || ap.title}
+                                  isSelected={selectedId === ap.pathway_id}
+                                  matchScore={matchScore}
+                                  fitScore={ap.fit_score}
+                                  onClick={() => setSelectedId(ap.pathway_id)}
+                                />
+                              );
+                            })}
+                          </div>
+                        </SortableContext>
+                      </DndContext>
                     )}
                   </div>
                 )}
