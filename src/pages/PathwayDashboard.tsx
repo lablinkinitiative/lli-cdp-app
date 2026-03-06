@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Nav from '../components/Nav';
 import { getCurrentUser, getStudentData } from '../auth';
@@ -322,6 +322,7 @@ export default function PathwayDashboard() {
   const [generating, setGenerating] = useState(false);
   const [jobId, setJobId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const autoTriggeredRef = useRef(false);
 
   const isLocked = completeness < 60;
 
@@ -343,6 +344,15 @@ export default function PathwayDashboard() {
   }, [token, isLocked]);
 
   useEffect(() => { loadPathways(); }, [loadPathways]);
+
+  // Auto-trigger pathway generation when profile is complete but no pathways exist yet
+  useEffect(() => {
+    if (!loading && !isLocked && pathways.length === 0 && !generating && !error && !autoTriggeredRef.current) {
+      autoTriggeredRef.current = true;
+      handleGenerate();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, isLocked, pathways.length, generating, error]);
 
   // Poll generation job
   useEffect(() => {
@@ -429,11 +439,12 @@ export default function PathwayDashboard() {
               display: 'flex',
               alignItems: 'center',
               gap: '0.75rem',
+              flexWrap: 'wrap',
             }}>
               <span style={{ color: 'var(--error)', fontSize: '1.25rem' }}>!</span>
-              <p style={{ fontSize: 'var(--text-sm)', color: 'var(--error)' }}>{error}</p>
-              <button className="btn btn-sm btn-ghost" style={{ marginLeft: 'auto' }} onClick={() => setError(null)}>
-                Dismiss
+              <p style={{ fontSize: 'var(--text-sm)', color: 'var(--error)', flex: 1 }}>{error}</p>
+              <button className="btn btn-sm" style={{ background: 'var(--brand-600)', color: '#fff', border: 'none' }} onClick={() => { setError(null); autoTriggeredRef.current = false; }}>
+                Try again
               </button>
             </div>
           )}
@@ -473,61 +484,11 @@ export default function PathwayDashboard() {
             </>
           )}
 
-          {/* No pathways yet — offer generation */}
-          {!isLocked && !loading && pathways.length === 0 && !generating && (
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 'var(--sp-2xl) var(--sp-lg)',
-              textAlign: 'center',
-            }}>
-              <div style={{
-                width: 80,
-                height: 80,
-                borderRadius: '50%',
-                background: 'var(--brand-50)',
-                border: '2px solid var(--brand-100)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '2rem',
-                marginBottom: 'var(--sp-md)',
-              }}>
-                <span style={{ lineHeight: 1 }}>&#127919;</span>
-              </div>
-
-              <h2 style={{
-                fontSize: 'var(--text-xl)',
-                fontWeight: 800,
-                color: 'var(--text-strong)',
-                fontFamily: 'Plus Jakarta Sans, sans-serif',
-                marginBottom: '0.5rem',
-              }}>
-                Find Your Pathways
-              </h2>
-
-              <p style={{
-                fontSize: 'var(--text-sm)',
-                color: 'var(--text-muted)',
-                lineHeight: 1.6,
-                maxWidth: 440,
-                marginBottom: 'var(--sp-lg)',
-              }}>
-                We'll analyze your profile and assign three personalized career pathways — one achievable goal, one strong fit, and one ambitious reach.
-              </p>
-
-              <button
-                className="btn btn-primary btn-lg"
-                onClick={handleGenerate}
-              >
-                Find My Pathways
-              </button>
-
-              <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-faint)', marginTop: 'var(--sp-sm)' }}>
-                Takes about 30–60 seconds
-              </p>
+          {/* Auto-generating (no pathways yet, profile complete, error-free) */}
+          {!isLocked && !loading && pathways.length === 0 && !generating && !error && (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 'var(--sp-2xl) var(--sp-lg)', textAlign: 'center' }}>
+              <div style={{ width: 48, height: 48, borderRadius: '50%', border: '4px solid var(--brand-100)', borderTopColor: 'var(--brand-500)', animation: 'spin 0.9s linear infinite', marginBottom: 'var(--sp-md)' }} />
+              <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>Getting your pathways ready…</p>
             </div>
           )}
 
@@ -535,31 +496,41 @@ export default function PathwayDashboard() {
           {generating && (
             <div>
               <div style={{
-                background: 'rgba(37,99,235,0.06)',
-                border: '1px solid rgba(37,99,235,0.18)',
+                background: 'linear-gradient(135deg, rgba(154,184,46,0.08) 0%, rgba(37,99,235,0.06) 100%)',
+                border: '1px solid rgba(154,184,46,0.25)',
                 borderRadius: 'var(--radius-lg)',
-                padding: 'var(--sp-md)',
+                padding: 'var(--sp-lg)',
                 marginBottom: 'var(--sp-lg)',
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
-                gap: 'var(--sp-md)',
+                textAlign: 'center',
+                gap: 'var(--sp-sm)',
               }}>
                 <div style={{
-                  width: 40,
-                  height: 40,
+                  width: 52,
+                  height: 52,
                   borderRadius: '50%',
-                  border: '3px solid var(--brand-100)',
-                  borderTopColor: 'var(--brand-500)',
+                  border: '4px solid rgba(154,184,46,0.2)',
+                  borderTopColor: 'var(--accent-lime)',
                   animation: 'spin 0.9s linear infinite',
-                  flexShrink: 0,
+                  marginBottom: '0.25rem',
                 }} />
                 <div>
-                  <p style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--text-strong)', marginBottom: '0.2rem' }}>
-                    Finding your pathways…
+                  <p style={{ fontSize: 'var(--text-base)', fontWeight: 800, color: 'var(--text-strong)', marginBottom: '0.35rem', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+                    Building your career pathways…
                   </p>
-                  <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>
-                    Analyzing your profile and matching to career pathways. This takes about 30–60 seconds.
+                  <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)', maxWidth: 420, lineHeight: 1.6 }}>
+                    We're analyzing your skills, experience, and goals to find your best-fit trajectories. This takes about 30–60 seconds.
                   </p>
+                </div>
+                <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                  {['Reviewing your profile', 'Scoring 42 pathways', 'Selecting your 3 best fits'].map((step, i) => (
+                    <span key={i} style={{ fontSize: 'var(--text-xs)', color: 'var(--text-faint)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent-lime)', display: 'inline-block', animation: `pulse ${1 + i * 0.3}s ease-in-out infinite` }} />
+                      {step}
+                    </span>
+                  ))}
                 </div>
               </div>
 
@@ -580,6 +551,10 @@ export default function PathwayDashboard() {
         }
         @keyframes spin {
           to { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(0.85); }
         }
         @media (max-width: 700px) {
           .grid-3 { grid-template-columns: 1fr !important; }
