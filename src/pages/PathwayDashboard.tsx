@@ -79,14 +79,6 @@ const TIER_CONFIG = {
   stretch: { label: 'Think Big', color: '#2196f3', bg: 'rgba(33,150,243,0.08)', border: 'rgba(33,150,243,0.25)', icon: '○' },
 };
 
-const GEN_STEPS = [
-  { icon: '👤', label: 'Reading your profile', sub: 'Analyzing skills, goals, interests, and background…' },
-  { icon: '🔍', label: 'Searching pathway library', sub: 'Scanning 42 career pathways for potential matches…' },
-  { icon: '🤖', label: 'AI scoring candidates', sub: 'Evaluating fit, readiness, and alignment with your goals…' },
-  { icon: '🎯', label: 'Selecting your pathways', sub: 'One achievable, one strong fit, one ambitious reach…' },
-  { icon: '📊', label: 'Running gap analyses', sub: 'Identifying skills and experiences to develop for each path…' },
-  { icon: '✨', label: 'Finalizing your roadmap', sub: 'Mapping internship programs to your pathways…' },
-];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -110,52 +102,17 @@ function readinessLabel(level: string | null, pct: number | null): string {
   return '';
 }
 
-// ─── Generating Banner ────────────────────────────────────────────────────────
+// ─── Researching Sidebar Slot ─────────────────────────────────────────────────
 
-function GeneratingBanner() {
-  const [stepIdx, setStepIdx] = useState(0);
-  useEffect(() => {
-    const iv = setInterval(() => setStepIdx(s => Math.min(s + 1, GEN_STEPS.length - 1)), 9000);
-    return () => clearInterval(iv);
-  }, []);
-  const progress = Math.min(95, Math.round(((stepIdx + 1) / GEN_STEPS.length) * 100));
-  const current = GEN_STEPS[stepIdx];
-
+function ResearchingSlot({ tier }: { tier: 'high' | 'medium' | 'stretch' }) {
+  const tc = TIER_CONFIG[tier];
   return (
-    <div style={{ background: 'linear-gradient(135deg, rgba(154,184,46,0.07) 0%, rgba(37,99,235,0.05) 100%)', border: '1px solid rgba(154,184,46,0.22)', borderRadius: 'var(--radius-lg)', padding: 'var(--sp-lg)', marginBottom: 'var(--sp-lg)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: 'var(--sp-md)' }}>
-        <div style={{ width: 44, height: 44, borderRadius: '50%', border: '3px solid rgba(154,184,46,0.2)', borderTopColor: 'var(--brand-500)', animation: 'spin 0.9s linear infinite', flexShrink: 0 }} />
-        <div>
-          <p style={{ fontSize: 'var(--text-base)', fontWeight: 800, color: 'var(--text-strong)', fontFamily: 'Plus Jakarta Sans, sans-serif', marginBottom: '0.15rem' }}>Generating Your Career Pathways</p>
-          <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>Usually takes 30–60 seconds — we'll show your results automatically</p>
-        </div>
-      </div>
-      <div style={{ marginBottom: 'var(--sp-md)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.375rem' }}>
-          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 600 }}>{current.icon} {current.label}…</span>
-          <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--brand-700)' }}>{progress}%</span>
-        </div>
-        <div style={{ height: 8, background: 'var(--surface-2)', borderRadius: 99, overflow: 'hidden' }}>
-          <div style={{ height: '100%', width: `${progress}%`, background: 'linear-gradient(90deg, var(--brand-500), #9AB82E)', borderRadius: 99, transition: 'width 1.2s ease' }} />
-        </div>
-        <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-faint)', marginTop: '0.3rem' }}>{current.sub}</p>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        {GEN_STEPS.map((step, i) => {
-          const done = i < stepIdx;
-          const active = i === stepIdx;
-          return (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', opacity: i > stepIdx ? 0.38 : 1, transition: 'opacity 0.5s' }}>
-              <div style={{ width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.68rem', flexShrink: 0, background: done ? '#4caf50' : active ? 'rgba(37,99,235,0.12)' : 'var(--surface-2)', border: active ? '2px solid var(--brand-400)' : 'none', animation: active ? 'stepPulse 1.6s ease-in-out infinite' : 'none', color: done ? '#fff' : 'var(--text-muted)', fontWeight: 700 }}>
-                {done ? '✓' : (i + 1)}
-              </div>
-              <span style={{ fontSize: 'var(--text-xs)', fontWeight: active ? 700 : 500, color: active ? 'var(--text-strong)' : done ? 'var(--text-muted)' : 'var(--text-faint)' }}>
-                {step.icon} {step.label}
-              </span>
-            </div>
-          );
-        })}
-      </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 0.625rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', background: 'var(--surface)' }}>
+      <span style={{ width: 8, height: 8, borderRadius: '50%', background: tc.color, display: 'inline-block', animation: 'researchPulse 1.8s ease-in-out infinite', flexShrink: 0, opacity: 0.7 }} />
+      <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontStyle: 'italic', flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        Researching pathway…
+      </span>
+      <span style={{ fontSize: '0.6rem', fontWeight: 700, color: tc.color, flexShrink: 0 }}>{tc.label}</span>
     </div>
   );
 }
@@ -538,7 +495,7 @@ function UnassignedPanel({ pathway, assignedPathways, token, onRunAnalysis, onSw
 
 export default function PathwayDashboard() {
   const user = getCurrentUser()!;
-  const navigate = useNavigate();
+  useNavigate();
   const [searchParams] = useSearchParams();
   const token = localStorage.getItem('cdp_token');
 
@@ -800,9 +757,6 @@ export default function PathwayDashboard() {
 
   // ─── Render ────────────────────────────────────────────────────────────────
 
-  // Navigate unused for now, but kept for potential future navigation
-  void navigate;
-
   return (
     <>
       <Nav />
@@ -819,13 +773,6 @@ export default function PathwayDashboard() {
           {/* Locked state */}
           {isLocked && <LockedState completeness={completeness} />}
 
-          {/* Generating initial pathways (full width) */}
-          {!isLocked && generating && (
-            <div>
-              <GeneratingBanner />
-            </div>
-          )}
-
           {/* Error states */}
           {generationError && (
             <div style={{ background: 'var(--error-bg)', border: '1px solid rgba(185,28,28,0.2)', borderRadius: 'var(--radius-md)', padding: 'var(--sp-md)', marginBottom: 'var(--sp-lg)', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
@@ -837,7 +784,7 @@ export default function PathwayDashboard() {
           )}
 
           {/* Main two-pane layout */}
-          {!isLocked && !generating && (
+          {!isLocked && (
             <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: 'var(--sp-xl)', alignItems: 'start' }}>
 
               {/* ── LEFT SIDEBAR ── */}
@@ -863,7 +810,7 @@ export default function PathwayDashboard() {
                 )}
 
                 {/* YOUR PATHWAYS section */}
-                {(loadingAssigned || sidebarAssigned.length > 0) && (
+                {(loadingAssigned || generating || sidebarAssigned.length > 0) && (
                   <div style={{ marginBottom: 'var(--sp-md)' }}>
                     <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: '0.375rem', padding: '0 0.25rem' }}>
                       Your Pathways
@@ -871,6 +818,12 @@ export default function PathwayDashboard() {
                     {loadingAssigned ? (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                         {[1, 2, 3].map(i => <div key={i} style={{ height: 32, borderRadius: 'var(--radius-md)', background: 'var(--surface-2)', animation: 'skeletonPulse 1.5s ease-in-out infinite' }} />)}
+                      </div>
+                    ) : generating && sidebarAssigned.length === 0 ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                        {(['high', 'medium', 'stretch'] as const).map(tier => (
+                          <ResearchingSlot key={tier} tier={tier} />
+                        ))}
                       </div>
                     ) : (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.125rem' }}>
@@ -935,7 +888,16 @@ export default function PathwayDashboard() {
 
               {/* ── RIGHT CONTENT ── */}
               <div>
-                {!selectedId && !isLoading && (
+                {!selectedId && !isLoading && generating && (
+                  <div style={{ padding: 'var(--sp-xl) var(--sp-lg)', color: 'var(--text-muted)' }}>
+                    <p style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--text-strong)', marginBottom: '0.375rem' }}>Your pathways are on the way</p>
+                    <p style={{ fontSize: 'var(--text-sm)', lineHeight: 1.65 }}>
+                      We're analyzing your profile and selecting your three best-fit paths — usually takes under a minute. In the meantime, browse all 42 pathways below to explore what's possible.
+                    </p>
+                  </div>
+                )}
+
+                {!selectedId && !isLoading && !generating && (
                   <div style={{ textAlign: 'center', padding: 'var(--sp-2xl)', color: 'var(--text-muted)' }}>
                     <div style={{ fontSize: '2.5rem', marginBottom: 'var(--sp-md)', opacity: 0.3 }}>→</div>
                     <p style={{ fontSize: 'var(--text-sm)' }}>Select a pathway from the sidebar to view details and gap analysis</p>
@@ -1069,9 +1031,9 @@ export default function PathwayDashboard() {
         @keyframes spin {
           to { transform: rotate(360deg); }
         }
-        @keyframes stepPulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(37,99,235,0.4); }
-          50% { box-shadow: 0 0 0 5px rgba(37,99,235,0); }
+        @keyframes researchPulse {
+          0%, 100% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.25); }
         }
         @keyframes gapPulse {
           0%, 100% { transform: translateX(-40%); }
