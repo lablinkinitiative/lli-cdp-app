@@ -798,7 +798,8 @@ export default function PathwayDashboard() {
                 )}
 
                 {/* YOUR PATHWAYS section */}
-                {(loadingAssigned || generating || sidebarAssigned.length > 0) && (
+                {/* Show section when: loading, generating, has pathways, OR auto-gen is about to start (qualified profile, no pathways yet) */}
+                {(loadingAssigned || generating || sidebarAssigned.length > 0 || (!isLocked && !loadingAssigned && assignedPathways.length === 0 && !generationError)) && (
                   <div style={{ marginBottom: 'var(--sp-md)' }}>
                     <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: '0.375rem', padding: '0 0.25rem' }}>
                       Your Pathways
@@ -807,7 +808,7 @@ export default function PathwayDashboard() {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                         {[1, 2, 3].map(i => <div key={i} style={{ height: 32, borderRadius: 'var(--radius-md)', background: 'var(--surface-2)', animation: 'skeletonPulse 1.5s ease-in-out infinite' }} />)}
                       </div>
-                    ) : generating && sidebarAssigned.length === 0 ? (
+                    ) : (generating || (!isLocked && assignedPathways.length === 0 && !generationError)) && sidebarAssigned.length === 0 ? (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.125rem' }}>
                         {(['high', 'medium', 'stretch'] as const).map(tier => {
                           const tc = TIER_CONFIG[tier];
@@ -846,7 +847,7 @@ export default function PathwayDashboard() {
                 )}
 
                 {/* Divider */}
-                {(sidebarAssigned.length > 0 || generating) && <div style={{ borderTop: '1px solid var(--border)', marginBottom: 'var(--sp-md)' }} />}
+                {(sidebarAssigned.length > 0 || generating || (!isLocked && !loadingAssigned && assignedPathways.length === 0 && !generationError)) && <div style={{ borderTop: '1px solid var(--border)', marginBottom: 'var(--sp-md)' }} />}
 
                 {/* ALL PATHWAYS section */}
                 <div>
