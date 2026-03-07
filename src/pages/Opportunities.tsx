@@ -43,6 +43,20 @@ export default function Opportunities() {
     const data = getStudentData(user.uid);
     setStudent(data);
     setSavedIds(data?.savedPrograms || []);
+
+    // Auto-set career stage filter based on student profile (only if no pathway filter active)
+    if (data && !searchParams.get('pathway')) {
+      const year = (data.profile?.year || '').toLowerCase();
+      const hasCurrentWork = (data.experience || []).some(
+        (e: { type: string; endDate?: string | null }) => e.type === 'work' && !e.endDate
+      );
+      if (year.includes('phd') || year.includes('doct')) {
+        setFilterCareerStage('phd');
+      } else if (year.includes('grad') || year.includes('master') || hasCurrentWork) {
+        setFilterCareerStage('graduate');
+      }
+      // undergrad/high school: leave unfiltered (they need access to all programs)
+    }
   }, [user.uid]);
 
   useEffect(() => {
