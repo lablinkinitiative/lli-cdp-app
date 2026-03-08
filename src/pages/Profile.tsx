@@ -5,7 +5,7 @@ import ExperienceTimeline from '../components/ExperienceTimeline';
 import { getCurrentUser, getStudentData, saveStudentData, updateCurrentUser, refreshStudentData, signOut } from '../auth';
 import type { StudentData, ExperienceEntry } from '../types';
 
-const YEARS = ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate', 'PhD', 'Community College', 'Working Professional', 'Other'];
+const YEARS = ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate', 'PhD', 'Community College', 'Other'];
 const GRAD_YEARS = ['2025', '2026', '2027', '2028', '2029', '2030'];
 
 const INTERESTS = [
