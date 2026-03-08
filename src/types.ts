@@ -18,6 +18,7 @@ export interface StudentProfile {
   email: string;
   createdAt: string;
   updatedAt: string;
+  career_stage?: string; // canonical stage: undergraduate|graduate|phd|postdoc|professional|high_school|community_college
 }
 
 export type ExperienceType = 'work' | 'research' | 'education' | 'leadership' | 'volunteer' | 'other';

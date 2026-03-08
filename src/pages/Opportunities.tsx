@@ -46,16 +46,30 @@ export default function Opportunities() {
 
     // Auto-set career stage filter based on student profile (only if no pathway filter active)
     if (data && !searchParams.get('pathway')) {
-      const year = (data.profile?.year || '').toLowerCase();
-      const hasCurrentWork = (data.experience || []).some(
-        (e: { type: string; endDate?: string | null }) => e.type === 'work' && !e.endDate
-      );
-      if (year.includes('phd') || year.includes('doct')) {
-        setFilterCareerStage('phd');
-      } else if (year.includes('grad') || year.includes('master') || hasCurrentWork) {
-        setFilterCareerStage('graduate');
+      // Use explicit career_stage from backend if available
+      const explicitStage = data.profile?.career_stage;
+      if (explicitStage) {
+        setFilterCareerStage(explicitStage);
+      } else {
+        const year = (data.profile?.year || '').toLowerCase();
+        const hasCurrentWork = (data.experience || []).some(
+          (e: { type: string; endDate?: string | null }) => e.type === 'work' && !e.endDate
+        );
+        if (hasCurrentWork) {
+          setFilterCareerStage('professional');
+        } else if (year.includes('phd') || year.includes('doct')) {
+          setFilterCareerStage('phd');
+        } else if (year.includes('grad') || year.includes('master')) {
+          setFilterCareerStage('graduate');
+        } else if (year.includes('fresh') || year.includes('soph') || year.includes('junior') || year.includes('senior') || year.includes('other')) {
+          setFilterCareerStage('undergraduate');
+        } else if (year.includes('community')) {
+          setFilterCareerStage('undergraduate');
+        } else if (year.includes('high school') || year === 'hs') {
+          setFilterCareerStage('high_school');
+        }
+        // Unknown year: leave unfiltered so new users see all programs
       }
-      // undergrad/high school: leave unfiltered (they need access to all programs)
     }
   }, [user.uid]);
 
@@ -174,6 +188,15 @@ export default function Opportunities() {
 
   const activeFilterCount = [filterPaid, filterRemote, !!filterCareerStage, !!filterBenefit, !!filterKeyword].filter(Boolean).length;
 
+  const STAGE_LABELS: Record<string, string> = {
+    high_school: 'High School',
+    undergraduate: 'Undergraduate',
+    graduate: 'Graduate',
+    phd: 'PhD',
+    postdoc: 'Postdoc',
+    professional: 'Working Professional',
+  };
+
   return (
     <>
       <Nav />
@@ -201,6 +224,26 @@ export default function Opportunities() {
                 onClick={() => { setSearchParams({}); }}
               >
                 ✕ Show all programs
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Career stage info banner — shown when a stage filter is auto-applied */}
+        {filterCareerStage && !pathwayParam && (
+          <div style={{ background: 'var(--surface-secondary, #f8fafc)', borderBottom: '1px solid var(--border, #e2e8f0)', padding: '0.5rem 1.25rem' }}>
+            <div className="page-container" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: 0 }}>
+              <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>
+                Showing programs for: <strong style={{ color: 'var(--text-primary)' }}>{STAGE_LABELS[filterCareerStage] || filterCareerStage}</strong>
+                {' '}— {filtered.length} matched
+              </span>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                style={{ marginLeft: 'auto', fontSize: 'var(--text-xs)' }}
+                onClick={() => setFilterCareerStage('')}
+              >
+                Show all stages
               </button>
             </div>
           </div>
@@ -283,6 +326,7 @@ export default function Opportunities() {
                   <option value="graduate">Graduate</option>
                   <option value="phd">PhD</option>
                   <option value="postdoc">Postdoc</option>
+                  <option value="professional">Working Professional</option>
                 </select>
               </div>
 

@@ -14,7 +14,7 @@ export function computeMatchScore(program: Program, student: StudentData): numbe
 
   // Eligibility check (25 pts)
   maxScore += 25;
-  const yearEligible = isEligibleByYear(program, student.profile.year);
+  const yearEligible = isEligibleByYear(program, student.profile.year, student.profile.career_stage, student.experience);
   if (yearEligible) score += 25;
   else score += 0;
 
@@ -54,18 +54,58 @@ export function computeMatchScore(program: Program, student: StudentData): numbe
   return Math.round((score / maxScore) * 100);
 }
 
-function isEligibleByYear(program: Program, year: string): boolean {
+function inferCareerStageFromProfile(year: string, experience: Array<{ type: string; endDate?: string | null }> = []): string {
+  const y = year.toLowerCase().trim();
+  const hasCurrentJob = experience.some(e => e.type === 'work' && !e.endDate);
+  if (hasCurrentJob) return 'professional';
+  if (y.includes('phd') || y.includes('doct')) return 'phd';
+  if (y.includes('grad') || y.includes('master')) return 'graduate';
+  if (y.includes('community') || y === 'cc') return 'community_college';
+  if (y.includes('high school') || y === 'hs') return 'high_school';
+  if (y === 'working professional' || y === 'professional') return 'professional';
+  if (y.includes('fresh') || y.includes('soph') || y.includes('junior') || y.includes('senior') || y.includes('undergrad') || y.includes('other') || y !== '') return 'undergraduate';
+  return ''; // unknown
+}
+
+function isEligibleByYear(program: Program, year: string, careerStage?: string, experience?: Array<{ type: string; endDate?: string | null }>): boolean {
+  // Use explicit career_stage if available, otherwise infer from year + experience
+  const stage = careerStage || inferCareerStageFromProfile(year, experience || []);
+
+  // Check tags.career_stage first (more reliable than eligibility.level text)
+  const tagStages = (program.tags?.career_stage || []) as string[];
+  if (tagStages.length > 0) {
+    if (tagStages.includes('any')) return true;
+    switch (stage) {
+      case 'professional':
+        return tagStages.some(s => ['professional', 'graduate', 'phd', 'postdoc'].includes(s));
+      case 'phd':
+        return tagStages.some(s => ['phd', 'postdoc', 'graduate'].includes(s));
+      case 'graduate':
+        return tagStages.some(s => ['graduate', 'phd'].includes(s));
+      case 'undergraduate':
+        return tagStages.some(s => ['undergraduate', 'community_college', 'high_school'].includes(s));
+      case 'community_college':
+        return tagStages.some(s => ['community_college', 'undergraduate'].includes(s));
+      case 'high_school':
+        return tagStages.some(s => ['high_school'].includes(s));
+      default:
+        return true; // unknown stage — optimistic
+    }
+  }
+
+  // Fallback: check eligibility.level text array
   const levels = program.eligibility.level.map(l => l.toLowerCase());
-
-  if (!year) return true; // Unknown — optimistic
-
-  if (year === 'Community College' || year === 'community college') {
+  if (!stage && !year) return true;
+  if (stage === 'professional' || stage === 'graduate' || year === 'Graduate') {
+    return levels.some(l => l.includes('graduate') || l.includes('phd') || l.includes('postdoc') || l.includes('professional'));
+  }
+  if (stage === 'phd' || year === 'PhD') {
+    return levels.some(l => l.includes('phd') || l.includes('graduate') || l.includes('postdoc'));
+  }
+  if (stage === 'community_college' || year === 'Community College' || year === 'community college') {
     return levels.some(l => l.includes('community college') || l.includes('undergraduate'));
   }
-  if (year === 'Graduate' || year === 'PhD') {
-    return levels.some(l => l.includes('graduate') || l.includes('phd') || l.includes('postdoc'));
-  }
-  if (['Freshman', 'Sophomore', 'Junior', 'Senior'].includes(year)) {
+  if (stage === 'undergraduate' || ['Freshman', 'Sophomore', 'Junior', 'Senior'].includes(year)) {
     return levels.some(l => l.includes('undergraduate') || l.includes(year.toLowerCase()));
   }
   return true;
@@ -97,9 +137,10 @@ export type EligibilityStatus = 'eligible' | 'check' | 'unlikely';
 
 export function getEligibilityStatus(program: Program, student: StudentData): EligibilityStatus {
   const year = student.profile.year;
-  if (!year) return 'check';
+  const careerStage = student.profile.career_stage;
+  if (!year && !careerStage) return 'check';
 
-  const eligible = isEligibleByYear(program, year);
+  const eligible = isEligibleByYear(program, year, careerStage, student.experience);
   if (!eligible) return 'unlikely';
 
   // GPA check
