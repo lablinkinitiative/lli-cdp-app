@@ -46,30 +46,27 @@ export default function Opportunities() {
 
     // Auto-set level filter based on student profile (only if no pathway filter active)
     if (data && !searchParams.get('pathway')) {
-      // Use stored career_stage from backend if available
-      const explicitStage = data.profile?.career_stage;
-      if (explicitStage) {
-        setFilterLevels([explicitStage]);
-      } else {
-        const year = (data.profile?.year || '').toLowerCase();
-        const hasCurrentWork = (data.experience || []).some(
-          (e: { type: string; endDate?: string | null }) => e.type === 'work' && !e.endDate
-        );
-        if (hasCurrentWork || year === 'working professional' || year === 'professional') {
-          setFilterLevels(['professional']);
-        } else if (year.includes('phd') || year.includes('doct')) {
-          setFilterLevels(['phd']);
-        } else if (year.includes('grad') || year.includes('master')) {
-          setFilterLevels(['graduate']);
-        } else if (year.includes('community')) {
-          setFilterLevels(['community_college']);
-        } else if (year.includes('high school') || year === 'hs') {
-          setFilterLevels(['high_school']);
-        } else if (year.includes('fresh') || year.includes('soph') || year.includes('junior') || year.includes('senior') || year.includes('other')) {
-          setFilterLevels(['undergraduate']);
-        }
-        // Unknown year: leave unfiltered so new users see all programs
+      // Use stored career_stage from backend (may be array or string — handles both)
+      const storedStage = data.profile?.career_stage;
+      if (storedStage) {
+        const stages = Array.isArray(storedStage) ? storedStage : [storedStage as string];
+        if (stages.length > 0) { setFilterLevels(stages); return; }
       }
+      // Fallback: infer from year + experience (new users before first save)
+      const year = (data.profile?.year || '').toLowerCase();
+      const hasCurrentWork = (data.experience || []).some(
+        (e: { type: string; endDate?: string | null }) => e.type === 'work' && !e.endDate
+      );
+      const inferredStages: string[] = [];
+      if (hasCurrentWork) inferredStages.push('professional');
+      if (year.includes('phd') || year.includes('doct')) inferredStages.push('phd');
+      else if (year.includes('grad') || year.includes('master')) inferredStages.push('graduate');
+      else if (year.includes('community')) inferredStages.push('community_college');
+      else if (year.includes('high school') || year === 'hs') inferredStages.push('high_school');
+      else if (year === 'working professional' || year === 'professional') { if (!inferredStages.includes('professional')) inferredStages.push('professional'); }
+      else if (year.includes('fresh') || year.includes('soph') || year.includes('junior') || year.includes('senior') || year.includes('other')) inferredStages.push('undergraduate');
+      if (inferredStages.length > 0) setFilterLevels(inferredStages);
+      // Unknown year: leave unfiltered so new users see all programs
     }
   }, [user.uid]);
 
