@@ -35,7 +35,7 @@ export default function Opportunities() {
   // Tag-based filters
   const [filterPaid, setFilterPaid] = useState(false);
   const [filterRemote, setFilterRemote] = useState(false);
-  const [filterCareerStage, setFilterCareerStage] = useState('');
+  const [filterLevels, setFilterLevels] = useState<string[]>([]);
   const [filterBenefit, setFilterBenefit] = useState('');
   const [filterKeyword, setFilterKeyword] = useState('');
 
@@ -44,29 +44,29 @@ export default function Opportunities() {
     setStudent(data);
     setSavedIds(data?.savedPrograms || []);
 
-    // Auto-set career stage filter based on student profile (only if no pathway filter active)
+    // Auto-set level filter based on student profile (only if no pathway filter active)
     if (data && !searchParams.get('pathway')) {
-      // Use explicit career_stage from backend if available
+      // Use stored career_stage from backend if available
       const explicitStage = data.profile?.career_stage;
       if (explicitStage) {
-        setFilterCareerStage(explicitStage);
+        setFilterLevels([explicitStage]);
       } else {
         const year = (data.profile?.year || '').toLowerCase();
         const hasCurrentWork = (data.experience || []).some(
           (e: { type: string; endDate?: string | null }) => e.type === 'work' && !e.endDate
         );
-        if (hasCurrentWork) {
-          setFilterCareerStage('professional');
+        if (hasCurrentWork || year === 'working professional' || year === 'professional') {
+          setFilterLevels(['professional']);
         } else if (year.includes('phd') || year.includes('doct')) {
-          setFilterCareerStage('phd');
+          setFilterLevels(['phd']);
         } else if (year.includes('grad') || year.includes('master')) {
-          setFilterCareerStage('graduate');
-        } else if (year.includes('fresh') || year.includes('soph') || year.includes('junior') || year.includes('senior') || year.includes('other')) {
-          setFilterCareerStage('undergraduate');
+          setFilterLevels(['graduate']);
         } else if (year.includes('community')) {
-          setFilterCareerStage('undergraduate');
+          setFilterLevels(['community_college']);
         } else if (year.includes('high school') || year === 'hs') {
-          setFilterCareerStage('high_school');
+          setFilterLevels(['high_school']);
+        } else if (year.includes('fresh') || year.includes('soph') || year.includes('junior') || year.includes('senior') || year.includes('other')) {
+          setFilterLevels(['undergraduate']);
         }
         // Unknown year: leave unfiltered so new users see all programs
       }
@@ -98,7 +98,7 @@ export default function Opportunities() {
       .finally(() => setIsLoadingPathway(false));
   }, [pathwayParam]);
 
-  const hasActiveFilters = filterPaid || filterRemote || !!filterCareerStage || !!filterBenefit || !!filterKeyword;
+  const hasActiveFilters = filterPaid || filterRemote || filterLevels.length > 0 || !!filterBenefit || !!filterKeyword;
 
   const filtered = useMemo(() => {
     let result = programs.filter(p => {
@@ -132,9 +132,11 @@ export default function Opportunities() {
         if (!isRemote) return false;
       }
 
-      if (filterCareerStage) {
-        const stageMatch = (p.tags?.career_stage || []).includes(filterCareerStage) ||
-          (p.eligibility?.level || []).some(l => l.toLowerCase().includes(filterCareerStage.replace('_', ' ')));
+      if (filterLevels.length > 0) {
+        const stageMatch = filterLevels.some(level =>
+          (p.tags?.career_stage || []).includes(level) ||
+          (p.eligibility?.level || []).some(l => l.toLowerCase().includes(level.replace('_', ' ')))
+        );
         if (!stageMatch) return false;
       }
 
@@ -168,12 +170,16 @@ export default function Opportunities() {
     }
 
     return result;
-  }, [query, category, sortMode, student, filterPaid, filterRemote, filterCareerStage, filterBenefit, filterKeyword, pathwayProgramSlugs]);
+  }, [query, category, sortMode, student, filterPaid, filterRemote, filterLevels, filterBenefit, filterKeyword, pathwayProgramSlugs]);
 
   const clearAll = () => {
     setQuery(''); setCategory('All');
     setFilterPaid(false); setFilterRemote(false);
-    setFilterCareerStage(''); setFilterBenefit(''); setFilterKeyword('');
+    setFilterLevels([]); setFilterBenefit(''); setFilterKeyword('');
+  };
+
+  const toggleLevel = (level: string) => {
+    setFilterLevels(prev => prev.includes(level) ? prev.filter(l => l !== level) : [...prev, level]);
   };
 
   const handleSaveToggle = (id: string, saved: boolean) => {
@@ -186,16 +192,17 @@ export default function Opportunities() {
     }
   };
 
-  const activeFilterCount = [filterPaid, filterRemote, !!filterCareerStage, !!filterBenefit, !!filterKeyword].filter(Boolean).length;
+  const activeFilterCount = [filterPaid, filterRemote, filterLevels.length > 0, !!filterBenefit, !!filterKeyword].filter(Boolean).length;
 
-  const STAGE_LABELS: Record<string, string> = {
-    high_school: 'High School',
-    undergraduate: 'Undergraduate',
-    graduate: 'Graduate',
-    phd: 'PhD',
-    postdoc: 'Postdoc',
-    professional: 'Working Professional',
-  };
+  const LEVEL_OPTIONS: { value: string; label: string }[] = [
+    { value: 'high_school', label: 'High School' },
+    { value: 'community_college', label: 'Community College' },
+    { value: 'undergraduate', label: 'Undergraduate' },
+    { value: 'graduate', label: 'Graduate' },
+    { value: 'phd', label: 'PhD' },
+    { value: 'postdoc', label: 'Postdoc' },
+    { value: 'professional', label: 'Working Professional' },
+  ];
 
   return (
     <>
@@ -229,21 +236,24 @@ export default function Opportunities() {
           </div>
         )}
 
-        {/* Career stage info banner — shown when a stage filter is auto-applied */}
-        {filterCareerStage && !pathwayParam && (
+        {/* Level info banner — shown when a level filter is auto-applied */}
+        {filterLevels.length > 0 && !pathwayParam && (
           <div style={{ background: 'var(--surface-secondary, #f8fafc)', borderBottom: '1px solid var(--border, #e2e8f0)', padding: '0.5rem 1.25rem' }}>
             <div className="page-container" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: 0 }}>
               <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>
-                Showing programs for: <strong style={{ color: 'var(--text-primary)' }}>{STAGE_LABELS[filterCareerStage] || filterCareerStage}</strong>
+                Showing programs for:{' '}
+                <strong style={{ color: 'var(--text-primary)' }}>
+                  {filterLevels.map(l => LEVEL_OPTIONS.find(o => o.value === l)?.label || l).join(', ')}
+                </strong>
                 {' '}— {filtered.length} matched
               </span>
               <button
                 type="button"
                 className="btn btn-ghost btn-sm"
                 style={{ marginLeft: 'auto', fontSize: 'var(--text-xs)' }}
-                onClick={() => setFilterCareerStage('')}
+                onClick={() => setFilterLevels([])}
               >
-                Show all stages
+                Show all levels
               </button>
             </div>
           </div>
@@ -311,23 +321,19 @@ export default function Opportunities() {
                 </label>
               </div>
 
-              {/* Career stage */}
+              {/* Level multi-select */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <label style={{ fontSize: 'var(--text-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>Career Stage</label>
-                <select
-                  className="form-select"
-                  style={{ width: 'auto' }}
-                  value={filterCareerStage}
-                  onChange={e => setFilterCareerStage(e.target.value)}
-                >
-                  <option value="">Any stage</option>
-                  <option value="high_school">High School</option>
-                  <option value="undergraduate">Undergraduate</option>
-                  <option value="graduate">Graduate</option>
-                  <option value="phd">PhD</option>
-                  <option value="postdoc">Postdoc</option>
-                  <option value="professional">Working Professional</option>
-                </select>
+                <label style={{ fontSize: 'var(--text-xs)', fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>Level</label>
+                {LEVEL_OPTIONS.map(({ value, label }) => (
+                  <label key={value} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', cursor: 'pointer', fontSize: 'var(--text-sm)' }}>
+                    <input
+                      type="checkbox"
+                      checked={filterLevels.includes(value)}
+                      onChange={() => toggleLevel(value)}
+                    />
+                    {label}
+                  </label>
+                ))}
               </div>
 
               {/* Benefits */}
@@ -370,7 +376,7 @@ export default function Opportunities() {
                   type="button"
                   className="btn btn-ghost btn-sm"
                   style={{ alignSelf: 'flex-end' }}
-                  onClick={() => { setFilterPaid(false); setFilterRemote(false); setFilterCareerStage(''); setFilterBenefit(''); setFilterKeyword(''); }}
+                  onClick={() => { setFilterPaid(false); setFilterRemote(false); setFilterLevels([]); setFilterBenefit(''); setFilterKeyword(''); }}
                 >
                   Clear tag filters
                 </button>

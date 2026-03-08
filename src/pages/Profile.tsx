@@ -5,7 +5,7 @@ import ExperienceTimeline from '../components/ExperienceTimeline';
 import { getCurrentUser, getStudentData, saveStudentData, updateCurrentUser, refreshStudentData, signOut } from '../auth';
 import type { StudentData, ExperienceEntry } from '../types';
 
-const YEARS = ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate', 'PhD', 'Community College', 'Other'];
+const YEARS = ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate', 'PhD', 'Community College', 'Working Professional', 'Other'];
 const GRAD_YEARS = ['2025', '2026', '2027', '2028', '2029', '2030'];
 
 const INTERESTS = [
@@ -348,9 +348,9 @@ export default function Profile() {
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-md)' }}>
                       <div className="form-group">
-                        <label className="form-label" htmlFor="p-year">Year</label>
+                        <label className="form-label" htmlFor="p-year">Level</label>
                         <select id="p-year" className="form-select" value={year} onChange={e => setYear(e.target.value)}>
-                          <option value="">Select year</option>
+                          <option value="">Select level</option>
                           {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
                         </select>
                       </div>
@@ -377,7 +377,7 @@ export default function Profile() {
                       { label: 'Name', value: firstName || lastName ? `${firstName} ${lastName}`.trim() : null },
                       { label: 'Email', value: user.email },
                       { label: 'School', value: school || null },
-                      { label: 'Year', value: year || null },
+                      { label: 'Level', value: year || null },
                       { label: 'Major', value: major || null },
                       { label: 'Graduation', value: gradYear || null },
                       { label: 'GPA', value: gpa || null },
